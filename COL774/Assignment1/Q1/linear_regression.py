@@ -7,24 +7,19 @@ import numpy as np
 
 class LinearRegressor:
     def __init__(self):
-        '''
-        
-        Read data
 
-        '''
+        '''Read data'''
         X, y = self.readData()
-        print(X.shape)
-        print(y.shape)
-        '''    
-        Pass through fit 
+        #print(X.shape)
+        #print(y.shape)
+        
+        '''Fit data'''
+        Theta = self.fit(X, y)
+        print(Theta)
+        loss = self.checkLoss(X, y, Theta)
+        print(loss)
 
-        '''
-        pass
-
-        '''   
-        Call predict
-
-        '''
+        '''Call predict'''
         pass
         
 
@@ -55,6 +50,13 @@ class LinearRegressor:
         #print(y.shape)
         return y
 
+    def checkLoss(self, X, y, Theta):
+        #Param = np.array([29.06475515, 6.21867801])
+        #Hyp = np.matmul(X, Param)
+        Hyp = np.matmul(X, Theta)
+        L = y - Hyp
+        loss = np.dot(L, L)/(2*X.shape[0])
+        return loss       
 
     def fit(self, X, y, learning_rate=0.01):
         """
@@ -76,8 +78,31 @@ class LinearRegressor:
         List of Parameters: numpy array of shape (n_iter, n_features+1,)
             The list of parameters obtained after each iteration of Gradient Descent.
         """
-        pass
-    
+        
+
+        #Starting parameters
+        iteration = 0
+        Theta = np.zeros(2)
+        norm = 1e+12 
+        #stopping criteria
+        tolerance = 1e-12
+        
+        while(norm > tolerance):
+            iteration += 1
+            print('Iteration: ', iteration)
+            print('Param: ', Theta)
+            
+            A = np.dot(X, Theta)
+            B = y - A
+            Grad = -1*np.matmul(X.T, B)/X.shape[0]
+            Theta = Theta - learning_rate*Grad
+            norm = np.linalg.norm(Grad)
+
+            print('Gradient : ', Grad )
+            print('Norm: ', norm)
+
+        return Theta
+
     def predict(self, X):
         """
         Predict the target values for the input data.
