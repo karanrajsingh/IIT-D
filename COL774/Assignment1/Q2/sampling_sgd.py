@@ -57,7 +57,7 @@ class StochasticLinearRegressor:
         input_sigma = np.array([2, 2])
         noise_sigma = math.sqrt(2)
         X, y = generate(N, theta, input_mean, input_sigma, noise_sigma)
-        print(X.shape, y.shape)
+        
 
     
     def fit(self, X, y, learning_rate=0.01):
@@ -80,7 +80,33 @@ class StochasticLinearRegressor:
         List of Parameters: numpy array of shape (n_iter, n_features+1,)
             The list of parameters obtained after each iteration of Gradient Descent.
         """
-        pass
+
+        
+
+        #Starting parameters
+        iteration = 0
+        Theta = np.zeros(X.shape[1])
+        norm = 1e+12 
+        #stopping criteria
+        tolerance = 1e-12
+        
+        while(norm > tolerance):
+            iteration += 1
+            print('Iteration: ', iteration)
+            print('Param: ', Theta)
+            
+            A = np.dot(X, Theta)
+            B = y - A
+            Grad = -1*np.matmul(X.T, B)/X.shape[0]
+            Theta = Theta - learning_rate*Grad
+            norm = np.linalg.norm(Grad)
+
+            print('Gradient : ', Grad )
+            print('Norm: ', norm)
+
+        return Theta
+
+        
     
     def predict(self, X):
         """

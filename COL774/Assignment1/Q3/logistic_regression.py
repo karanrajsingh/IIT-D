@@ -8,7 +8,34 @@ import numpy as np
 class LogisticRegressor:
     # Assume Binary Classification
     def __init__(self):
-        pass
+        X, y = self.readAndNormalizeData()
+
+        print(X, y)
+
+
+    def readAndNormalizeData(self):
+        #Read inputs from csv
+        X1 = np.loadtxt('./../data/Q3/logisticX.csv', delimiter=',')
+        X1.reshape([X1.shape[0], 2])
+
+        #Normalize inputs
+        Mean = np.mean(X1, axis = 0)
+        Var = np.var(X1, axis = 0)
+        Sigma = np.sqrt(Var)
+        M = np.ones([X1.shape[0], X1.shape[1]])*Mean
+        X1 = X1 - M
+        X1 = np.divide(X1, Sigma)
+
+        # Add intercept term to inputs
+        Ones = np.ones([X1.shape[0], 1])
+        X = np.concatenate((X1, Ones), axis = 1)
+
+        # Read labels from csv 
+        Y = np.loadtxt('./../data/Q3/logisticY.csv')
+        Y.reshape([Y.shape[0], 1])
+
+        return X, Y
+
     
     def fit(self, X, y, learning_rate=0.01):
         """
@@ -48,3 +75,5 @@ class LogisticRegressor:
             The predicted target label.
         """
         pass
+
+LogisticRegressor()
