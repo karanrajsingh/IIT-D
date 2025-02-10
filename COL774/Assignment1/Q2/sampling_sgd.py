@@ -36,19 +36,6 @@ def generate(N, theta, input_mean, input_sigma, noise_sigma):
         The target values.
     """
 
-    '''
-
-    #Generate using covariance. This works!
-    Cov = np.eye(input_sigma.shape[0])
-    for i in range(input_sigma[0]):
-        Cov[i][i] = input_sigma[i]
-
-    X_data =  np.random.multivariate_normal(input_mean, Cov, N)
-    X_intercept = np.ones([X_data.shape[0], 1])
-    X = np.concatenate((X_intercept, X_data), axis = 1)
-
-    '''
-
     #As both x1 and x2 are assumed to be independent
     X1 = np.random.normal(input_mean[0], input_sigma[0], N).reshape(N, 1)
     X2 = np.random.normal(input_mean[1], input_sigma[1], N).reshape(N,1)
@@ -56,9 +43,11 @@ def generate(N, theta, input_mean, input_sigma, noise_sigma):
     X_intercept = np.ones([N, 1])
     X = np.concatenate((X_intercept, X_data), axis = 1)
     
-    Y_clean = np.matmul(X, theta).reshape(N, 1)
-    Noise = np.random.normal(0, noise_sigma, N).reshape(N, 1)
-    Y = Y_clean + Noise
+    y_clean = np.matmul(X, theta)
+    Noise = np.random.normal(0, noise_sigma, N)
+    y = y_clean + Noise
+
+    return X, y
 
 class StochasticLinearRegressor:
     def __init__(self):
@@ -67,8 +56,8 @@ class StochasticLinearRegressor:
         input_mean = np.array([3, -1])
         input_sigma = np.array([2, 2])
         noise_sigma = math.sqrt(2)
-        generate(N, theta, input_mean, input_sigma, noise_sigma)
-
+        X, y = generate(N, theta, input_mean, input_sigma, noise_sigma)
+        print(X.shape, y.shape)
 
     
     def fit(self, X, y, learning_rate=0.01):
