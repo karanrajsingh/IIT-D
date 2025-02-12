@@ -8,20 +8,13 @@ import numpy as np
 class LinearRegressor:
     def __init__(self):
 
-        '''Read data'''
         X, y = self.readData()
-        #print(X.shape)
-        #print(y.shape)
         
-        '''Fit data'''
         Theta = self.fit(X, y)
         print(Theta)
-        loss = self.checkLoss(X, y, Theta)
-        print(loss)
+        self.theta = Theta
 
-        '''Call predict'''
-        pass
-        
+        loss = self.checkLoss(X, y, Theta)        
 
     def readData(self):
 
@@ -37,7 +30,7 @@ class LinearRegressor:
         ''' 
         D = np.loadtxt('./../data/Q1/linearX.csv', ndmin = 2)
         A = np.ones([D.shape[0],1])
-        X = np.concatenate((D, A), axis=1)
+        X = np.concatenate((A, D), axis=1)
         #print(X.shape)
         return X
     
@@ -81,25 +74,18 @@ class LinearRegressor:
         
 
         #Starting parameters
-        iteration = 0
         Theta = np.zeros(2)
         norm = 1e+12 
         #stopping criteria
         tolerance = 1e-12
         
         while(norm > tolerance):
-            iteration += 1
-            print('Iteration: ', iteration)
-            print('Param: ', Theta)
             
             A = np.dot(X, Theta)
             B = y - A
             Grad = -1*np.matmul(X.T, B)/X.shape[0]
             Theta = Theta - learning_rate*Grad
             norm = np.linalg.norm(Grad)
-
-            print('Gradient : ', Grad )
-            print('Norm: ', norm)
 
         return Theta
 
@@ -117,6 +103,7 @@ class LinearRegressor:
         y_pred : numpy array of shape (n_samples,)
             The predicted target values.
         """
-        pass
+        val = np.dot(X, self.theta)
+        return val
 
 LinearRegressor()

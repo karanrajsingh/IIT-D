@@ -6,12 +6,14 @@ import numpy as np
 # as these functions will be called by the autograder.
 
 class LogisticRegressor:
+    
     # Assume Binary Classification
     def __init__(self):
         X, y = self.readAndNormalizeData()
-
-        print(X, y)
-
+        Theta = self.fit(X, y, 0.1)
+        self.theta = Theta
+        print(self.theta)
+        print('Class: ',self.predict([1, 4.2903,2.7389]))
 
     def readAndNormalizeData(self):
         #Read inputs from csv
@@ -28,7 +30,7 @@ class LogisticRegressor:
 
         # Add intercept term to inputs
         Ones = np.ones([X1.shape[0], 1])
-        X = np.concatenate((X1, Ones), axis = 1)
+        X = np.concatenate((Ones, X1), axis = 1)
 
         # Read labels from csv 
         Y = np.loadtxt('./../data/Q3/logisticY.csv')
@@ -36,7 +38,7 @@ class LogisticRegressor:
 
         return X, Y
 
-    
+
     def fit(self, X, y, learning_rate=0.01):
         """
         Fit the linear regression model to the data using Newton's Method.
@@ -58,7 +60,24 @@ class LogisticRegressor:
         List of Parameters: numpy array of shape (n_iter, n_features+1,)
             The list of parameters obtained after each iteration of Newton's Method.
         """
-        pass
+        Theta = np.zeros(X.shape[1], ) + 1e-10*np.ones(X.shape[1])
+
+        norm = 1e+12
+        tolerance = 1e-12
+        
+        while(norm > tolerance):
+
+            sigmoid = 1/(1+np.exp(-np.matmul(X, Theta)))
+            difference = y - sigmoid
+            grad = np.matmul(X.T, difference)
+            differential = sigmoid*(1-sigmoid)
+            diagonalize = np.diag(differential)
+            hessian = np.matmul(-np.matmul(X.T, diagonalize), X)
+            hessian_inv = np.linalg.inv(hessian)
+            Theta = Theta - learning_rate*np.matmul(hessian_inv, grad)
+            norm = np.linalg.norm(grad)
+
+        return Theta
     
     def predict(self, X):
         """
@@ -74,6 +93,11 @@ class LogisticRegressor:
         y_pred : numpy array of shape (n_samples,)
             The predicted target label.
         """
-        pass
+        eta = np.dot(X, self.theta)
+        sigmoid = 1/(1 + np.exp(-eta))
+        if sigmoid >=0.5:
+            return 1
+        else:
+            return 0
 
 LogisticRegressor()
