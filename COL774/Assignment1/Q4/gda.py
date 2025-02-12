@@ -9,8 +9,39 @@ import numpy as np
 class GaussianDiscriminantAnalysis:
     # Assume Binary Classification
     def __init__(self):
-        pass
+        X, y = self.readAndNormalizeData()
+        print(y)
     
+    def readAndNormalizeData(self):
+        #Read inputs from csv
+        X1 = np.loadtxt('./../data/Q4/q4x.dat')
+        X1.reshape([X1.shape[0], 2])
+
+        #Normalize inputs
+        Mean = np.mean(X1, axis = 0)
+        Var = np.var(X1, axis = 0)
+        Sigma = np.sqrt(Var)
+        M = np.ones([X1.shape[0], X1.shape[1]])*Mean
+        X1 = X1 - M
+        X1 = np.divide(X1, Sigma)
+
+        # Add intercept term to inputs
+        Ones = np.ones([X1.shape[0], 1])
+        X = np.concatenate((Ones, X1), axis = 1)
+
+        # Read labels from csv 
+        Y = np.zeros(X.shape[0])
+        with open('./../data/Q4/q4y.dat', 'r') as f:
+            data = f.readlines()
+        for i in range(len(data)):
+            if data[i] == 'Alaska\n':
+                Y[i] = 1
+            else:
+                Y[i] = 0
+        print(Y[49], Y[50]) 
+        
+        return X, Y
+
     def fit(self, X, y, assume_same_covariance=False):
         """
         Fit the Gaussian Discriminant Analysis model to the data.
@@ -51,3 +82,4 @@ class GaussianDiscriminantAnalysis:
             The predicted target label.
         """
         pass
+GaussianDiscriminantAnalysis()
