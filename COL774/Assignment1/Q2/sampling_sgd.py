@@ -1,5 +1,6 @@
 # Imports - you can add any other permitted libraries
 import numpy as np
+import matplotlib.pyplot as plt
 import math
 
 # You may add any other functions to make your code more modular. However,
@@ -47,7 +48,16 @@ def generate(N, theta, input_mean, input_sigma, noise_sigma):
     Noise = np.random.normal(0, noise_sigma, N)
     y = y_clean + Noise
 
-    return X, y
+    Xy = np.concatenate([X, y.reshape(y.shape[0], 1)], axis = 1)
+    np.random.shuffle(Xy)
+    Xy_train = Xy[ : math.floor(0.8*N)]
+    Xy_test = Xy[math.floor(0.8*N) : ]
+    y_train = Xy_train[ : , 3]
+    X_train = Xy_train[ : , [0, 1, 2]]
+    y_test = Xy_test[ : , 3]
+    X_test = Xy_test[ : , [0, 1, 2]]
+    
+    return X_train, y_train, X_test, y_test
 
 class StochasticLinearRegressor:
     def __init__(self):
@@ -56,9 +66,9 @@ class StochasticLinearRegressor:
         input_mean = np.array([3, -1])
         input_sigma = np.array([2, 2])
         noise_sigma = math.sqrt(2)
-        X, y = generate(N, theta, input_mean, input_sigma, noise_sigma)
+        X_train, y_train, X_test, y_test = generate(N, theta, input_mean, input_sigma, noise_sigma)
         
-
+        self.fit(X_train, y_train)
     
     def fit(self, X, y, learning_rate=0.01):
         """
@@ -81,28 +91,69 @@ class StochasticLinearRegressor:
             The list of parameters obtained after each iteration of Gradient Descent.
         """
 
-        
-
         #Starting parameters
         iteration = 0
+        epoch = 0
         Theta = np.zeros(X.shape[1])
         norm = 1e+12 
         #stopping criteria
-        tolerance = 1e-12
+        tolerance = 1e-6
+        batch_size = 8000
+        batches = X.shape[0]//batch_size
         
-        while(norm > tolerance):
-            iteration += 1
-            print('Iteration: ', iteration)
-            print('Param: ', Theta)
-            
-            A = np.dot(X, Theta)
-            B = y - A
-            Grad = -1*np.matmul(X.T, B)/X.shape[0]
-            Theta = Theta - learning_rate*Grad
-            norm = np.linalg.norm(Grad)
+        Xy = np.concatenate([X, y.reshape(y.shape[0], 1)], axis = 1)
+        np.random.shuffle(Xy)  
+        Xy_data = Xy.reshape((batches,batch_size,Xy.shape[1]))
+        #print(Xy_data)
+        
+        while norm > tolerance:
+            for batch in Xy_data:
+                #print(batch.shape)
+                yb = batch[:,3]
+                #print('yb ',yb.shape)
+                xb = batch[:,[0,1,2]]
+                #print('xb ', xb.shape)
+                #print('Theta ',Theta.shape)
+                eta = np.dot(xb, Theta)
+                #print('eta ',eta.shape)
+                diff = yb - eta
+                #print('diff ', diff.shape)
+                grad = -1*np.matmul(xb.T, diff)/xb.shape[0]
+                #print('grad ', grad)
+                Theta = Theta - 0.001*grad
+                print('Theta ', Theta)
+                norm = np.linalg.norm(grad)
+                print('grad norm ', norm)
 
-            print('Gradient : ', Grad )
-            print('Norm: ', norm)
+        '''
+        while norm > tolerance:
+            for batch in Xy_data:
+                iteration += 1
+                batch = Xy_data
+                Xe = batch[:,[0,1,2]]
+                print(Xe.shape)
+                ye = batch[:,3]
+                print(ye.shape)
+                
+                eta = np.dot(Xe, Theta)
+                diff = ye - eta
+                Grad = -np.matmul(Xe.T, diff)/Xe.shape[0]
+                Theta = Theta - learning_rate*Grad
+                norm = np.linalg.norm(Grad)
+                if norm <= tolerance:
+                    break
+
+                
+                
+            
+            epoch += 1
+
+        '''
+
+        
+
+
+        print(Theta)
 
         return Theta
 

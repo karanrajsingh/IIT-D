@@ -1,5 +1,6 @@
 # Imports - you can add any other permitted libraries
 import numpy as np
+import math
 
 # You may add any other functions to make your code more modular. However,
 # do not change the function signatures (name and arguments) of the given functions,
@@ -10,7 +11,8 @@ class GaussianDiscriminantAnalysis:
     # Assume Binary Classification
     def __init__(self):
         X, y = self.readAndNormalizeData()
-        print(y)
+        #print(y)
+        self.fit(X, y)
     
     def readAndNormalizeData(self):
         #Read inputs from csv
@@ -24,10 +26,11 @@ class GaussianDiscriminantAnalysis:
         M = np.ones([X1.shape[0], X1.shape[1]])*Mean
         X1 = X1 - M
         X1 = np.divide(X1, Sigma)
+        X = X1
 
         # Add intercept term to inputs
-        Ones = np.ones([X1.shape[0], 1])
-        X = np.concatenate((Ones, X1), axis = 1)
+        #Ones = np.ones([X1.shape[0], 1])
+        #X = np.concatenate((Ones, X1), axis = 1)
 
         # Read labels from csv 
         Y = np.zeros(X.shape[0])
@@ -38,7 +41,6 @@ class GaussianDiscriminantAnalysis:
                 Y[i] = 1
             else:
                 Y[i] = 0
-        print(Y[49], Y[50]) 
         
         return X, Y
 
@@ -65,8 +67,38 @@ class GaussianDiscriminantAnalysis:
             If assume_same_covariance = False - 4-tuple of numpy arrays mu_0, mu_1, sigma_0, sigma_1
             The parameters learned by the model.
         """
-        pass
-    
+        phi = np.sum(y, axis = 0)/y.shape[0]
+
+        X_0 = X[np.where(y==0)]
+        Mean_0 = np.mean(X_0, axis = 0)
+        X_1 = X[np.where(y==1)]
+        Mean_1 = np.mean(X_1, axis = 0)
+        
+        Ones_0 = np.ones([X_0.shape[0], X_0.shape[1]])
+        Ones_1 = np.ones([X_1.shape[0], X_1.shape[1]])
+        Mean_0_Vec = Ones_0*Mean_0
+        Mean_1_Vec = Ones_1*Mean_1
+        merge_mean =  np.concat((Mean_0_Vec, Mean_1_Vec), axis=0)
+        merge_X = np.concat((X_0, X_1), axis=0)
+        diff = merge_X - merge_mean
+        Cov = np.matmul(diff.T, diff)/diff.shape[0]
+        same_slope = np.matmul(np.linalg.inv(Cov), (Mean_1 - Mean_0))
+        same_intercept = math.log(phi/(1 - phi)) - 0.5*(np.matmul(np.matmul(Mean_1.T, np.linalg.inv(Cov)), Mean_1) - np.matmul(np.matmul(Mean_0.T, np.linalg.inv(Cov)), Mean_0))
+        print(same_slope)
+        print(same_intercept)
+
+        diff_0 = X_0 - Mean_0
+        Cov_0 = np.matmul(diff_0.T, diff_0)/diff_0.shape[0]
+        diff_1 = X_1 - Mean_1
+        Cov_1 = np.matmul(diff_1.T, diff_1)/diff_1.shape[0]
+        second_order = np.linalg.inv(Cov_0) - np.linalg.inv(Cov_1)
+        same_slope = np.matmul(np.linalg.inv(Cov_1), Mean_1) - np.matmul(np.linalg.inv(Cov_0), Mean_0)
+        same_intercept = math.log(phi/(1 - phi)) + 0.5*math.log(np.linalg.norm(Cov_0)/np.linalg.norm(Cov_1)) - 0.5*(np.matmul(np.matmul(Mean_1.T, np.linalg.inv(Cov)), Mean_1) - np.matmul(np.matmul(Mean_0.T, np.linalg.inv(Cov)), Mean_0))
+        print(second_order)
+        print(same_slope)
+        print(same_intercept)
+
+
     def predict(self, X):
         """
         Predict the target values for the input data.
