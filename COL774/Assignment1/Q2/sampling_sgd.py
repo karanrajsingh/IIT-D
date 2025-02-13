@@ -98,16 +98,27 @@ class StochasticLinearRegressor:
         norm = 1e+12 
         #stopping criteria
         tolerance = 1e-6
-        batch_size = 8000
+        batch_size = 800000
         batches = X.shape[0]//batch_size
         
         Xy = np.concatenate([X, y.reshape(y.shape[0], 1)], axis = 1)
         np.random.shuffle(Xy)  
         Xy_data = Xy.reshape((batches,batch_size,Xy.shape[1]))
         #print(Xy_data)
-        
-        while norm > tolerance:
+
+        XTX_inv = np.linalg.inv(np.matmul(X.T, X))
+        XTy = np.matmul(X.T, y)
+        Theta_mat = np.matmul(XTX_inv, XTy)
+        print(Theta_mat)
+
+        #Change this
+        curr_loss = 1
+        prev_loss = 0
+
+        while abs(curr_loss - prev_loss) > tolerance:
+            epoch_loss = 0
             for batch in Xy_data:
+                iteration += 1
                 #print(batch.shape)
                 yb = batch[:,3]
                 #print('yb ',yb.shape)
@@ -121,9 +132,17 @@ class StochasticLinearRegressor:
                 grad = -1*np.matmul(xb.T, diff)/xb.shape[0]
                 #print('grad ', grad)
                 Theta = Theta - 0.001*grad
-                print('Theta ', Theta)
+                #print('Theta ', Theta)
                 norm = np.linalg.norm(grad)
-                print('grad norm ', norm)
+                #print('grad norm ', norm)
+                loss_diff = yb - np.dot(xb, Theta)
+                epoch_loss += np.matmul(loss_diff.T, loss_diff)/(2*xb.shape[0])
+            epoch += 1
+            prev_loss = curr_loss
+            curr_loss = epoch_loss
+            print(epoch, curr_loss, prev_loss)
+            
+
 
         '''
         while norm > tolerance:
@@ -150,14 +169,9 @@ class StochasticLinearRegressor:
 
         '''
 
-        
-
-
         print(Theta)
 
         return Theta
-
-        
     
     def predict(self, X):
         """
