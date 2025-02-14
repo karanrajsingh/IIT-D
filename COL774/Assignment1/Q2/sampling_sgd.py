@@ -68,7 +68,7 @@ class StochasticLinearRegressor:
         noise_sigma = math.sqrt(2)
         X_train, y_train, X_test, y_test = generate(N, theta, input_mean, input_sigma, noise_sigma)
         
-        self.fit(X_train, y_train)
+        self.theta = self.fit(X_train, y_train, 0.001)
     
     def fit(self, X, y, learning_rate=0.01):
         """
@@ -119,58 +119,18 @@ class StochasticLinearRegressor:
             epoch_loss = 0
             for batch in Xy_data:
                 iteration += 1
-                #print(batch.shape)
                 yb = batch[:,3]
-                #print('yb ',yb.shape)
                 xb = batch[:,[0,1,2]]
-                #print('xb ', xb.shape)
-                #print('Theta ',Theta.shape)
                 eta = np.dot(xb, Theta)
-                #print('eta ',eta.shape)
                 diff = yb - eta
-                #print('diff ', diff.shape)
                 grad = -1*np.matmul(xb.T, diff)/xb.shape[0]
-                #print('grad ', grad)
-                Theta = Theta - 0.001*grad
-                #print('Theta ', Theta)
+                Theta = Theta - learning_rate*grad
                 norm = np.linalg.norm(grad)
-                #print('grad norm ', norm)
                 loss_diff = yb - np.dot(xb, Theta)
                 epoch_loss += np.matmul(loss_diff.T, loss_diff)/(2*xb.shape[0])
             epoch += 1
             prev_loss = curr_loss
             curr_loss = epoch_loss
-            print(epoch, curr_loss, prev_loss)
-            
-
-
-        '''
-        while norm > tolerance:
-            for batch in Xy_data:
-                iteration += 1
-                batch = Xy_data
-                Xe = batch[:,[0,1,2]]
-                print(Xe.shape)
-                ye = batch[:,3]
-                print(ye.shape)
-                
-                eta = np.dot(Xe, Theta)
-                diff = ye - eta
-                Grad = -np.matmul(Xe.T, diff)/Xe.shape[0]
-                Theta = Theta - learning_rate*Grad
-                norm = np.linalg.norm(Grad)
-                if norm <= tolerance:
-                    break
-
-                
-                
-            
-            epoch += 1
-
-        '''
-
-        print(Theta)
-
         return Theta
     
     def predict(self, X):
@@ -187,6 +147,7 @@ class StochasticLinearRegressor:
         y_pred : numpy array of shape (n_samples,)
             The predicted target values.
         """
-        pass
+        val = np.dot(X, self.theta)
+        return val
 
 StochasticLinearRegressor()
