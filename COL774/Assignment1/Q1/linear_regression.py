@@ -57,7 +57,7 @@ class LinearRegressor:
         X = np.concatenate((Ones, X.reshape(X.shape[0], 1)), axis=1)
 
         #Starting parameters
-        Theta = np.zeros(2)
+        Theta = np.zeros(X.shape[1])
         norm = 1e+12 
         #stopping criteria
         tolerance = 1e-12
@@ -95,21 +95,21 @@ class LinearRegressor:
         Ones = np.ones([X.shape[0],1])
         X = np.concatenate((Ones, X.reshape(X.shape[0], 1)), axis=1)
         param = self.theta[len(self.theta) - 1][1]
-        y = np.matmul(X, param)
-        return y
+        y_predicted = np.matmul(X, param)
+        return y_predicted
     
     def plot(self, X, y):
         fig = plt.figure(figsize=(15, 9), facecolor='white')
         axes = plt.axes()
         plt.title('Linear Regression to predict wine density based on acidity')
-        plt.scatter(X, y,s = 15,label = 'Training Data', c = 'blue')
+        plt.scatter(X, y,s = 0.2,label = 'Training Data', c = 'blue')
         plt.xlabel('Wine Acidity')
         plt.ylabel('Wine Density')
         Ones = np.ones([X.shape[0],1])
         X = np.concatenate((Ones, X.reshape(X.shape[0], 1)), axis=1)
         param = self.theta[len(self.theta) - 1][1] 
         predicted = np.matmul(X, param)
-        plt.plot(X[:,1], predicted, linewidth = 2,label = 'Learned Hypothesis', c = 'red')
+        plt.plot(X[:,1], predicted, linewidth = 1,label = 'Learned Hypothesis', c = 'red')
         plt.legend(loc = "lower right")
         plt.show()
         plt.savefig('linear regression.jpg')
