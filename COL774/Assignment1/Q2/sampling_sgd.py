@@ -53,9 +53,11 @@ def generate(N, theta, input_mean, input_sigma, noise_sigma):
     Xy_train = Xy[ : math.floor(0.8*N)]
     Xy_test = Xy[math.floor(0.8*N) : ]
     y_train = Xy_train[ : , 3]
-    X_train = Xy_train[ : , [0, 1, 2]]
+    #X_train = Xy_train[ : , [0, 1, 2]]
+    X_train = Xy_train[ : , [1, 2]]
     y_test = Xy_test[ : , 3]
-    X_test = Xy_test[ : , [0, 1, 2]]
+    #X_test = Xy_test[ : , [0, 1, 2]]
+    X_test = Xy_test[ : , [1, 2]]
     
     return X_train, y_train, X_test, y_test
 
@@ -67,8 +69,11 @@ class StochasticLinearRegressor:
         input_sigma = np.array([2, 2])
         noise_sigma = math.sqrt(2)
         X_train, y_train, X_test, y_test = generate(N, theta, input_mean, input_sigma, noise_sigma)
-        
         self.theta = self.fit(X_train, y_train, 0.001)
+
+        test_error = self.error(X_test, y_test)
+        train_error = self.error(X_train, y_train)
+        print(train_error, test_error)
     
     def fit(self, X, y, learning_rate=0.01):
         """
@@ -91,6 +96,9 @@ class StochasticLinearRegressor:
             The list of parameters obtained after each iteration of Gradient Descent.
         """
 
+        X_intercept = np.ones([X.shape[0], 1])
+        X = np.concatenate((X_intercept, X), axis = 1)
+
         #Starting parameters
         iteration = 0
         epoch = 0
@@ -98,9 +106,12 @@ class StochasticLinearRegressor:
         norm = 1e+12 
         #stopping criteria
         tolerance = 1e-6
-        batch_size = 800000
+        batch_size = 8000
         batches = X.shape[0]//batch_size
         
+        theta = []
+        theta.append([epoch, Theta])
+
         Xy = np.concatenate([X, y.reshape(y.shape[0], 1)], axis = 1)
         np.random.shuffle(Xy)  
         Xy_data = Xy.reshape((batches,batch_size,Xy.shape[1]))
@@ -131,7 +142,8 @@ class StochasticLinearRegressor:
             epoch += 1
             prev_loss = curr_loss
             curr_loss = epoch_loss
-        return Theta
+            theta.append([epoch, Theta])
+        return theta
     
     def predict(self, X):
         """
@@ -147,7 +159,18 @@ class StochasticLinearRegressor:
         y_pred : numpy array of shape (n_samples,)
             The predicted target values.
         """
-        val = np.dot(X, self.theta)
-        return val
+        #Adding bias term
+        X_intercept = np.ones([X.shape[0], 1])
+        X = np.concatenate((X_intercept, X), axis = 1)        
+        param = self.theta[len(self.theta) - 1][1]
+        y_predicted = np.matmul(X, param)
+        return y_predicted
+
+    def error(self, X, y):
+        #Adding bias term
+        y_predicted = self.predict(X)
+        error = y - y_predicted
+        error_norm = np.linalg.norm(error)/(X.shape[0])
+        return error_norm
 
 StochasticLinearRegressor()
