@@ -1,6 +1,7 @@
 # Imports - you can add any other permitted libraries
 import numpy as np
 import math
+import matplotlib.pyplot as plt
 
 # You may add any other functions to make your code more modular. However,
 # do not change the function signatures (name and arguments) of the given functions,
@@ -12,7 +13,19 @@ class GaussianDiscriminantAnalysis:
     def __init__(self):
         X, y = self.readAndNormalizeData()
         #print(y)
-        self.fit(X, y)
+        self.same_Cov_tuple = self.fit(X, y, True)
+        self.same_Cov_Mean_0 = self.same_Cov_tuple[0]
+        self.same_Cov_Mean_1 = self.same_Cov_tuple[1]
+        self.same_Cov = self.same_Cov_tuple[2]
+        print('init - Same Cov: ',self.same_Cov_Mean_0, self.same_Cov_Mean_1, self.same_Cov)
+        self.diff_Cov_tuple = self.fit(X, y, False)
+        self.diff_Cov_Mean_0 = self.diff_Cov_tuple[0]
+        self.diff_Cov_Mean_1 = self.diff_Cov_tuple[1]
+        self.diff_Cov_0 = self.diff_Cov_tuple[2]
+        self.diff_Cov_1 = self.diff_Cov_tuple[3]
+        print('diff - Same Cov: ',self.diff_Cov_Mean_0, self.diff_Cov_Mean_1, self.diff_Cov_0, self.diff_Cov_1)
+
+        self.plot(X,y)
     
     def readAndNormalizeData(self):
         #Read inputs from csv
@@ -74,30 +87,48 @@ class GaussianDiscriminantAnalysis:
         X_1 = X[np.where(y==1)]
         Mean_1 = np.mean(X_1, axis = 0)
         
-        Ones_0 = np.ones([X_0.shape[0], X_0.shape[1]])
-        Ones_1 = np.ones([X_1.shape[0], X_1.shape[1]])
-        Mean_0_Vec = Ones_0*Mean_0
-        Mean_1_Vec = Ones_1*Mean_1
-        merge_mean =  np.concat((Mean_0_Vec, Mean_1_Vec), axis=0)
-        merge_X = np.concat((X_0, X_1), axis=0)
-        diff = merge_X - merge_mean
-        Cov = np.matmul(diff.T, diff)/diff.shape[0]
-        same_slope = np.matmul(np.linalg.inv(Cov), (Mean_1 - Mean_0))
-        same_intercept = math.log(phi/(1 - phi)) - 0.5*(np.matmul(np.matmul(Mean_1.T, np.linalg.inv(Cov)), Mean_1) - np.matmul(np.matmul(Mean_0.T, np.linalg.inv(Cov)), Mean_0))
-        print(same_slope)
-        print(same_intercept)
+        if assume_same_covariance:
+            Ones_0 = np.ones([X_0.shape[0], X_0.shape[1]])
+            Ones_1 = np.ones([X_1.shape[0], X_1.shape[1]])
+            Mean_0_Vec = Ones_0*Mean_0
+            Mean_1_Vec = Ones_1*Mean_1
+            merge_mean =  np.concat((Mean_0_Vec, Mean_1_Vec), axis=0)
+            merge_X = np.concat((X_0, X_1), axis=0)
+            diff = merge_X - merge_mean
+            Cov = np.matmul(diff.T, diff)/diff.shape[0]
+            same_slope = np.matmul(np.linalg.inv(Cov), (Mean_1 - Mean_0))
+            same_intercept = math.log(phi/(1 - phi)) - 0.5*(np.matmul(np.matmul(Mean_1.T, np.linalg.inv(Cov)), Mean_1) - np.matmul(np.matmul(Mean_0.T, np.linalg.inv(Cov)), Mean_0))
+            print('Param - Same Cov', same_slope, same_intercept)
+            return (Mean_0, Mean_1, Cov)
+        else:
+            diff_0 = X_0 - Mean_0
+            Cov_0 = np.matmul(diff_0.T, diff_0)/diff_0.shape[0]
+            diff_1 = X_1 - Mean_1
+            Cov_1 = np.matmul(diff_1.T, diff_1)/diff_1.shape[0]
+            second_order = np.linalg.inv(Cov_0) - np.linalg.inv(Cov_1)
+            same_slope = np.matmul(np.linalg.inv(Cov_1), Mean_1) - np.matmul(np.linalg.inv(Cov_0), Mean_0)
+            same_intercept = math.log(phi/(1 - phi)) + 0.5*math.log(np.linalg.norm(Cov_0)/np.linalg.norm(Cov_1)) - 0.5*(np.matmul(np.matmul(Mean_1.T, np.linalg.inv(Cov_1)), Mean_1) - np.matmul(np.matmul(Mean_0.T, np.linalg.inv(Cov_0)), Mean_0))
+            print('Param - Diff Cov', same_slope,same_intercept, second_order)
+            return (Mean_0, Mean_1, Cov_0, Cov_1)
 
-        diff_0 = X_0 - Mean_0
-        Cov_0 = np.matmul(diff_0.T, diff_0)/diff_0.shape[0]
-        diff_1 = X_1 - Mean_1
-        Cov_1 = np.matmul(diff_1.T, diff_1)/diff_1.shape[0]
-        second_order = np.linalg.inv(Cov_0) - np.linalg.inv(Cov_1)
-        same_slope = np.matmul(np.linalg.inv(Cov_1), Mean_1) - np.matmul(np.linalg.inv(Cov_0), Mean_0)
-        same_intercept = math.log(phi/(1 - phi)) + 0.5*math.log(np.linalg.norm(Cov_0)/np.linalg.norm(Cov_1)) - 0.5*(np.matmul(np.matmul(Mean_1.T, np.linalg.inv(Cov)), Mean_1) - np.matmul(np.matmul(Mean_0.T, np.linalg.inv(Cov)), Mean_0))
-        print(second_order)
-        print(same_slope)
-        print(same_intercept)
-
+    def param(self, y,assume_same_covariance):
+        phi = np.sum(y, axis = 0)/y.shape[0]
+        if assume_same_covariance:
+            Mean_0 = self.same_Cov_tuple[0]
+            Mean_1 = self.same_Cov_tuple[1]
+            Cov = self.same_Cov_tuple[2]
+            same_slope = np.matmul(np.linalg.inv(Cov), (Mean_1 - Mean_0))
+            same_intercept = math.log(phi/(1 - phi)) - 0.5*(np.matmul(np.matmul(Mean_1.T, np.linalg.inv(Cov)), Mean_1) - np.matmul(np.matmul(Mean_0.T, np.linalg.inv(Cov)), Mean_0))            
+            return (same_intercept, same_slope)
+        else:
+            Mean_0 = self.diff_Cov_tuple[0]
+            Mean_1 = self.diff_Cov_tuple[1]
+            Cov_0 = self.diff_Cov_tuple[2]
+            Cov_1 = self.diff_Cov_tuple[3]
+            second_order = np.linalg.inv(Cov_0) - np.linalg.inv(Cov_1)
+            same_slope = np.matmul(np.linalg.inv(Cov_1), Mean_1) - np.matmul(np.linalg.inv(Cov_0), Mean_0)
+            same_intercept = math.log(phi/(1 - phi)) + 0.5*math.log(np.linalg.norm(Cov_0)/np.linalg.norm(Cov_1)) - 0.5*(np.matmul(np.matmul(Mean_1.T, np.linalg.inv(Cov_1)), Mean_1) - np.matmul(np.matmul(Mean_0.T, np.linalg.inv(Cov_0)), Mean_0))
+            return (same_intercept, same_slope, second_order)
 
     def predict(self, X):
         """
@@ -114,4 +145,28 @@ class GaussianDiscriminantAnalysis:
             The predicted target label.
         """
         pass
+
+    def plot(self, X, y):
+        fig = plt.figure(figsize=(15, 9), facecolor='white')
+        axes = plt.axes()
+        plt.title("Gaussian Discriminant Analysis")
+        yX = np.concatenate((y.reshape(y.shape[0], 1), X), axis = 1)
+        yX_class_1 = yX[yX[:,0] == 1]
+        yX_class_0 = yX[yX[:,0] == 0]
+        plt.scatter(yX_class_1[:,1], yX_class_1[:,2], s=30, label = 'Alaska', c ='cyan')
+        plt.scatter(yX_class_0[:,1], yX_class_0[:,2], s=30, label = 'Canada', c ='green')
+        plt.xlabel('Ring diameter in fresh water')
+        plt.ylabel('Ring diameter in marine water')
+        same_param = self.param(y, True)
+        diff_param = self.param(y, False)
+        print('same param', same_param)
+        print('diff param',diff_param)
+        x1_ = np.linspace(-3, 3, num = 50, endpoint=False)
+        print(same_param[0], same_param[1][0], same_param[1][1])
+        x2_ = -(same_param[1][0]/same_param[1][1])*x1_ - (same_param[0]/same_param[1][1])
+        plt.plot(x1_, x2_, linewidth = 1.5, label = 'Linear Decision boundary', c ='red')
+        plt.legend(loc = "lower right")       
+        plt.show()
+        plt.savefig('gda.jpg')
+
 GaussianDiscriminantAnalysis()
