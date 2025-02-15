@@ -3,7 +3,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 from mpl_toolkits.mplot3d import Axes3D
-import matplotlib.animation as anm
 
 # You may add any other functions to make your code more modular. However,
 # do not change the function signatures (name and arguments) of the given functions,
