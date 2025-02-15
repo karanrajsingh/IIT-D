@@ -16,15 +16,8 @@ class LinearRegressor:
         path_X = './../data/Q1/linearX.csv'
         path_Y = './../data/Q1/linearY.csv'
         X, y = self.readData(path_X, path_Y)
-
-        self.t, self.theta = self.fit(X, y)
-        print(len(self.theta))
-        print(self.theta[len(self.theta) - 1])
-        print(self.t[len(self.t) - 1])
-        #print(self.t)
-
+        self.t = self.fit(X, y)
         print(self.predict(X[: 10]))
-
         self.plot(X, y)
 
     def readData(self, path_X, path_Y):
@@ -70,10 +63,7 @@ class LinearRegressor:
         #stopping criteria
         tolerance = 1e-12
         epochs = 0
-        theta = []
-        theta.append([epochs, Theta])
         t = np.array(Theta.reshape(1, X.shape[1]))
-        print(t.shape, Theta.shape, t)
 
         while(norm > tolerance):
             epochs += 1
@@ -82,12 +72,10 @@ class LinearRegressor:
             Grad = -1*np.matmul(X.T, B)/X.shape[0]
             Theta = Theta - learning_rate*Grad
             norm = np.linalg.norm(Grad)
-            theta.append([epochs, Theta])
             tt = Theta.reshape(1, Theta.shape[0])
             t = np.append(t, tt, axis = 0)
-        self.theta = theta
         self.t = t
-        return t, theta
+        return t
 
     def predict(self, X):
         """
@@ -107,13 +95,9 @@ class LinearRegressor:
         #Adding bias term
         Ones = np.ones([X.shape[0],1])
         X = np.concatenate((Ones, X.reshape(X.shape[0], 1)), axis=1)
-        param = self.theta[len(self.theta) - 1][1]
-        p = self.t[len(self.theta) - 1]
-        y_predicted = np.matmul(X, param)
-        print(X.shape, param.shape)
-        print(X.shape, p.shape)
+        p = self.t[len(self.t) - 1]
         y_p =  np.matmul(X, p)
-        return y_p, y_predicted
+        return y_p
     
     def plot(self, X, y):
         fig = plt.figure(figsize=(15, 9), facecolor='white')
@@ -124,14 +108,13 @@ class LinearRegressor:
         plt.ylabel('Wine Density')
         Ones = np.ones([X.shape[0],1])
         X = np.concatenate((Ones, X.reshape(X.shape[0], 1)), axis=1)
-        #param = self.theta[len(self.theta) - 1][1]
         param = self.t[len(self.t) - 1]
         predicted = np.matmul(X, param)
         plt.plot(X[:,1], predicted, linewidth = 1.5, label = 'Learned Hypothesis', c = 'red')
         plt.legend(loc = "lower right")
-        #plt.show()
-        #plt.savefig('2.jpg')
-        #plt.close()
+        plt.show()
+        plt.savefig('2.jpg')
+        plt.close()
 
         #Plotting Loss function
         d1 = np.linspace(-25, 50, num=300, endpoint=False)
@@ -143,38 +126,37 @@ class LinearRegressor:
         axes2 = fig.add_subplot(title='Loss function', projection='3d', xlabel='theta0', ylabel='theta1', zlabel='  Loss')
         axes2.set_zlim3d(np.min(loss), np.max(loss))
         surface = axes2.plot_surface(v1, v2, loss, label='Loss Function', cmap = cm.gist_rainbow)        
-        #plt.show()
-        #plt.savefig('3a.jpg')
-        #plt.close()
+        plt.show()
+        plt.savefig('3a.jpg')
+        plt.close()
 
         #Plotting movement of parameters
         fig = plt.figure()
         axes3 = fig.add_subplot(title = 'Movement of parameters with epochs', projection = '3d', xlabel='theta0', ylabel='theta1', zlabel='  Loss')
         axes3.set_zlim3d(np.min(loss), 2*np.max(loss))
         surface = axes3.plot_surface(v1, v2, loss, label = 'Loss function', alpha = 0.25, cmap = cm.gist_rainbow)
-        for i in range(len(self.theta) - 1):
-            th_str = self.theta[i][1]
-            th_end = self.theta[i+1][1]
-            l_str = self.checkLoss(X, y, th_str)
-            l_end= self.checkLoss(X, y, th_end)
+        th_str = self.t[0]
+        l_str = self.checkLoss(X, y, th_str)
+        for i in range(len(self.t) - 1):
+            th_end = self.t[i+1]
+            l_end = self.checkLoss(X, y, th_end)
             u = th_end[0] - th_str[0]
             v = th_end[1] - th_str[1]
             w = l_end - l_str
+            th_str, l_str = th_end, l_end
             axes3.quiver(th_str[0], th_str[1], l_str, u, v, w, colors = 'blue')       
-        #plt.show()
-        #plt.savefig('3b.jpg')
-        #plt.close()
+        plt.show()
+        plt.savefig('3b.jpg')
+        plt.close()
 
         #Plotting contours
         fig = plt.figure()
         axes4 = fig.add_subplot(title = 'Contour plot',  xlabel = 'theta0', ylabel = 'theta1')
-        axes4.contour(v1, v2, loss, 100)
-
-        #for i in range(len(self.t) - 1):
-            #axes4.scatter(self.t[i][0], self.t[i][1])        
+        axes4.contour(v1, v2, loss, 100)       
         axes4.scatter(self.t[:, 0], self.t[:, 1])
 
-       
         plt.show()
+        plt.savefig('4.jpg')
+        plt.close()
 
 LinearRegressor()
