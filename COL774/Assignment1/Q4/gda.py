@@ -125,10 +125,10 @@ class GaussianDiscriminantAnalysis:
             Mean_1 = self.diff_Cov_tuple[1]
             Cov_0 = self.diff_Cov_tuple[2]
             Cov_1 = self.diff_Cov_tuple[3]
-            second_order = np.linalg.inv(Cov_0) - np.linalg.inv(Cov_1)
-            same_slope = np.matmul(np.linalg.inv(Cov_1), Mean_1) - np.matmul(np.linalg.inv(Cov_0), Mean_0)
-            same_intercept = math.log(phi/(1 - phi)) + 0.5*math.log(np.linalg.norm(Cov_0)/np.linalg.norm(Cov_1)) - 0.5*(np.matmul(np.matmul(Mean_1.T, np.linalg.inv(Cov_1)), Mean_1) - np.matmul(np.matmul(Mean_0.T, np.linalg.inv(Cov_0)), Mean_0))
-            return (same_intercept, same_slope, second_order)
+            second_order = 0.5*(np.linalg.inv(Cov_0) - np.linalg.inv(Cov_1))
+            diff_slope = np.matmul(np.linalg.inv(Cov_1), Mean_1) - np.matmul(np.linalg.inv(Cov_0), Mean_0)
+            diff_intercept = math.log(phi/(1 - phi)) + 0.5*math.log(np.linalg.det(Cov_0)/np.linalg.det(Cov_1)) - 0.5*(np.matmul(np.matmul(Mean_1.T, np.linalg.inv(Cov_1)), Mean_1) - np.matmul(np.matmul(Mean_0.T, np.linalg.inv(Cov_0)), Mean_0))
+            return (diff_intercept, diff_slope, second_order)
 
     def predict(self, X):
         """
@@ -165,8 +165,20 @@ class GaussianDiscriminantAnalysis:
         print(same_param[0], same_param[1][0], same_param[1][1])
         x2_ = -(same_param[1][0]/same_param[1][1])*x1_ - (same_param[0]/same_param[1][1])
         plt.plot(x1_, x2_, linewidth = 1.5, label = 'Linear Decision boundary', c ='red')
+        x1_diff = np.linspace(-3, 3, num = 50, endpoint=False)
+        x2_diff = np.linspace(-3, 3, num= 50, endpoint= False)
+        v1, v2 = np.meshgrid(x1_diff, x2_diff)
+        v = np.stack([v1, v2], axis = -1)
+        print(diff_param)
+        z = np.apply_along_axis(lambda x: self.strips(x, diff_param), 2, v)
+        axes.contour(v1, v2, z, [1], colors='magenta')
+        axes.plot([], [], color='magenta', label='Quadratic decision boundary') 
         plt.legend(loc = "lower right")       
         plt.show()
         plt.savefig('gda.jpg')
+
+    def strips(self, x, diff_param):
+        z = diff_param[0] + np.matmul(x.T, diff_param[1]) + np.matmul(np.matmul(x.T, diff_param[2]) , x)
+        return z
 
 GaussianDiscriminantAnalysis()
