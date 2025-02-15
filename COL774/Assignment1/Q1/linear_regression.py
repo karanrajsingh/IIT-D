@@ -115,9 +115,9 @@ class LinearRegressor:
         predicted = np.matmul(X, param)
         plt.plot(X[:,1], predicted, linewidth = 1.5, label = 'Learned Hypothesis', c = 'red')
         plt.legend(loc = "lower right")
-        plt.show()
-        plt.savefig('2.png')
-        plt.close()
+        #plt.show()
+        #plt.savefig('2.jpg')
+        #plt.close()
 
         #Plotting Loss function
         d1 = np.linspace(-25, 50, num=300, endpoint=False)
@@ -129,9 +129,9 @@ class LinearRegressor:
         axes2 = fig.add_subplot(title='Loss function', projection='3d', xlabel='theta0', ylabel='theta1', zlabel='  Loss')
         axes2.set_zlim3d(np.min(loss), np.max(loss))
         surface = axes2.plot_surface(v1, v2, loss, label='Loss Function', cmap = cm.gist_rainbow)        
-        plt.show()
-        plt.savefig('3a.png')
-        plt.close()
+        #plt.show()
+        #plt.savefig('3a.jpg')
+        #plt.close()
 
         #Plotting movement of parameters
         fig = plt.figure()
@@ -146,9 +146,22 @@ class LinearRegressor:
             u = th_end[0] - th_str[0]
             v = th_end[1] - th_str[1]
             w = l_end - l_str
-            axes3.quiver(th_str[0], th_str[1], l_str, u, v, w, colors = 'blue', label = 'Parameter movement')       
+            axes3.quiver(th_str[0], th_str[1], l_str, u, v, w, colors = 'blue')       
+        #plt.show()
+        #plt.savefig('3b.jpg')
+        #plt.close()
+
+        #Plotting contours
+        fig = plt.figure()
+        axes4 = fig.add_subplot(title = 'Contour plot',  xlabel = 'theta0', ylabel = 'theta1')
+        axes4.contour(v1, v2, loss, 100)
+        for i in range(len(self.theta) - 1):
+            th_str = self.theta[i][1]
+            th_end = self.theta[i+1][1]
+            u = th_end[0] - th_str[0]
+            v = th_end[1] - th_str[1]
+            #axes4.quiver(th_str[0], th_str[1], l_str, u, v, scale = 10)
+            axes4.scatter(th_end[0], th_end[1])       
         plt.show()
-        plt.savefig('3b.png')
-        plt.close()     
 
 LinearRegressor()
