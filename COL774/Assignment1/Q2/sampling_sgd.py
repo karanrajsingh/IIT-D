@@ -2,6 +2,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import math
+import matplotlib.cm as cm
+from mpl_toolkits.mplot3d import Axes3D
 
 # You may add any other functions to make your code more modular. However,
 # do not change the function signatures (name and arguments) of the given functions,
@@ -74,6 +76,10 @@ class StochasticLinearRegressor:
         test_error = self.error(X_test, y_test)
         train_error = self.error(X_train, y_train)
         print(train_error, test_error)
+
+        print(len(self.theta))
+
+        #self.plot(X_train, y_train)
     
     def fit(self, X, y, learning_rate=0.01):
         """
@@ -106,7 +112,7 @@ class StochasticLinearRegressor:
         norm = 1e+12 
         #stopping criteria
         tolerance = 1e-6
-        batch_size = 8000
+        batch_size = 80
         batches = X.shape[0]//batch_size
         
         theta = []
@@ -139,10 +145,12 @@ class StochasticLinearRegressor:
                 norm = np.linalg.norm(grad)
                 loss_diff = yb - np.dot(xb, Theta)
                 epoch_loss += np.matmul(loss_diff.T, loss_diff)/(2*xb.shape[0])
+                theta.append([epoch, Theta])
             epoch += 1
             prev_loss = curr_loss
             curr_loss = epoch_loss
-            theta.append([epoch, Theta])
+            #unhash later
+            #theta.append([epoch, Theta])
         return theta
     
     def predict(self, X):
@@ -172,5 +180,18 @@ class StochasticLinearRegressor:
         error = y - y_predicted
         error_norm = np.linalg.norm(error)/(X.shape[0])
         return error_norm
+    
+    def plot(self, X, y):
+        X_intercept = np.ones([X.shape[0], 1])
+        X = np.concatenate((X_intercept, X), axis = 1)
+        #Plotting movement of parameters
+        fig = plt.figure()
+        axes = fig.add_subplot(title = 'Movement of parameters with epochs', projection = '3d', xlabel='theta0', ylabel='theta1', zlabel='  Loss')
+        for i in range(len(self.theta)):
+            th= self.theta[i][1]
+            axes.scatter(th[0], th[1], th[2])       
+        plt.show()
+        #plt.savefig('3b.jpg')
+        #plt.close()
 
 StochasticLinearRegressor()

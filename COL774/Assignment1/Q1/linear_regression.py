@@ -17,9 +17,13 @@ class LinearRegressor:
         path_Y = './../data/Q1/linearY.csv'
         X, y = self.readData(path_X, path_Y)
 
-        self.theta = self.fit(X, y)
+        self.t, self.theta = self.fit(X, y)
+        print(len(self.theta))
         print(self.theta[len(self.theta) - 1])
-        #print(self.predict(X[: 10]))
+        print(self.t[len(self.t) - 1])
+        #print(self.t)
+
+        print(self.predict(X[: 10]))
 
         self.plot(X, y)
 
@@ -68,6 +72,8 @@ class LinearRegressor:
         epochs = 0
         theta = []
         theta.append([epochs, Theta])
+        t = np.array(Theta.reshape(1, X.shape[1]))
+        print(t.shape, Theta.shape, t)
 
         while(norm > tolerance):
             epochs += 1
@@ -77,8 +83,11 @@ class LinearRegressor:
             Theta = Theta - learning_rate*Grad
             norm = np.linalg.norm(Grad)
             theta.append([epochs, Theta])
+            tt = Theta.reshape(1, Theta.shape[0])
+            t = np.append(t, tt, axis = 0)
         self.theta = theta
-        return theta
+        self.t = t
+        return t, theta
 
     def predict(self, X):
         """
@@ -99,8 +108,12 @@ class LinearRegressor:
         Ones = np.ones([X.shape[0],1])
         X = np.concatenate((Ones, X.reshape(X.shape[0], 1)), axis=1)
         param = self.theta[len(self.theta) - 1][1]
+        p = self.t[len(self.theta) - 1]
         y_predicted = np.matmul(X, param)
-        return y_predicted
+        print(X.shape, param.shape)
+        print(X.shape, p.shape)
+        y_p =  np.matmul(X, p)
+        return y_p, y_predicted
     
     def plot(self, X, y):
         fig = plt.figure(figsize=(15, 9), facecolor='white')
@@ -111,7 +124,8 @@ class LinearRegressor:
         plt.ylabel('Wine Density')
         Ones = np.ones([X.shape[0],1])
         X = np.concatenate((Ones, X.reshape(X.shape[0], 1)), axis=1)
-        param = self.theta[len(self.theta) - 1][1] 
+        #param = self.theta[len(self.theta) - 1][1]
+        param = self.t[len(self.t) - 1]
         predicted = np.matmul(X, param)
         plt.plot(X[:,1], predicted, linewidth = 1.5, label = 'Learned Hypothesis', c = 'red')
         plt.legend(loc = "lower right")
@@ -155,13 +169,12 @@ class LinearRegressor:
         fig = plt.figure()
         axes4 = fig.add_subplot(title = 'Contour plot',  xlabel = 'theta0', ylabel = 'theta1')
         axes4.contour(v1, v2, loss, 100)
-        for i in range(len(self.theta) - 1):
-            th_str = self.theta[i][1]
-            th_end = self.theta[i+1][1]
-            u = th_end[0] - th_str[0]
-            v = th_end[1] - th_str[1]
-            #axes4.quiver(th_str[0], th_str[1], l_str, u, v, scale = 10)
-            axes4.scatter(th_end[0], th_end[1])       
+
+        #for i in range(len(self.t) - 1):
+            #axes4.scatter(self.t[i][0], self.t[i][1])        
+        axes4.scatter(self.t[:, 0], self.t[:, 1])
+
+       
         plt.show()
 
 LinearRegressor()
