@@ -133,7 +133,7 @@ class StochasticLinearRegressor:
         XTX_inv = np.linalg.inv(np.matmul(X.T, X))
         XTy = np.matmul(X.T, y)
         Theta_mat = np.matmul(XTX_inv, XTy)
-        print("Closed form solution: \n", Theta_mat)
+        print("Closed form solution: ", Theta_mat)
 
         #Starting parameters
         iteration = 0
@@ -153,10 +153,7 @@ class StochasticLinearRegressor:
         t1 = time.time()
         while abs(loss_end - loss_str) > self.threshold:
             epoch_loss = 0
-            #print(epoch, abs(loss_end - loss_str))
             for batch in Xy_data:
-                #print(iteration, abs(loss_end - loss_str), Theta)
-                print(epoch, abs(loss_end - loss_str), iteration)
                 iteration += 1
                 yb = batch[:,3]
                 xb = batch[:,[0,1,2]]
@@ -173,7 +170,7 @@ class StochasticLinearRegressor:
             loss_str = loss_end
             loss_end = epoch_loss
         t2 = time.time()
-        print('Time taken by SGD for {}: '.format(self.batch_size), t2 - t1)
+        print('Time taken by SGD for {} batch size: '.format(self.batch_size), t2 - t1)
         print('Epochs: ', epoch)
         return t
     
