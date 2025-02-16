@@ -11,28 +11,42 @@ import matplotlib.pyplot as plt
 class GaussianDiscriminantAnalysis:
     # Assume Binary Classification
     def __init__(self):
-        X, y = self.readAndNormalizeData()
+        self.X, self.y, self.Mean, self.Sigma = self.readAndNormalizeData()
         #print(y)
-        self.same_Cov_tuple = self.fit(X, y, True)
+        self.same_Cov_tuple = self.fit(self.X, self.y, True)
         self.same_Cov_Mean_0 = self.same_Cov_tuple[0]
         self.same_Cov_Mean_1 = self.same_Cov_tuple[1]
         self.same_Cov = self.same_Cov_tuple[2]
         print('init - Same Cov: ',self.same_Cov_Mean_0, self.same_Cov_Mean_1, self.same_Cov)
-        self.diff_Cov_tuple = self.fit(X, y, False)
+        self.diff_Cov_tuple = self.fit(self.X, self.y, False)
         self.diff_Cov_Mean_0 = self.diff_Cov_tuple[0]
         self.diff_Cov_Mean_1 = self.diff_Cov_tuple[1]
         self.diff_Cov_0 = self.diff_Cov_tuple[2]
         self.diff_Cov_1 = self.diff_Cov_tuple[3]
         print('diff - Same Cov: ',self.diff_Cov_Mean_0, self.diff_Cov_Mean_1, self.diff_Cov_0, self.diff_Cov_1)
 
-        self.plot(X,y)
+        self.plot(self.X, self.y)
     
+    def normalizeData(self, X):
+        X.reshape([X.shape[0], 2])
+        #Normalize inputs
+        Mean = np.mean(X, axis = 0)
+        Var = np.var(X, axis = 0)
+        Sigma = np.sqrt(Var)
+        M = np.ones([X.shape[0], X.shape[1]])*Mean
+        X = X - M
+        X = np.divide(X, Sigma)
+        return X, Mean, Sigma
+
     def readAndNormalizeData(self):
         #Read inputs from csv
         X1 = np.loadtxt('./../data/Q4/q4x.dat')
-        X1.reshape([X1.shape[0], 2])
 
-        #Normalize inputs
+        X, Mean, Sigma = self.normalizeData(X1)
+
+        '''
+        X1.reshape([X1.shape[0], 2])
+                #Normalize inputs
         Mean = np.mean(X1, axis = 0)
         Var = np.var(X1, axis = 0)
         Sigma = np.sqrt(Var)
@@ -40,6 +54,8 @@ class GaussianDiscriminantAnalysis:
         X1 = X1 - M
         X1 = np.divide(X1, Sigma)
         X = X1
+
+        '''
 
         # Add intercept term to inputs
         #Ones = np.ones([X1.shape[0], 1])
@@ -55,7 +71,7 @@ class GaussianDiscriminantAnalysis:
             else:
                 Y[i] = 0
         
-        return X, Y
+        return X1, Y, Mean, Sigma
 
     def fit(self, X, y, assume_same_covariance=False):
         """
@@ -80,6 +96,8 @@ class GaussianDiscriminantAnalysis:
             If assume_same_covariance = False - 4-tuple of numpy arrays mu_0, mu_1, sigma_0, sigma_1
             The parameters learned by the model.
         """
+        X, Mean, Sigma = self.normalizeData(X)
+
         phi = np.sum(y, axis = 0)/y.shape[0]
 
         X_0 = X[np.where(y==0)]
@@ -144,9 +162,22 @@ class GaussianDiscriminantAnalysis:
         y_pred : numpy array of shape (n_samples,)
             The predicted target label.
         """
-        pass
+        #Normalize inputs first
+        X.reshape([X.shape[0], 2])
+        #Normalize inputs w.r.t training mean and variance
+        M = np.ones([X.shape[0], X.shape[1]])*self.Mean
+        X = X - M
+        X = np.divide(X, self.Sigma)
+        intercept, slope = self.param(self.y, True)
+        val = intercept + np.matmul(X, slope)
+        y_p = np.zeros(val.shape[0])
+        for i in range(val.shape[0]):
+            if val[i] >= 0:
+                y_p[i] = 1
+        return y_p
 
     def plot(self, X, y):
+        X, Mean, Sigma = self.normalizeData(X)
         fig = plt.figure(figsize=(15, 9), facecolor='white')
         axes = plt.axes()
         plt.title("Gaussian Discriminant Analysis")
@@ -164,14 +195,14 @@ class GaussianDiscriminantAnalysis:
         x1_ = np.linspace(-3, 3, num = 50, endpoint=False)
         print(same_param[0], same_param[1][0], same_param[1][1])
         x2_ = -(same_param[1][0]/same_param[1][1])*x1_ - (same_param[0]/same_param[1][1])
-        plt.plot(x1_, x2_, linewidth = 1.5, label = 'Linear Decision boundary', c ='red')
+        plt.plot(x1_, x2_, linewidth = 1.5, label = 'Linear decision boundary', c ='red')
         x1_diff = np.linspace(-3, 3, num = 50, endpoint=False)
         x2_diff = np.linspace(-3, 3, num= 50, endpoint= False)
         v1, v2 = np.meshgrid(x1_diff, x2_diff)
         v = np.stack([v1, v2], axis = -1)
         print(diff_param)
         z = np.apply_along_axis(lambda x: self.strips(x, diff_param), 2, v)
-        axes.contour(v1, v2, z, [1], colors='magenta')
+        axes.contour(v1, v2, z, [0], colors='magenta')
         axes.plot([], [], color='magenta', label='Quadratic decision boundary') 
         plt.legend(loc = "lower right")       
         plt.show()
