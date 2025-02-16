@@ -103,7 +103,7 @@ class StochasticLinearRegressor:
         print('Test error: ', test_error)
 
         # Generating plots
-        self.plot(self.X_train, self.y_train)
+        #self.plot(self.X_train, self.y_train)
     
     def fit(self, X, y, learning_rate=0.01):
         """
@@ -211,4 +211,4 @@ class StochasticLinearRegressor:
         axes.scatter(self.t[: , 0], self.t[: , 1], self.t[: , 2])      
         plt.show()
 
-StochasticLinearRegressor()
+#StochasticLinearRegressor()

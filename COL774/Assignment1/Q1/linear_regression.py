@@ -45,7 +45,7 @@ class LinearRegressor:
         Generate plots for analysis.
         For generating plots for different learning rates, make sure to retrain the model each time.
         '''
-        self.plot(self.X, self.y)
+        #self.plot(self.X, self.y)
 
     def readData(self, path_X, path_Y):
         X = np.loadtxt(path_X)
@@ -182,4 +182,4 @@ class LinearRegressor:
         axes4.scatter(self.t[:, 0], self.t[:, 1])
         plt.show()
 
-LinearRegressor()
+#LinearRegressor()

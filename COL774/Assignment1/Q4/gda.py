@@ -12,7 +12,6 @@ class GaussianDiscriminantAnalysis:
     # Assume Binary Classification
     def __init__(self):
         self.X, self.y, self.Mean, self.Sigma = self.readAndNormalizeData()
-        #print(y)
         self.same_Cov_tuple = self.fit(self.X, self.y, True)
         self.same_Cov_Mean_0 = self.same_Cov_tuple[0]
         self.same_Cov_Mean_1 = self.same_Cov_tuple[1]
@@ -25,7 +24,7 @@ class GaussianDiscriminantAnalysis:
         self.diff_Cov_1 = self.diff_Cov_tuple[3]
         print('diff - Same Cov: ',self.diff_Cov_Mean_0, self.diff_Cov_Mean_1, self.diff_Cov_0, self.diff_Cov_1)
 
-        self.plot(self.X, self.y)
+        #self.plot(self.X, self.y)
     
     def normalizeData(self, X):
         X.reshape([X.shape[0], 2])
@@ -43,23 +42,6 @@ class GaussianDiscriminantAnalysis:
         X1 = np.loadtxt('./../data/Q4/q4x.dat')
 
         X, Mean, Sigma = self.normalizeData(X1)
-
-        '''
-        X1.reshape([X1.shape[0], 2])
-                #Normalize inputs
-        Mean = np.mean(X1, axis = 0)
-        Var = np.var(X1, axis = 0)
-        Sigma = np.sqrt(Var)
-        M = np.ones([X1.shape[0], X1.shape[1]])*Mean
-        X1 = X1 - M
-        X1 = np.divide(X1, Sigma)
-        X = X1
-
-        '''
-
-        # Add intercept term to inputs
-        #Ones = np.ones([X1.shape[0], 1])
-        #X = np.concatenate((Ones, X1), axis = 1)
 
         # Read labels from csv 
         Y = np.zeros(X.shape[0])
@@ -206,10 +188,9 @@ class GaussianDiscriminantAnalysis:
         axes.plot([], [], color='magenta', label='Quadratic decision boundary') 
         plt.legend(loc = "lower right")       
         plt.show()
-        plt.savefig('gda.jpg')
 
     def strips(self, x, diff_param):
         z = diff_param[0] + np.matmul(x.T, diff_param[1]) + np.matmul(np.matmul(x.T, diff_param[2]) , x)
         return z
 
-GaussianDiscriminantAnalysis()
+#GaussianDiscriminantAnalysis()

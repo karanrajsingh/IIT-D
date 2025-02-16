@@ -25,7 +25,7 @@ class LogisticRegressor:
         '''
         Generating plots
         '''
-        self.plot(self.X, self.y)
+        #self.plot(self.X, self.y)
 
     '''
     Normalizes input X, to training dataset's mean and variance
@@ -153,4 +153,4 @@ class LogisticRegressor:
         plt.legend(loc = "lower right")       
         plt.show()
 
-LogisticRegressor()
+#LogisticRegressor()
