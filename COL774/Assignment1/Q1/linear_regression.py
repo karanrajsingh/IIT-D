@@ -3,6 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 from mpl_toolkits.mplot3d import Axes3D
+import time
+import itertools
 
 # You may add any other functions to make your code more modular. However,
 # do not change the function signatures (name and arguments) of the given functions,
@@ -10,20 +12,49 @@ from mpl_toolkits.mplot3d import Axes3D
 
 class LinearRegressor:
     def __init__(self):        
-        self.theta = []
+        
+        '''
+        Pre-processing
+        '''
         #Read data from file
         path_X = './../data/Q1/linearX.csv'
         path_Y = './../data/Q1/linearY.csv'
-        X, y = self.readData(path_X, path_Y)
-        self.t = self.fit(X, y)
-        print(self.predict(X[: 10]))
-        self.plot(X, y)
+        self.X, self.y = self.readData(path_X, path_Y)
+        
+        '''
+        Toggle by commenting/uncommenting to train over a specific learning rate.
+
+        Remarks: 
+        1. Choose tolerance of 1e-11 for learning rate of 0.001.
+        2. For learning rates of {0.01, 0.025, 0.1}, tolerance can be less or equal to 1e-12
+        '''
+        #self.learning_rate = 0.1
+        #self.learning_rate = 0.025
+        self.learning_rate = 0.01
+        #self.learning_rate = 0.001
+        self.threshold = 1e-12
+        #self.threshold = 1e-11
+        
+        '''
+        Train the model of the given learning rate
+        '''
+        self.t = self.fit(self.X, self.y, self.learning_rate)
+        print('Parameters of learned model: ', self.t[len(self.t) - 1])
+        
+        '''
+        Generate plots for analysis.
+        For generating plots for different learning rates, make sure to retrain the model each time.
+        '''
+        self.plot(self.X, self.y)
 
     def readData(self, path_X, path_Y):
         X = np.loadtxt(path_X)
         y = np.loadtxt(path_Y)
         return X, y 
 
+    '''
+    Returns the Loss function value at a given parameter
+    '''
     def checkLoss(self, X, y, Theta):
         Hyp = np.matmul(X, Theta)
         L = y - Hyp
@@ -58,13 +89,14 @@ class LinearRegressor:
 
         #Starting parameters
         Theta = np.zeros(X.shape[1])
-        norm = 1e+12 
-        #stopping criteria
-        tolerance = 1e-12
+        norm = 1e+12
         epochs = 0
         t = np.array(Theta.reshape(1, X.shape[1]))
 
-        while(norm > tolerance):
+        t0 = time.time()
+        # Batch Gradient Descent Algorithm
+        while(norm > self.threshold):
+            #print(epochs, norm, Theta)
             epochs += 1
             A = np.dot(X, Theta)
             B = y - A
@@ -73,7 +105,8 @@ class LinearRegressor:
             norm = np.linalg.norm(Grad)
             tt = Theta.reshape(1, Theta.shape[0])
             t = np.append(t, tt, axis = 0)
-        self.t = t
+        t1 = time.time()
+        print('Converges in {} seconds for '.format(t1 - t0) + '{} epochs.'.format(epochs))
         return t
 
     def predict(self, X):
@@ -112,8 +145,6 @@ class LinearRegressor:
         plt.plot(X[:,1], predicted, linewidth = 1.5, label = 'Learned Hypothesis', c = 'red')
         plt.legend(loc = "lower right")
         plt.show()
-        plt.savefig('2.jpg')
-        plt.close()
 
         #Plotting Loss function
         d1 = np.linspace(-25, 50, num=300, endpoint=False)
@@ -126,8 +157,6 @@ class LinearRegressor:
         axes2.set_zlim3d(np.min(loss), np.max(loss))
         surface = axes2.plot_surface(v1, v2, loss, label='Loss Function', cmap = cm.gist_rainbow)        
         plt.show()
-        plt.savefig('3a.jpg')
-        plt.close()
 
         #Plotting movement of parameters
         fig = plt.figure()
@@ -145,17 +174,12 @@ class LinearRegressor:
             th_str, l_str = th_end, l_end
             axes3.quiver(th_str[0], th_str[1], l_str, u, v, w, colors = 'blue')       
         plt.show()
-        plt.savefig('3b.jpg')
-        plt.close()
 
         #Plotting contours
         fig = plt.figure()
-        axes4 = fig.add_subplot(title = 'Contour plot',  xlabel = 'theta0', ylabel = 'theta1')
-        axes4.contour(v1, v2, loss, 100)       
+        axes4 = fig.add_subplot(title = 'Contour plot for learning rate = {}'.format(self.learning_rate),  xlabel = 'theta0', ylabel = 'theta1')
+        axes4.contour(v1, v2, loss, 100)   
         axes4.scatter(self.t[:, 0], self.t[:, 1])
-
         plt.show()
-        plt.savefig('4.jpg')
-        plt.close()
 
 LinearRegressor()
