@@ -10,17 +10,13 @@ class LogisticRegressor:
     
     # Assume Binary Classification
     def __init__(self):
-        theta = []
-        X, y = self.readAndNormalizeData()
-        self.theta = self.fit(X, y, 0.1)
+        self.X, self.y, self.Mean, self.Sigma = self.readAndNormalizeData()
+        self.t = self.fit(self.X, self.y)
+        print("Parameters of learned model: ", self.t[len(self.t) - 1])
+        self.plot(self.X, self.y)
 
-        self.plot(X, y)
-
-    def readAndNormalizeData(self):
-        #Read inputs from csv
-        X = np.loadtxt('./../data/Q3/logisticX.csv', delimiter=',')
+    def normalizeData(self, X):
         X.reshape([X.shape[0], 2])
-
         #Normalize inputs
         Mean = np.mean(X, axis = 0)
         Var = np.var(X, axis = 0)
@@ -28,12 +24,18 @@ class LogisticRegressor:
         M = np.ones([X.shape[0], X.shape[1]])*Mean
         X = X - M
         X = np.divide(X, Sigma)
+        return X, Mean, Sigma
+
+    def readAndNormalizeData(self):
+        #Read inputs from csv
+        X = np.loadtxt('./../data/Q3/logisticX.csv', delimiter=',')
+
+        X1, Mean, Sigma = self.normalizeData(X)
 
         # Read labels from csv 
         Y = np.loadtxt('./../data/Q3/logisticY.csv')
-        #Y.reshape([Y.shape[0], 1])
 
-        return X, Y
+        return X, Y, Mean, Sigma
 
 
     def fit(self, X, y, learning_rate=0.01):
@@ -58,6 +60,8 @@ class LogisticRegressor:
             The list of parameters obtained after each iteration of Newton's Method.
         """
 
+        X, Mean, Sigma = self.normalizeData(X)
+
         # Add intercept term to inputs
         Ones = np.ones([X.shape[0], 1])
         X = np.concatenate((Ones, X), axis = 1)
@@ -66,8 +70,7 @@ class LogisticRegressor:
         norm = 1e+12
         tolerance = 1e-12
         epochs = 0
-        theta = []
-        theta.append([epochs, Theta])
+        t = np.array(Theta.reshape(1, X.shape[1]))
         
         while(norm > tolerance):
             epochs += 1
@@ -80,9 +83,9 @@ class LogisticRegressor:
             hessian_inv = np.linalg.inv(hessian)
             Theta = Theta - learning_rate*np.matmul(hessian_inv, grad)
             norm = np.linalg.norm(grad)
-            theta.append([epochs, Theta])
-
-        return theta
+            tt = Theta.reshape(1, Theta.shape[0])
+            t = np.append(t, tt, axis = 0)
+        return t
     
     def predict(self, X):
         """
@@ -98,10 +101,16 @@ class LogisticRegressor:
         y_pred : numpy array of shape (n_samples,)
             The predicted target label.
         """
-        # Add intercept term to inputs
+        X.reshape([X.shape[0], 2])
+        #Normalize inputs
+        M = np.ones([X.shape[0], X.shape[1]])*self.Mean
+        X = X - M
+        X = np.divide(X, self.Sigma)
+        
+        # Add intercept term to inputs        
         Ones = np.ones([X.shape[0], 1])      
         X = np.concatenate((Ones, X), axis = 1)
-        param = self.theta[len(self.theta) - 1][1]
+        param = self.t[len(self.t) - 1]
         eta = np.matmul(X, param)
         sigmoid = 1/(1 + np.exp(-eta))
         y_predicted = np.zeros(X.shape[0])
@@ -111,6 +120,7 @@ class LogisticRegressor:
         return y_predicted
 
     def plot(self, X, y):
+        X, Mean, Sigma = self.normalizeData(X)
         fig = plt.figure(figsize=(15, 9), facecolor='white')
         axes = plt.axes()
         plt.title("Logistic Regression using Newton's method")
@@ -121,7 +131,7 @@ class LogisticRegressor:
         plt.scatter(yX_class_0[:,1], yX_class_0[:,2], s=30, label = 'Class 0', c ='cyan')
         plt.xlabel('x1')
         plt.ylabel('x2')
-        param = self.theta[len(self.theta) - 1][1] 
+        param = self.t[len(self.t) - 1] 
         x1_ = np.linspace(-3, 3, num = 50, endpoint=False)
         x2_ = -(param[1]/param[2])*x1_ - (param[0]/param[2])
         plt.plot(x1_, x2_, linewidth = 1.5, label = 'Decision boundary', c ='red')
