@@ -10,11 +10,26 @@ class LogisticRegressor:
     
     # Assume Binary Classification
     def __init__(self):
+        '''
+        Pre-processing:
+        Read data and store Mean and standard deviation for normalizing input X.
+        '''
         self.X, self.y, self.Mean, self.Sigma = self.readAndNormalizeData()
+
+        '''
+        Training the logistic classifier
+        '''
         self.t = self.fit(self.X, self.y)
         print("Parameters of learned model: ", self.t[len(self.t) - 1])
+        
+        '''
+        Generating plots
+        '''
         self.plot(self.X, self.y)
 
+    '''
+    Normalizes input X, to training dataset's mean and variance
+    '''
     def normalizeData(self, X):
         X.reshape([X.shape[0], 2])
         #Normalize inputs
@@ -137,6 +152,5 @@ class LogisticRegressor:
         plt.plot(x1_, x2_, linewidth = 1.5, label = 'Decision boundary', c ='red')
         plt.legend(loc = "lower right")       
         plt.show()
-        plt.savefig('logistic regression.jpg')
 
 LogisticRegressor()
