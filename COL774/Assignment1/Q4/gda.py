@@ -7,24 +7,15 @@ import matplotlib.pyplot as plt
 # do not change the function signatures (name and arguments) of the given functions,
 # as these functions will be called by the autograder.
 
+Mean = 0
+Sigma = 0
+same_Cov_tuple = 0
+diff_Cov_tuple = 0
 
 class GaussianDiscriminantAnalysis:
     # Assume Binary Classification
     def __init__(self):
-        self.X, self.y, self.Mean, self.Sigma = self.readAndNormalizeData()
-        self.same_Cov_tuple = self.fit(self.X, self.y, True)
-        self.same_Cov_Mean_0 = self.same_Cov_tuple[0]
-        self.same_Cov_Mean_1 = self.same_Cov_tuple[1]
-        self.same_Cov = self.same_Cov_tuple[2]
-        print('init - Same Cov: ',self.same_Cov_Mean_0, self.same_Cov_Mean_1, self.same_Cov)
-        self.diff_Cov_tuple = self.fit(self.X, self.y, False)
-        self.diff_Cov_Mean_0 = self.diff_Cov_tuple[0]
-        self.diff_Cov_Mean_1 = self.diff_Cov_tuple[1]
-        self.diff_Cov_0 = self.diff_Cov_tuple[2]
-        self.diff_Cov_1 = self.diff_Cov_tuple[3]
-        print('diff - Same Cov: ',self.diff_Cov_Mean_0, self.diff_Cov_Mean_1, self.diff_Cov_0, self.diff_Cov_1)
-
-        #self.plot(self.X, self.y)
+        "Gaussian Discriminant Analysis"
     
     def normalizeData(self, X):
         X.reshape([X.shape[0], 2])
@@ -37,15 +28,13 @@ class GaussianDiscriminantAnalysis:
         X = np.divide(X, Sigma)
         return X, Mean, Sigma
 
-    def readAndNormalizeData(self):
+    def read(self, path_X, path_Y):
         #Read inputs from csv
-        X1 = np.loadtxt('./../data/Q4/q4x.dat')
-
-        X, Mean, Sigma = self.normalizeData(X1)
+        X = np.loadtxt(path_X)
 
         # Read labels from csv 
         Y = np.zeros(X.shape[0])
-        with open('./../data/Q4/q4y.dat', 'r') as f:
+        with open(path_Y, 'r') as f:
             data = f.readlines()
         for i in range(len(data)):
             if data[i] == 'Alaska\n':
@@ -53,7 +42,7 @@ class GaussianDiscriminantAnalysis:
             else:
                 Y[i] = 0
         
-        return X1, Y, Mean, Sigma
+        return X, Y
 
     def fit(self, X, y, assume_same_covariance=False):
         """
@@ -78,6 +67,11 @@ class GaussianDiscriminantAnalysis:
             If assume_same_covariance = False - 4-tuple of numpy arrays mu_0, mu_1, sigma_0, sigma_1
             The parameters learned by the model.
         """
+        global Mean
+        global Sigma
+        global same_Cov_tuple
+        global diff_Cov_tuple
+        
         X, Mean, Sigma = self.normalizeData(X)
 
         phi = np.sum(y, axis = 0)/y.shape[0]
@@ -98,7 +92,8 @@ class GaussianDiscriminantAnalysis:
             Cov = np.matmul(diff.T, diff)/diff.shape[0]
             same_slope = np.matmul(np.linalg.inv(Cov), (Mean_1 - Mean_0))
             same_intercept = math.log(phi/(1 - phi)) - 0.5*(np.matmul(np.matmul(Mean_1.T, np.linalg.inv(Cov)), Mean_1) - np.matmul(np.matmul(Mean_0.T, np.linalg.inv(Cov)), Mean_0))
-            print('Param - Same Cov', same_slope, same_intercept)
+            #print('Param - Same Cov', same_slope, same_intercept)
+            same_Cov_tuple = (Mean_0, Mean_1, Cov)
             return (Mean_0, Mean_1, Cov)
         else:
             diff_0 = X_0 - Mean_0
@@ -108,29 +103,33 @@ class GaussianDiscriminantAnalysis:
             second_order = np.linalg.inv(Cov_0) - np.linalg.inv(Cov_1)
             same_slope = np.matmul(np.linalg.inv(Cov_1), Mean_1) - np.matmul(np.linalg.inv(Cov_0), Mean_0)
             same_intercept = math.log(phi/(1 - phi)) + 0.5*math.log(np.linalg.norm(Cov_0)/np.linalg.norm(Cov_1)) - 0.5*(np.matmul(np.matmul(Mean_1.T, np.linalg.inv(Cov_1)), Mean_1) - np.matmul(np.matmul(Mean_0.T, np.linalg.inv(Cov_0)), Mean_0))
-            print('Param - Diff Cov', same_slope,same_intercept, second_order)
+            #print('Param - Diff Cov', same_slope,same_intercept, second_order)
+            diff_Cov_tuple = (Mean_0, Mean_1, Cov_0, Cov_1)
             return (Mean_0, Mean_1, Cov_0, Cov_1)
 
     def param(self, y,assume_same_covariance):
+        global same_Cov_tuple
+        global diff_Cov_tuple
         phi = np.sum(y, axis = 0)/y.shape[0]
         if assume_same_covariance:
-            Mean_0 = self.same_Cov_tuple[0]
-            Mean_1 = self.same_Cov_tuple[1]
-            Cov = self.same_Cov_tuple[2]
+            Mean_0 = same_Cov_tuple[0]
+            Mean_1 = same_Cov_tuple[1]
+            Cov = same_Cov_tuple[2]
             same_slope = np.matmul(np.linalg.inv(Cov), (Mean_1 - Mean_0))
             same_intercept = math.log(phi/(1 - phi)) - 0.5*(np.matmul(np.matmul(Mean_1.T, np.linalg.inv(Cov)), Mean_1) - np.matmul(np.matmul(Mean_0.T, np.linalg.inv(Cov)), Mean_0))            
             return (same_intercept, same_slope)
         else:
-            Mean_0 = self.diff_Cov_tuple[0]
-            Mean_1 = self.diff_Cov_tuple[1]
-            Cov_0 = self.diff_Cov_tuple[2]
-            Cov_1 = self.diff_Cov_tuple[3]
+            Mean_0 = diff_Cov_tuple[0]
+            Mean_1 = diff_Cov_tuple[1]
+            Cov_0 = diff_Cov_tuple[2]
+            Cov_1 = diff_Cov_tuple[3]
             second_order = 0.5*(np.linalg.inv(Cov_0) - np.linalg.inv(Cov_1))
             diff_slope = np.matmul(np.linalg.inv(Cov_1), Mean_1) - np.matmul(np.linalg.inv(Cov_0), Mean_0)
             diff_intercept = math.log(phi/(1 - phi)) + 0.5*math.log(np.linalg.det(Cov_0)/np.linalg.det(Cov_1)) - 0.5*(np.matmul(np.matmul(Mean_1.T, np.linalg.inv(Cov_1)), Mean_1) - np.matmul(np.matmul(Mean_0.T, np.linalg.inv(Cov_0)), Mean_0))
             return (diff_intercept, diff_slope, second_order)
 
-    def predict(self, X):
+    #This predicts based on linear decision boundary
+    def predict(self, X, y):
         """
         Predict the target values for the input data.
         
@@ -144,22 +143,24 @@ class GaussianDiscriminantAnalysis:
         y_pred : numpy array of shape (n_samples,)
             The predicted target label.
         """
+        global Mean
+        global Sigma
         #Normalize inputs first
         X.reshape([X.shape[0], 2])
         #Normalize inputs w.r.t training mean and variance
-        M = np.ones([X.shape[0], X.shape[1]])*self.Mean
+        M = np.ones([X.shape[0], X.shape[1]])*Mean
         X = X - M
-        X = np.divide(X, self.Sigma)
-        intercept, slope = self.param(self.y, True)
+        X = np.divide(X, Sigma)
+        intercept, slope = self.param(y, True)
         val = intercept + np.matmul(X, slope)
         y_p = np.zeros(val.shape[0])
         for i in range(val.shape[0]):
-            if val[i] >= 0:
+            if val[i] > 0:
                 y_p[i] = 1
         return y_p
 
     def plot(self, X, y):
-        X, Mean, Sigma = self.normalizeData(X)
+        X, m, s = self.normalizeData(X)
         fig = plt.figure(figsize=(15, 9), facecolor='white')
         axes = plt.axes()
         plt.title("Gaussian Discriminant Analysis")
@@ -193,4 +194,4 @@ class GaussianDiscriminantAnalysis:
         z = diff_param[0] + np.matmul(x.T, diff_param[1]) + np.matmul(np.matmul(x.T, diff_param[2]) , x)
         return z
 
-#GaussianDiscriminantAnalysis()
+GaussianDiscriminantAnalysis()

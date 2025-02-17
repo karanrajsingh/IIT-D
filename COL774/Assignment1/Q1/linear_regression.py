@@ -11,41 +11,21 @@ import itertools
 # as these functions will be called by the autograder.
 
 class LinearRegressor:
-    def __init__(self):        
-        
-        '''
-        Pre-processing
-        '''
-        #Read data from file
-        path_X = './../data/Q1/linearX.csv'
-        path_Y = './../data/Q1/linearY.csv'
-        self.X, self.y = self.readData(path_X, path_Y)
-        
-        '''
-        Toggle by commenting/uncommenting to train over a specific learning rate.
 
-        Remarks: 
-        1. Choose tolerance of 1e-11 for learning rate of 0.001.
-        2. For learning rates of {0.01, 0.025, 0.1}, tolerance can be less or equal to 1e-12
-        '''
-        #self.learning_rate = 0.1
-        #self.learning_rate = 0.025
-        self.learning_rate = 0.01
-        #self.learning_rate = 0.001
+    theta = 0
+
+    def __init__(self):        
+        "Initializing Linear Regressor model"
         self.threshold = 1e-12
-        #self.threshold = 1e-11
+
+    def error(self, y1, y2):
+        return np.square(np.linalg.norm(y1 - y2))/(y1.shape)
         
-        '''
-        Train the model of the given learning rate
-        '''
-        self.t = self.fit(self.X, self.y, self.learning_rate)
-        print('Parameters of learned model: ', self.t[len(self.t) - 1])
-        
-        '''
-        Generate plots for analysis.
-        For generating plots for different learning rates, make sure to retrain the model each time.
-        '''
-        #self.plot(self.X, self.y)
+    
+    def splitTrainTest(self, X, y):
+        X_train, y_train = X[ : 80], y[ : 80]
+        X_test, y_test = X[80 : ], y[80 : ]
+        return X_train, y_train, X_test, y_test
 
     def readData(self, path_X, path_Y):
         X = np.loadtxt(path_X)
@@ -107,7 +87,9 @@ class LinearRegressor:
             t = np.append(t, tt, axis = 0)
         t1 = time.time()
         print('Converges in {} seconds for '.format(t1 - t0) + '{} epochs.'.format(epochs))
-        return t
+        global theta
+        theta = t
+        return theta
 
     def predict(self, X):
         """
@@ -123,11 +105,10 @@ class LinearRegressor:
         y_pred : numpy array of shape (n_samples,)
             The predicted target values.
         """
-        
         #Adding bias term
         Ones = np.ones([X.shape[0],1])
         X = np.concatenate((Ones, X.reshape(X.shape[0], 1)), axis=1)
-        p = self.t[len(self.t) - 1]
+        p = theta[len(theta) - 1]
         y_p =  np.matmul(X, p)
         return y_p
     
@@ -140,7 +121,7 @@ class LinearRegressor:
         plt.ylabel('Wine Density')
         Ones = np.ones([X.shape[0],1])
         X = np.concatenate((Ones, X.reshape(X.shape[0], 1)), axis=1)
-        param = self.t[len(self.t) - 1]
+        param = theta[len(theta) - 1]
         predicted = np.matmul(X, param)
         plt.plot(X[:,1], predicted, linewidth = 1.5, label = 'Learned Hypothesis', c = 'red')
         plt.legend(loc = "lower right")
@@ -163,10 +144,10 @@ class LinearRegressor:
         axes3 = fig.add_subplot(title = 'Movement of parameters with epochs', projection = '3d', xlabel='theta0', ylabel='theta1', zlabel='  Loss')
         axes3.set_zlim3d(np.min(loss), 2*np.max(loss))
         surface = axes3.plot_surface(v1, v2, loss, label = 'Loss function', alpha = 0.25, cmap = cm.gist_rainbow)
-        th_str = self.t[0]
+        th_str = theta[0]
         l_str = self.checkLoss(X, y, th_str)
-        for i in range(len(self.t) - 1):
-            th_end = self.t[i+1]
+        for i in range(len(theta) - 1):
+            th_end = theta[i+1]
             l_end = self.checkLoss(X, y, th_end)
             u = th_end[0] - th_str[0]
             v = th_end[1] - th_str[1]
@@ -177,9 +158,7 @@ class LinearRegressor:
 
         #Plotting contours
         fig = plt.figure()
-        axes4 = fig.add_subplot(title = 'Contour plot for learning rate = {}'.format(self.learning_rate),  xlabel = 'theta0', ylabel = 'theta1')
+        axes4 = fig.add_subplot(title = 'Contour plot',  xlabel = 'theta0', ylabel = 'theta1')
         axes4.contour(v1, v2, loss, 100)   
-        axes4.scatter(self.t[:, 0], self.t[:, 1])
+        axes4.scatter(theta[:, 0], theta[:, 1])
         plt.show()
-
-#LinearRegressor()

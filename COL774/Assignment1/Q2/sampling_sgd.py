@@ -64,7 +64,12 @@ def generate(N, theta, input_mean, input_sigma, noise_sigma):
     
     return X_train, y_train, X_test, y_test
 
+theta_list = []
+
 class StochasticLinearRegressor:
+
+    
+
     def __init__(self):
         
         '''
@@ -72,12 +77,6 @@ class StochasticLinearRegressor:
         1. Generate a million points.
         2. Split into 80-20 train-test dataset.
         '''
-        N = int(1e6)
-        theta = np.array([3, 1, 2])
-        input_mean = np.array([3, -1])
-        input_sigma = np.array([2, 2])
-        noise_sigma = math.sqrt(2)
-        self.X_train, self.y_train, self.X_test, self.y_test = generate(N, theta, input_mean, input_sigma, noise_sigma)
         
         '''
         Toggle by commenting/uncommenting for selecting the batch size and threshold for training the dataset.
@@ -85,7 +84,7 @@ class StochasticLinearRegressor:
         '''
         #self.batch_size = 1
         #self.batch_size = 80
-        self.batch_size = 8000
+        #self.batch_size = 8000
         #self.batch_size = 800000
         self.threshold = 1e-6
         #self.threshold = 1e-10
@@ -93,14 +92,14 @@ class StochasticLinearRegressor:
         '''
         Training the dataset
         '''
-        self.t = self.fit(self.X_train, self.y_train, 0.001)
-        print('Learned parameters: ', self.t[len(self.t) - 1])
+        #self.t = self.fit(self.X_train, self.y_train, 0.001)
+        #print('Learned parameters: ', self.t[len(self.t) - 1])
 
         #For train-error and test-error analysis
-        train_error = self.error(self.X_train, self.y_train)
-        test_error = self.error(self.X_test, self.y_test)
-        print('Training error: ',train_error)
-        print('Test error: ', test_error)
+        #train_error = self.error(self.X_train, self.y_train)
+        #test_error = self.error(self.X_test, self.y_test)
+        #print('Training error: ',train_error)
+        #print('Test error: ', test_error)
 
         # Generating plots
         #self.plot(self.X_train, self.y_train)
@@ -135,44 +134,83 @@ class StochasticLinearRegressor:
         Theta_mat = np.matmul(XTX_inv, XTy)
         print("Closed form solution: ", Theta_mat)
 
-        #Starting parameters
-        iteration = 0
-        epoch = 0
-        loss_str = 1
-        loss_end = 0
-        Theta = np.zeros(X.shape[1])
-        batches = X.shape[0]//self.batch_size
 
-        #Grouping data into batches
-        Xy = np.concatenate([X, y.reshape(y.shape[0], 1)], axis = 1)
-        np.random.shuffle(Xy)  
-        Xy_data = Xy.reshape((batches,self.batch_size,Xy.shape[1]))
+        arr = [1, 80, 8000, 800000]
 
-        #Stochastic gradient descent algorithm
-        t = np.array(Theta.reshape(1, X.shape[1]))
-        t1 = time.time()
-        while abs(loss_end - loss_str) > self.threshold:
-            epoch_loss = 0
-            for batch in Xy_data:
-                iteration += 1
-                yb = batch[:,3]
-                xb = batch[:,[0,1,2]]
-                eta = np.dot(xb, Theta)
-                diff = yb - eta
-                grad = -1*np.matmul(xb.T, diff)/xb.shape[0]
-                Theta = Theta - learning_rate*grad
-                norm = np.linalg.norm(grad)
-                loss_diff = yb - np.dot(xb, Theta)
-                epoch_loss += np.matmul(loss_diff.T, loss_diff)/(2*xb.shape[0])
-                tt = Theta.reshape(1, Theta.shape[0])
-                t = np.append(t, tt, axis = 0)
-            epoch += 1
-            loss_str = loss_end
-            loss_end = epoch_loss
-        t2 = time.time()
-        print('Time taken by SGD for {} batch size: '.format(self.batch_size), t2 - t1)
-        print('Epochs: ', epoch)
-        return t
+        for i in range(len(arr)):
+            batch_size = arr[i]
+
+            #Starting parameters
+            iteration = 0
+            epoch = 0
+            loss_str = 1
+            loss_end = 0
+            Theta = np.zeros(X.shape[1])
+            batches = X.shape[0]//batch_size
+
+            #Grouping data into batches
+            Xy = np.concatenate([X, y.reshape(y.shape[0], 1)], axis = 1)
+            np.random.shuffle(Xy)  
+            Xy_data = Xy.reshape((batches,batch_size,Xy.shape[1]))
+            global theta_list
+            #Stochastic gradient descent algorithm
+            t = np.array(Theta.reshape(1, X.shape[1]))
+            if batch_size != 1:
+                t1 = time.time()
+                while abs(loss_end - loss_str) > self.threshold:
+                    epoch_loss = 0
+                    for batch in Xy_data:
+                        iteration += 1
+                        yb = batch[:,3]
+                        xb = batch[:,[0,1,2]]
+                        eta = np.dot(xb, Theta)
+                        diff = yb - eta
+                        grad = -1*np.matmul(xb.T, diff)/xb.shape[0]
+                        Theta = Theta - learning_rate*grad
+                        norm = np.linalg.norm(grad)
+                        loss_diff = yb - np.dot(xb, Theta)
+                        epoch_loss += np.matmul(loss_diff.T, loss_diff)/(2*xb.shape[0])
+                        tt = Theta.reshape(1, Theta.shape[0])
+                        t = np.append(t, tt, axis = 0)
+                    epoch += 1
+                    loss_str = loss_end
+                    loss_end = epoch_loss     
+                t2 = time.time()
+                print('Time taken by SGD for {} batch size: '.format(batch_size), t2 - t1)
+                print('Epochs: ', epoch)
+                theta_list.append(t)
+            else:
+                flag = False
+                t1 = time.time()
+                while abs(loss_end - loss_str) > self.threshold:
+                    epoch_loss = 0
+                    for batch in Xy_data:
+                        iteration += 1
+                        yb = batch[:,3]
+                        xb = batch[:,[0,1,2]]
+                        eta = np.dot(xb, Theta)
+                        diff = yb - eta
+                        grad = -1*np.matmul(xb.T, diff)/xb.shape[0]
+                        Theta = Theta - learning_rate*grad
+                        norm = np.linalg.norm(grad)
+                        loss_diff = yb - np.dot(xb, Theta)
+                        epoch_loss += np.matmul(loss_diff.T, loss_diff)/(2*xb.shape[0])
+                        tt = Theta.reshape(1, Theta.shape[0])
+                        t = np.append(t, tt, axis = 0)
+                        t1_ = time.time()
+                        if t1_ - t1 > 1200:
+                            flag = True
+                            break
+                    epoch += 1
+                    loss_str = loss_end
+                    loss_end = epoch_loss
+                    if flag:
+                        break
+                t2 = time.time()
+                print('Time taken by SGD for {} batch size: '.format(batch_size), t2 - t1)
+                print('Epochs: ', epoch)
+                theta_list.append(t)                
+        return theta_list
     
     def predict(self, X):
         """
@@ -190,25 +228,31 @@ class StochasticLinearRegressor:
         """
         #Adding bias term
         X_intercept = np.ones([X.shape[0], 1])
-        X = np.concatenate((X_intercept, X), axis = 1)        
-        param = self.t[len(self.t) - 1]
-        y_predicted = np.matmul(X, param)
+        X = np.concatenate((X_intercept, X), axis = 1)  
+        y_predicted = []
+        for i in range(len(theta_list)):
+            param = theta_list[i][theta_list[i].shape[0] - 1]
+        y_predicted.append(np.matmul(X, param))
         return y_predicted
 
     def error(self, X, y):
         #Adding bias term
         y_predicted = self.predict(X)
-        error = y - y_predicted
-        error_norm = np.linalg.norm(error)/(X.shape[0])
+        error_norm = []
+        for i in range(len(y_predicted)):
+            error = y - y_predicted[i]
+            error_norm.append(np.square(np.linalg.norm(error))/(X.shape[0]))
         return error_norm
     
     def plot(self, X, y):
         X_intercept = np.ones([X.shape[0], 1])
         X = np.concatenate((X_intercept, X), axis = 1)
         #Plotting movement of parameters
-        fig = plt.figure()
-        axes = fig.add_subplot(title = 'Movement of parameters with epochs, for batch size {}'.format(self.batch_size), projection = '3d', xlabel='theta0', ylabel='theta1', zlabel='  theta2')
-        axes.scatter(self.t[: , 0], self.t[: , 1], self.t[: , 2])      
-        plt.show()
+        global theta_list
+        for i in range(len(theta_list)):
+            fig = plt.figure()
+            axes = fig.add_subplot(title = 'Movement of parameters with epochs, for batch size', projection = '3d', xlabel='theta0', ylabel='theta1', zlabel='  theta2')
+            axes.scatter(theta_list[i][: , 0], theta_list[i][: , 1], theta_list[i][: , 2])      
+            plt.show()
 
-#StochasticLinearRegressor()
+StochasticLinearRegressor()
