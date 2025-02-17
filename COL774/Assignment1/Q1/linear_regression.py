@@ -16,7 +16,8 @@ class LinearRegressor:
 
     def __init__(self):        
         "Initializing Linear Regressor model"
-        self.threshold = 1e-12
+        self.threshold = 1e-11
+        #self.threshold = 1e-11
 
     def error(self, y1, y2):
         return np.square(np.linalg.norm(y1 - y2))/(y1.shape)

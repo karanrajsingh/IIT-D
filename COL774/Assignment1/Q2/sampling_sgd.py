@@ -68,41 +68,15 @@ theta_list = []
 
 class StochasticLinearRegressor:
 
-    
-
     def __init__(self):
-        
+        ''' 
+        Instructions:
+        1. Toggle by commenting/uncommenting for selecting the batch size and threshold for training the dataset.
+        2. For large batch sizes of 4 = 800000, choose 1e-10 as threshold.
         '''
-        Pre-processing:
-        1. Generate a million points.
-        2. Split into 80-20 train-test dataset.
-        '''
-        
-        '''
-        Toggle by commenting/uncommenting for selecting the batch size and threshold for training the dataset.
-
-        '''
-        #self.batch_size = 1
-        #self.batch_size = 80
-        #self.batch_size = 8000
-        #self.batch_size = 800000
         self.threshold = 1e-6
         #self.threshold = 1e-10
-
-        '''
-        Training the dataset
-        '''
-        #self.t = self.fit(self.X_train, self.y_train, 0.001)
-        #print('Learned parameters: ', self.t[len(self.t) - 1])
-
-        #For train-error and test-error analysis
-        #train_error = self.error(self.X_train, self.y_train)
-        #test_error = self.error(self.X_test, self.y_test)
-        #print('Training error: ',train_error)
-        #print('Test error: ', test_error)
-
-        # Generating plots
-        #self.plot(self.X_train, self.y_train)
+     
     
     def fit(self, X, y, learning_rate=0.01):
         """
@@ -133,7 +107,6 @@ class StochasticLinearRegressor:
         XTy = np.matmul(X.T, y)
         Theta_mat = np.matmul(XTX_inv, XTy)
         print("Closed form solution: ", Theta_mat)
-
 
         arr = [1, 80, 8000, 800000]
 
@@ -232,16 +205,16 @@ class StochasticLinearRegressor:
         y_predicted = []
         for i in range(len(theta_list)):
             param = theta_list[i][theta_list[i].shape[0] - 1]
-        y_predicted.append(np.matmul(X, param))
+            y_predicted.append(np.matmul(X, param))
         return y_predicted
 
-    def error(self, X, y):
+    def error(self, y1, y2):
         #Adding bias term
-        y_predicted = self.predict(X)
         error_norm = []
-        for i in range(len(y_predicted)):
-            error = y - y_predicted[i]
-            error_norm.append(np.square(np.linalg.norm(error))/(X.shape[0]))
+        for i in range(len(y1)):
+            error = y1[i] - y2
+            val = np.square(np.linalg.norm(error))/(y2.shape[0])
+            error_norm.append(val)
         return error_norm
     
     def plot(self, X, y):

@@ -7,12 +7,12 @@ import math
 # do not change the function signatures (name and arguments) of the given functions,
 # as these functions will be called by the autograder.
 
-Mean = 0
-Sigma = 0
-Theta = 0
-
 class LogisticRegressor:
     
+    Mean = 0
+    Sigma = 0
+    Theta = 0
+
     # Assume Binary Classification
     def __init__(self):
         '''
@@ -67,7 +67,7 @@ class LogisticRegressor:
         global Mean
         global Sigma
         X, Mean, Sigma = self.normalizeData(X)
-        print(Mean, Sigma)
+        #print(Mean, Sigma)
 
         # Add intercept term to inputs
         Ones = np.ones([X.shape[0], 1])

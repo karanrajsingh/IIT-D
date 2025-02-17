@@ -7,12 +7,14 @@ import matplotlib.pyplot as plt
 # do not change the function signatures (name and arguments) of the given functions,
 # as these functions will be called by the autograder.
 
-Mean = 0
-Sigma = 0
-same_Cov_tuple = 0
-diff_Cov_tuple = 0
 
 class GaussianDiscriminantAnalysis:
+
+    Mean = 0
+    Sigma = 0
+    same_Cov_tuple = 0
+    diff_Cov_tuple = 0
+
     # Assume Binary Classification
     def __init__(self):
         "Gaussian Discriminant Analysis"
