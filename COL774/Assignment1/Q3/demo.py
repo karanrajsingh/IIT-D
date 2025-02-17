@@ -3,5 +3,8 @@ import numpy as np
 model = logistic_regression.LogisticRegressor()
 X, y = model.read(path_X ='./../data/Q3/logisticX.csv', path_Y = './../data/Q3/logisticY.csv')
 theta = model.fit(X,y)
-#param = theta[len(theta)-1]
+param = theta[len(theta)-1]
+y_p = model.predict(X[45 : 55])
+print(y_p)
+print(y[45 : 55])
 model.plot(X, y)

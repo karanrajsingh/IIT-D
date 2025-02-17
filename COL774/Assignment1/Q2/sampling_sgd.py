@@ -71,8 +71,8 @@ class StochasticLinearRegressor:
     def __init__(self):
         ''' 
         Instructions:
-        1. Toggle by commenting/uncommenting for selecting the batch size and threshold for training the dataset.
-        2. For large batch sizes of 4 = 800000, choose 1e-10 as threshold.
+        1. Toggle by commenting/uncommenting for selecting the threshold for training the dataset.
+        2. For large batch sizes of r = 800000, choose 1e-10 as threshold.
         '''
         self.threshold = 1e-6
         #self.threshold = 1e-10

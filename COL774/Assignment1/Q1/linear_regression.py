@@ -16,8 +16,13 @@ class LinearRegressor:
 
     def __init__(self):        
         "Initializing Linear Regressor model"
+        '''
+        Instructions:
+        1. Toggle between the two thresholds
+        2. For learning rate = 0.001 use 1e-11 as threshold
+        '''
         self.threshold = 1e-11
-        #self.threshold = 1e-11
+        #self.threshold = 1e-12
 
     def error(self, y1, y2):
         return np.square(np.linalg.norm(y1 - y2))/(y1.shape)
@@ -114,6 +119,7 @@ class LinearRegressor:
         return y_p
     
     def plot(self, X, y):
+        #Plotting Linear Regression Hypothesis fit
         fig = plt.figure(figsize=(15, 9), facecolor='white')
         axes = plt.axes()
         plt.title('Linear Regression to predict wine density based on acidity')

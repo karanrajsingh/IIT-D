@@ -192,6 +192,7 @@ class GaussianDiscriminantAnalysis:
         plt.legend(loc = "lower right")       
         plt.show()
 
+    #Used in plotting
     def strips(self, x, diff_param):
         z = diff_param[0] + np.matmul(x.T, diff_param[1]) + np.matmul(np.matmul(x.T, diff_param[2]) , x)
         return z
