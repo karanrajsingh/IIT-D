@@ -1,9 +1,18 @@
 import numpy as np
+import pandas as pd
 
 class NaiveBayes:
     def __init__(self):
-        pass
         
+        #Initial test for test.csv (as dataset is smaller)
+        path_test = '../data/Q1/test.csv'
+        self.preprocessing(path_test)
+
+    def preprocessing(self, path):
+        df = pd.read_csv(path)
+        print('----Successful Read----')
+        print(df[0])
+
     def fit(self, df, smoothening, class_col = "Class Index", text_col = "Tokenized Description"):
         """Learn the parameters of the model from the training data.
         Classes are 1-indexed
