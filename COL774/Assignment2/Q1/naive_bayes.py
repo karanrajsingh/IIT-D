@@ -11,7 +11,6 @@ class NaiveBayes:
     def preprocessing(self, path):
         df = pd.read_csv(path)
         print('----Successful Read----')
-        print(df[0])
 
     def fit(self, df, smoothening, class_col = "Class Index", text_col = "Tokenized Description"):
         """Learn the parameters of the model from the training data.
