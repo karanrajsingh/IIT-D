@@ -3,6 +3,7 @@ import pandas as pd
 import string
 import re
 
+
 class NaiveBayes:
 
     df = ""
@@ -10,19 +11,20 @@ class NaiveBayes:
     def __init__(self):
         
         #Initial test for test.csv (as dataset is smaller)
-        path_test = '../data/Q1/test.csv'
+        path_train = '../data/Q1/train.csv'
         #df = self.preprocessing(path_test)
-        self.read(path_test)
+        self.read(path_train)
         self.tokenize(text_col="Description")
-        self.print()
+        #self.print()
 
     def print(self):
         global df
         feature_column = "Description"
-        for i in range(len(feature_column)):
+        for i in range(len(df)):
             print("\n")
             print(df.iloc[i])
             print("\n")
+        
 
 
     def read(self, path):
@@ -34,7 +36,7 @@ class NaiveBayes:
     def tokenize(self, text_col):
         global df
         feature_column = text_col
-        for i in range(len(feature_column)):
+        for i in range(len(df[feature_column])):
             s = df[feature_column].iloc[i]
             df.at[i, feature_column] = self.tokenize_text(s)
 
