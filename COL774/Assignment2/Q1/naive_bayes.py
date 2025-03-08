@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import string
-import re
+from wordcloud import WordCloud
 
 
 class NaiveBayes:
@@ -15,18 +15,8 @@ class NaiveBayes:
         #df = self.preprocessing(path_test)
         self.read(path_train)
         self.tokenize(text_col="Description")
-        #self.print()
-
-    def print(self):
-        global df
-        feature_column = "Description"
-        for i in range(len(df)):
-            print("\n")
-            print(df.iloc[i])
-            print("\n")
+    
         
-
-
     def read(self, path):
         global df
         df = pd.read_csv(path)
@@ -36,9 +26,7 @@ class NaiveBayes:
     def tokenize(self, text_col):
         global df
         feature_column = text_col
-        for i in range(len(df[feature_column])):
-            s = df[feature_column].iloc[i]
-            df.at[i, feature_column] = self.tokenize_text(s)
+        df[feature_column] = df[feature_column].apply(self.tokenize_text)
 
 
     # Cleans the text from punctuations and returns a list of words in the text
@@ -49,6 +37,15 @@ class NaiveBayes:
         list = remove_punctuation.split()
         return list
         #return " ".join(list)
+
+    def wordcloud(self, class_index):
+        selected_df = self.rows_by_class(class_index)
+        print(selected_df)
+
+    def rows_by_class(self, class_index):
+        global df
+        selected_df = df[df["Class Index"] == class_index]
+        return selected_df
 
 
     def fit(self, df, smoothening, class_col = "Class Index", text_col = "Tokenized Description"):
