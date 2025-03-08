@@ -18,7 +18,16 @@ class NaiveBayes:
         feature_column = "Description"
         for i in range(len(feature_column)):
             s = df[feature_column].iloc[i]
-            print(self.tokenizer(s))
+            df.at[i, feature_column] = self.tokenizer(s)
+
+        # Test for correct update
+        '''
+        for i in range(len(feature_column)):
+            print("\n")
+            print(df[feature_column].iloc[i])
+            print("\n")
+
+        '''
 
 
     # Cleans the text from punctuations and returns a list of words in the text
@@ -26,7 +35,9 @@ class NaiveBayes:
         punctuation = string.punctuation
         map = str.maketrans(punctuation, ' '*len(punctuation))
         remove_punctuation = text.translate(map)
-        return remove_punctuation.split()
+        list = remove_punctuation.split()
+        return list
+        #return " ".join(list)
 
 
     def fit(self, df, smoothening, class_col = "Class Index", text_col = "Tokenized Description"):
