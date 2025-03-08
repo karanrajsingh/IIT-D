@@ -12,7 +12,8 @@ class NaiveBayes:
         #Initial test for test.csv (as dataset is smaller)
         path_test = '../data/Q1/test.csv'
         #df = self.preprocessing(path_test)
-        self.preprocessing(path_test)
+        self.read(path_test)
+        self.tokenize(text_col="Description")
         self.print()
 
     def print(self):
@@ -24,19 +25,22 @@ class NaiveBayes:
             print("\n")
 
 
-    def preprocessing(self, path):
+    def read(self, path):
         global df
         df = pd.read_csv(path)
         print('----Successful Read----')
 
-        feature_column = "Description"
+    # Clean a dataframe row of punctuations
+    def tokenize(self, text_col):
+        global df
+        feature_column = text_col
         for i in range(len(feature_column)):
             s = df[feature_column].iloc[i]
-            df.at[i, feature_column] = self.tokenizer(s)
+            df.at[i, feature_column] = self.tokenize_text(s)
 
 
     # Cleans the text from punctuations and returns a list of words in the text
-    def tokenizer(self, text):
+    def tokenize_text(self, text):
         punctuation = string.punctuation
         map = str.maketrans(punctuation, ' '*len(punctuation))
         remove_punctuation = text.translate(map)
