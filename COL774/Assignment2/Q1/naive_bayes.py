@@ -5,13 +5,27 @@ import re
 
 class NaiveBayes:
 
+    df = ""
+
     def __init__(self):
         
         #Initial test for test.csv (as dataset is smaller)
         path_test = '../data/Q1/test.csv'
+        #df = self.preprocessing(path_test)
         self.preprocessing(path_test)
+        self.print()
+
+    def print(self):
+        global df
+        feature_column = "Description"
+        for i in range(len(feature_column)):
+            print("\n")
+            print(df.iloc[i])
+            print("\n")
+
 
     def preprocessing(self, path):
+        global df
         df = pd.read_csv(path)
         print('----Successful Read----')
 
@@ -19,15 +33,6 @@ class NaiveBayes:
         for i in range(len(feature_column)):
             s = df[feature_column].iloc[i]
             df.at[i, feature_column] = self.tokenizer(s)
-
-        # Test for correct update
-        '''
-        for i in range(len(feature_column)):
-            print("\n")
-            print(df[feature_column].iloc[i])
-            print("\n")
-
-        '''
 
 
     # Cleans the text from punctuations and returns a list of words in the text
