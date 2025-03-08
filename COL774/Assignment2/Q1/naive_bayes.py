@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import string
 from wordcloud import WordCloud
+import matplotlib.pyplot as plt
 
 
 class NaiveBayes:
@@ -15,6 +16,9 @@ class NaiveBayes:
         #df = self.preprocessing(path_test)
         self.read(path_train)
         self.tokenize(text_col="Description")
+        self.wordcloud(text_col="Description")
+        #self.wordcloud(text_col="Description", class_index=1)
+        #print(df)
     
         
     def read(self, path):
@@ -38,10 +42,27 @@ class NaiveBayes:
         return list
         #return " ".join(list)
 
-    def wordcloud(self, class_index):
+    
+    def wordcloud(self, text_col):
+        global df
+        max = df["Class Index"].max(axis=0)
+        for i in range(max):
+            text = self.build_text(text_col, i+1)
+            class_wc = WordCloud(background_color='white', max_words=20000)
+            class_wc.generate(text)
+            plt.imshow(class_wc, interpolation='bilinear')
+            plt.axis('off')
+            plt.show()
+    
+    def build_text(self, text_col, class_index):
         selected_df = self.rows_by_class(class_index)
-        print(selected_df)
-
+        selected_df[text_col] = selected_df[text_col].apply(" ".join)
+        text = ""
+        print(len(selected_df[text_col]))
+        for i in range(len(selected_df[text_col])):
+            text += " " + selected_df[text_col].iloc[i]
+        return text
+        
     def rows_by_class(self, class_index):
         global df
         selected_df = df[df["Class Index"] == class_index]
