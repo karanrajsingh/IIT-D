@@ -18,13 +18,13 @@ class NaiveBayes:
         feature_column = "Description"
         for i in range(len(feature_column)):
             s = df[feature_column].iloc[i]
-            print(self.cleantext(s))
+            print(self.tokenizer(s))
         
 
 
 
     # Cleans the text from punctuations and returns a list of words in the text
-    def cleantext(self, text):
+    def tokenizer(self, text):
         translator = str.maketrans(string.punctuation, ' ' * len(string.punctuation))
         clean_text = text.translate(translator)
         return clean_text.split()
