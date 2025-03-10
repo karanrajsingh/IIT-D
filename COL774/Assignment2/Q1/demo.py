@@ -33,10 +33,11 @@ params = model.fit(df_train, smoothening=0.1)
 priors = params[0]
 estimates = params[1]
 
+df_train= model.predict(df_train)
+train_accuracy = model.accuracy(df_train)
+print("Train accuracy:  ", train_accuracy)
 df_test = model.predict(df_test)
-print(df_test.columns)
-# print(df_test.iloc[0])
-accuracy = model.accuracy(df_test)
-print(accuracy)
+test_accuracy = model.accuracy(df_test)
+print("Test accuracy:  ", test_accuracy)
 
-model.wordcloud(df_train)
+# model.wordcloud(df_train)
