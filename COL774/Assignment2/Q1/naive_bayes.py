@@ -4,7 +4,7 @@ import string
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 import math
-
+import sys
 
 class NaiveBayes:
 
@@ -161,9 +161,15 @@ class NaiveBayes:
                 val_2 = word_dict[word]
                 word_dict[word] = math.log(word_dict[word]) - math.log(total_words_smoothed)
         #        print(word + " : ", val_1, val_2, word_dict[word])
+            word_dict[";;;"] = math.log(smoothening) - math.log(total_words_smoothed)
         print("Estimating class priors...")
         class_priors = self.class_priors(df, class_col)
         #print(class_priors)
+
+        global priors
+        global word_estimates
+        priors = class_priors
+        word_estimates = word_count       
 
         return (class_priors, word_count)
 
@@ -207,7 +213,6 @@ class NaiveBayes:
     def build_word_count_for_class_helper(self, merged_words, text_col = "Tokenized Description"):
         word_dict = {}
         for word in merged_words:
-            print
             word = word.lower()
             if word in word_dict:
                 word_dict[word] += 1
@@ -226,4 +231,47 @@ class NaiveBayes:
             df (pd.DataFrame): The testing data containing column text_col.
                 each entry of text_col is a list of tokens.
         """
-        pass
+        
+        df[predicted_col] = df[text_col].apply(self.predict_text)
+        # for i in range(len(df)):
+        #      #print(df["Class Index"].iloc[i], df[predicted_col].iloc[i])
+        #      print(df.iloc[i])
+        return df
+
+    def predict_text(self, text):
+        #print(text)
+        global priors
+        global word_estimates
+        class_probability = {}
+        for class_index in priors:
+            class_probability[class_index] = self.get_probability(text, class_index)
+        max_prob = max(class_probability.values())
+        for class_index in class_probability:
+            if class_probability[class_index] == max_prob:
+                predicted_class = class_index
+        return predicted_class
+
+
+
+    def get_probability(self, text, class_index = 1):
+        global priors
+        global word_estimates
+        word_dict = word_estimates[class_index]
+        probability = 0
+        mod_V = 1e+6
+        for word in text:
+            word = word.lower()
+            if word in word_dict:
+                probability += word_dict[word]
+            else:
+                probability += word_dict[";;;"]
+        probability += priors[class_index]
+        return probability
+    
+    def accuracy(self, df):
+        accuracy = 0;
+        total = len(df["Class Index"])
+        for i in range(len(df["Class Index"])):
+            if df["Class Index"].iloc[i] == df["Predicted"].iloc[i]:
+                accuracy += 1
+        return float(accuracy)/total
