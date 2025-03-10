@@ -7,40 +7,43 @@ import matplotlib.pyplot as plt
 
 class NaiveBayes:
 
-    df = ""
+    df_train = ""
+    df_test = ""
 
     def __init__(self):
         
+
+        global df_train, df_test
         #Initial test for test.csv (as dataset is smaller)
         path_train = '../data/Q1/train.csv'
+        path_test = '../data/Q1/test.csv'
         #df = self.preprocessing(path_test)
-        self.read(path_train)
-        self.tokenize(text_col="Description")
-        self.wordcloud(text_col="Description")
+        #df_train, df_test = self.read(path_train, path_test)
+        #self.tokenize(text_col="Description")
+        #self.wordcloud(text_col="Description")
         #self.wordcloud(text_col="Description", class_index=1)
         #print(df)
     
         
     def read(self, path):
-        global df
-        df = pd.read_csv(path)
-        print('----Successful Read----')
+        df= pd.read_csv(path)
+        return df
 
-    # Clean a dataframe row of punctuations
-    def tokenize(self, text_col):
-        global df
-        feature_column = text_col
-        df[feature_column] = df[feature_column].apply(self.tokenize_text)
+    # Cleans a dataframe column from punctuations, and returns the updated dataframe
+    def clean_punctuation(self, df, text_col):
+        df[text_col] = df[text_col].apply(self.clean_punctuation_from_cell)
+        return df
 
 
-    # Cleans the text from punctuations and returns a list of words in the text
-    def tokenize_text(self, text):
+    # Cleans any text string from punctuations and returns the updated string
+    def clean_punctuation_from_cell(self, text):
         punctuation = string.punctuation
         map = str.maketrans(punctuation, ' '*len(punctuation))
         remove_punctuation = text.translate(map)
-        list = remove_punctuation.split()
-        return list
+        #list = remove_punctuation.split()
+        #return list
         #return " ".join(list)
+        return remove_punctuation
 
     
     def wordcloud(self, text_col):
@@ -79,7 +82,21 @@ class NaiveBayes:
             smoothening (float): The Laplace smoothening parameter.
         """
 
+        """
+        Steps to follow:
+            1. For each class in Class Index in df:
+                a. Merge all tokens and store in a dictionary.
+                b. Calculate probabilities (Theta parameter) for each word (token) given the class.
+                c. Store the parameters from (b) in a dictionary ('token/word' : probability).
+            2. Calculate phi for each class
+            3. Give different variations to text_col. These would be pre-processed and fed to the 'fit' function, with steps as under:
+                1. Remove punctuations. This would return each cell of text_col as list of tokens.
+                2.  
+
+        """
+
         pass
+
     
     def predict(self, df, text_col = "Tokenized Description", predicted_col = "Predicted"):
         """
