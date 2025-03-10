@@ -26,4 +26,7 @@ df_train = model.tokenize_col(df_train, text_col="Title Description")
 
 #print(df_train.iloc[0])
 
-model.fit(df_train, smoothening=1)
+params = model.fit(df_train, smoothening=1)
+priors = params[0]
+estimates = params[1]
+print(params[1])

@@ -3,12 +3,17 @@ import pandas as pd
 import string
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
+import math
 
 
 class NaiveBayes:
 
     df_train = ""
     df_test = ""
+    mod_V = 1e+6
+
+    priors = ""
+    word_estimates = ""
 
     def __init__(self):
         
@@ -109,17 +114,73 @@ class NaiveBayes:
         word_count = self.build_word_count(df, class_col, text_col)[0]
         total_words = self.build_word_count(df, class_col, text_col)[1]
 
+        mod_V = 1e+6
+
+        """
+
+        'word_count' stores counts of each word across all documents in a class.
+        After fit function completes execution, 'word_count' stores log of probability of each word given a class
+
+        word_count:
+            class_index_1: word_dict
+                            {word_1: count_1 -> later updated to P(word_1|class_index_1)}
+                            {word_2: count_2 -> later updated to P(word_2|class_index_1)}
+                            {-----------------------------------------------------------}
+                            {-----------------------------------------------------------}
+                            {word_j: count_j -> later updated to P(word_j|class_index_1)}
+                            {-----------------------------------------------------------}
+                            {-----------------------------------------------------------}                            
+                            {word_n: count_n -> later updated to P(word_n|class_index_1)}
+            :
+            :
+            :
+            class_index_4: word_dict
+                            {word_1: count_1 -> later updated to P(word_1|class_index_4)}
+                            {word_2: count_2 -> later updated to P(word_2|class_index_4)}
+                            {-----------------------------------------------------------}
+                            {-----------------------------------------------------------}
+                            {word_j: count_j -> later updated to P(word_j|class_index_4)}
+                            {-----------------------------------------------------------}
+                            {-----------------------------------------------------------}
+                            {word_n: count_n -> later updated to P(word_n|class_index_4)}
+        
+        total_words:
+            class_index_1: total words in all documents of class 1
+            class_index_2: total words in all documents of class 2
+            class_index_3: total words in all documents of class 3
+            class_index_4: total words in all documents of class 4
+
+        """
+        print("Estimating class wise conditional porbabilities of each word...")
         for class_index in word_count:
-            words = word_count[class_index]
-            s = 0
-            for word in words:
-                s += words[word]
-            print(s, total_words[class_index])
+            word_dict = word_count[class_index]
+            total_words_smoothed = self.smoothen(total_words[class_index], mod_V, smoothening)
+            for word in word_dict:
+                val_1 = word_dict[word]
+                word_dict[word] = self.smoothen(word_dict[word], 1, smoothening)
+                val_2 = word_dict[word]
+                word_dict[word] = math.log(word_dict[word]) - math.log(total_words_smoothed)
+        #        print(word + " : ", val_1, val_2, word_dict[word])
+        print("Estimating class priors...")
+        class_priors = self.class_priors(df, class_col)
+        #print(class_priors)
 
+        return (class_priors, word_count)
 
+    def smoothen(self, value, offset, smoothening):
+        value += offset*smoothening
+        return value
+
+    def class_priors(self, df, class_col = "Class Index"):
+        max = df[class_col].max(axis=0)
+        class_priors = {}
+        for i in range(max):
+            class_index = i+1
+            class_priors[class_index] = df[class_col].value_counts().get(class_index, 0)/len(df)
+        return class_priors
     
     def build_word_count(self, df,  class_col = "Class Index", text_col = "Tokenized Description"):
-        max = df["Class Index"].max(axis=0)
+        max = df[class_col].max(axis=0)
         word_count_by_class = {}
         total_words_by_class = {}
         for i in range(max):
@@ -138,7 +199,7 @@ class NaiveBayes:
         return word_count, total_words
     
     def merge_documents(self, df,class_col = "Class Index", text_col = "Tokenized Description", class_index = '1'):
-        class_df = df[df["Class Index"] == class_index]
+        class_df = df[df[class_col] == class_index]
         merged_doc = class_df[text_col].apply(" ".join).str.cat(sep= " ")
         merged_words = merged_doc.split()
         return merged_words, len(merged_words)
