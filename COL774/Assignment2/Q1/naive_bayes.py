@@ -109,14 +109,14 @@ class NaiveBayes:
         word_count = self.build_word_count(df, class_col, text_col)[0]
         total_words = self.build_word_count(df, class_col, text_col)[1]
 
-        print(word_count.keys())
-        print(total_words)
-        # for i in range(max):
-        #     class_index = i + 1
-        #     class_df = df[df["Class Index"] == class_index]
-        #     temp_df = class_df[text_col].apply(" ".join).str.cat(sep= " ")
-            
-        #     print(temp_df)
+        for class_index in word_count:
+            words = word_count[class_index]
+            s = 0
+            for word in words:
+                s += words[word]
+            print(s, total_words[class_index])
+
+
     
     def build_word_count(self, df,  class_col = "Class Index", text_col = "Tokenized Description"):
         max = df["Class Index"].max(axis=0)
@@ -131,20 +131,20 @@ class NaiveBayes:
 
         
     def build_word_count_for_class(self, df, class_col = "Class Index", text_col = "Tokenized Description", class_index = '1'):
-        merged_doc = self.merge_documents(df, class_col, text_col, class_index)[0]
+        merged_words = self.merge_documents(df, class_col, text_col, class_index)[0]
         total_words = self.merge_documents(df, class_col, text_col, class_index)[1]
-        word_count = self.build_word_count_for_class_helper(merged_doc, text_col)
+        word_count = self.build_word_count_for_class_helper(merged_words, text_col)
         #print(word_count)
         return word_count, total_words
     
     def merge_documents(self, df,class_col = "Class Index", text_col = "Tokenized Description", class_index = '1'):
         class_df = df[df["Class Index"] == class_index]
         merged_doc = class_df[text_col].apply(" ".join).str.cat(sep= " ")
-        return merged_doc, len(merged_doc)
-
-    def build_word_count_for_class_helper(self, merged_doc, text_col = "Tokenized Description"):
-        word_dict = {}
         merged_words = merged_doc.split()
+        return merged_words, len(merged_words)
+
+    def build_word_count_for_class_helper(self, merged_words, text_col = "Tokenized Description"):
+        word_dict = {}
         for word in merged_words:
             print
             word = word.lower()
