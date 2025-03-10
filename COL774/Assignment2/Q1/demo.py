@@ -38,3 +38,5 @@ print(df_test.columns)
 # print(df_test.iloc[0])
 accuracy = model.accuracy(df_test)
 print(accuracy)
+
+model.wordcloud(df_train)

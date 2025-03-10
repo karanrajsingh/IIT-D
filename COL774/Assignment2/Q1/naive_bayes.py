@@ -62,32 +62,6 @@ class NaiveBayes:
         df[text_col1 + " " + text_col2] = df[text_col1] + df[text_col2]
         return df
     
-    def wordcloud(self, text_col):
-        global df
-        max = df["Class Index"].max(axis=0)
-        for i in range(max):
-            text = self.build_text(text_col, i+1)
-            class_wc = WordCloud(background_color='white', max_words=20000)
-            class_wc.generate(text)
-            plt.imshow(class_wc, interpolation='bilinear')
-            plt.axis('off')
-            plt.show()
-    
-    def build_text(self, text_col, class_index):
-        selected_df = self.rows_by_class(class_index)
-        selected_df[text_col] = selected_df[text_col].apply(" ".join)
-        text = ""
-        print(len(selected_df[text_col]))
-        for i in range(len(selected_df[text_col])):
-            text += " " + selected_df[text_col].iloc[i]
-        return text
-        
-    def rows_by_class(self, class_index):
-        global df
-        selected_df = df[df["Class Index"] == class_index]
-        return selected_df
-
-
     def fit(self, df, smoothening, class_col = "Class Index", text_col = "Tokenized Description"):
         """Learn the parameters of the model from the training data.
         Classes are 1-indexed
@@ -208,7 +182,7 @@ class NaiveBayes:
         class_df = df[df[class_col] == class_index]
         merged_doc = class_df[text_col].apply(" ".join).str.cat(sep= " ")
         merged_words = merged_doc.split()
-        return merged_words, len(merged_words)
+        return merged_words, len(merged_words), merged_doc
 
     def build_word_count_for_class_helper(self, merged_words, text_col = "Tokenized Description"):
         word_dict = {}
@@ -220,8 +194,6 @@ class NaiveBayes:
                 word_dict[word] = 1
             
         return word_dict
-        
-
     
     def predict(self, df, text_col = "Tokenized Description", predicted_col = "Predicted"):
         """
@@ -233,9 +205,6 @@ class NaiveBayes:
         """
         
         df[predicted_col] = df[text_col].apply(self.predict_text)
-        # for i in range(len(df)):
-        #      #print(df["Class Index"].iloc[i], df[predicted_col].iloc[i])
-        #      print(df.iloc[i])
         return df
 
     def predict_text(self, text):
@@ -250,8 +219,6 @@ class NaiveBayes:
             if class_probability[class_index] == max_prob:
                 predicted_class = class_index
         return predicted_class
-
-
 
     def get_probability(self, text, class_index = 1):
         global priors
@@ -275,3 +242,16 @@ class NaiveBayes:
             if df["Class Index"].iloc[i] == df["Predicted"].iloc[i]:
                 accuracy += 1
         return float(accuracy)/total
+    
+    def wordcloud(self, df, text_col = "Tokenized Description"):
+        max = df["Class Index"].max(axis=0)
+        for i in range(max):
+            class_index = i+1
+            merged_string = self.merge_documents(df, "Class Index", text_col, class_index)[2]
+            #merged_string = merged_string.lower()
+            class_wc = WordCloud(background_color='white', max_words=20000)
+            class_wc.generate(merged_string)
+            plt.imshow(class_wc, interpolation='bilinear')
+            plt.axis('off')
+            plt.show()
+    
