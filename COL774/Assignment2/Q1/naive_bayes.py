@@ -47,8 +47,8 @@ class NaiveBayes:
     
     # Returns a list of tokens for each cell in the dataframe column
     def tokenize_col(self, df, text_col):
-        df[text_col] = df[text_col].apply(self.tokenize)
-        df.rename(columns={text_col: "Tokenized" + " " + text_col}, inplace=True)
+        df["Tokenized" + " " + text_col] = df[text_col].apply(self.tokenize)
+        #df.rename(columns={text_col: "Tokenized" + " " + text_col}, inplace=True)
         return df
 
     def tokenize(self, text):
@@ -103,6 +103,8 @@ class NaiveBayes:
                 2.  
 
         """
+
+        
 
         pass
 
