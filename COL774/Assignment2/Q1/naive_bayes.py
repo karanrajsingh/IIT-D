@@ -48,12 +48,14 @@ class NaiveBayes:
     # Returns a list of tokens for each cell in the dataframe column
     def tokenize_col(self, df, text_col):
         df["Tokenized" + " " + text_col] = df[text_col].apply(self.tokenize)
-        #df.rename(columns={text_col: "Tokenized" + " " + text_col}, inplace=True)
         return df
 
     def tokenize(self, text):
         return text.split()
 
+    def merge_col(self, df, text_col1, text_col2):
+        df[text_col1 + " " + text_col2] = df[text_col1] + df[text_col2]
+        return df
     
     def wordcloud(self, text_col):
         global df
@@ -104,9 +106,55 @@ class NaiveBayes:
 
         """
 
-        
+        word_count = self.build_word_count(df, class_col, text_col)[0]
+        total_words = self.build_word_count(df, class_col, text_col)[1]
 
-        pass
+        print(word_count.keys())
+        print(total_words)
+        # for i in range(max):
+        #     class_index = i + 1
+        #     class_df = df[df["Class Index"] == class_index]
+        #     temp_df = class_df[text_col].apply(" ".join).str.cat(sep= " ")
+            
+        #     print(temp_df)
+    
+    def build_word_count(self, df,  class_col = "Class Index", text_col = "Tokenized Description"):
+        max = df["Class Index"].max(axis=0)
+        word_count_by_class = {}
+        total_words_by_class = {}
+        for i in range(max):
+            class_index = i+1
+            word_dict_by_class = self.build_word_count_for_class(df, class_col, text_col, class_index)[0]
+            total_words_by_class[class_index] = self.build_word_count_for_class(df, class_col, text_col, class_index)[1]
+            word_count_by_class[class_index] =  word_dict_by_class
+        return word_count_by_class, total_words_by_class
+
+        
+    def build_word_count_for_class(self, df, class_col = "Class Index", text_col = "Tokenized Description", class_index = '1'):
+        merged_doc = self.merge_documents(df, class_col, text_col, class_index)[0]
+        total_words = self.merge_documents(df, class_col, text_col, class_index)[1]
+        word_count = self.build_word_count_for_class_helper(merged_doc, text_col)
+        #print(word_count)
+        return word_count, total_words
+    
+    def merge_documents(self, df,class_col = "Class Index", text_col = "Tokenized Description", class_index = '1'):
+        class_df = df[df["Class Index"] == class_index]
+        merged_doc = class_df[text_col].apply(" ".join).str.cat(sep= " ")
+        return merged_doc, len(merged_doc)
+
+    def build_word_count_for_class_helper(self, merged_doc, text_col = "Tokenized Description"):
+        word_dict = {}
+        merged_words = merged_doc.split()
+        for word in merged_words:
+            print
+            word = word.lower()
+            if word in word_dict:
+                word_dict[word] += 1
+            else:
+                word_dict[word] = 1
+            
+        return word_dict
+        
 
     
     def predict(self, df, text_col = "Tokenized Description", predicted_col = "Predicted"):

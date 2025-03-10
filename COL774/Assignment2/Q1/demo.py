@@ -12,10 +12,18 @@ df_train = model.read(path_train)
 df_test = model.read(path_test)
 
 # Remove punctuations
+df_train = model.clean_punctuation(df_train, text_col="Title")
+df_test = model.clean_punctuation(df_test, text_col="Title")
 df_train = model.clean_punctuation(df_train, text_col="Description")
 df_test = model.clean_punctuation(df_test, text_col="Description")
+df_train = model.merge_col(df_train, text_col1="Title", text_col2="Description")
+df_test = model.merge_col(df_test, text_col1="Title", text_col2="Description")
 
 # Tokenize description for Part 1
+df_train = model.tokenize_col(df_train, text_col="Title")
 df_train = model.tokenize_col(df_train, text_col="Description")
+df_train = model.tokenize_col(df_train, text_col="Title Description")
 
-print(df_train.iloc[0])
+#print(df_train.iloc[0])
+
+model.fit(df_train, smoothening=1)
