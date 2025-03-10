@@ -45,6 +45,7 @@ class NaiveBayes:
         #return " ".join(list)
         return remove_punctuation
     
+    # Returns a list of tokens for each cell in the dataframe column
     def tokenize_col(self, df, text_col):
         df[text_col] = df[text_col].apply(self.tokenize)
         df.rename(columns={text_col: "Tokenized" + " " + text_col}, inplace=True)
