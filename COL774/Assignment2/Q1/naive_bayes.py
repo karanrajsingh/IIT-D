@@ -44,6 +44,14 @@ class NaiveBayes:
         #return list
         #return " ".join(list)
         return remove_punctuation
+    
+    def tokenize_col(self, df, text_col):
+        df[text_col] = df[text_col].apply(self.tokenize)
+        df.rename(columns={text_col: "Tokenized" + " " + text_col}, inplace=True)
+        return df
+
+    def tokenize(self, text):
+        return text.split()
 
     
     def wordcloud(self, text_col):

@@ -15,4 +15,6 @@ df_test = model.read(path_test)
 df_train = model.clean_punctuation(df_train, text_col="Description")
 df_test = model.clean_punctuation(df_test, text_col="Description")
 
-print(df_train, df_test)
+# Tokenize description for Part 1
+df_train = model.tokenize_col(df_train, text_col="Description")
+print(df_train)
