@@ -2,9 +2,11 @@ import numpy as np
 import pandas as pd
 import string
 from wordcloud import WordCloud
+import nltk
+#nltk.download('stopwords')
+from nltk.corpus import stopwords
 import matplotlib.pyplot as plt
 import math
-import sys
 
 class NaiveBayes:
 
@@ -125,7 +127,7 @@ class NaiveBayes:
             class_index_4: total words in all documents of class 4
 
         """
-        print("Estimating class wise conditional porbabilities of each word...")
+        print("Estimating class wise conditional probabilities of each word...")
         for class_index in word_count:
             word_dict = word_count[class_index]
             total_words_smoothed = self.smoothen(total_words[class_index], mod_V, smoothening)
@@ -254,4 +256,15 @@ class NaiveBayes:
             plt.imshow(class_wc, interpolation='bilinear')
             plt.axis('off')
             plt.show()
+
+
+    def remove_stopwords(self, df, text_col = "Description"):
+        df["Tokenized "+ text_col + " No Stopwords"] = df[text_col].apply(self.remove_stopwords_from_text)
+        return df
     
+    def remove_stopwords_from_text(self, text):
+        stop_words = set(stopwords.words('english'))
+        clean_punctuation = self.clean_punctuation_from_cell(text)
+        tokens = clean_punctuation.split()
+        clean_stopwords = [word for word in tokens if not word.lower() in stop_words]
+        return clean_stopwords
