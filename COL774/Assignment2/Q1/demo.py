@@ -30,7 +30,7 @@ df_test = model.tokenize_col(df_test, text_col="Description")
 df_train = model.tokenize_col(df_train, text_col="Title Description")
 df_test = model.tokenize_col(df_test, text_col="Title Description")
 
-print(df_test.iloc[0])
+# print(df_test.iloc[0])
 
 # Training simple data
 print("Training simple data...")
@@ -66,7 +66,38 @@ priors = params[0]
 estimates = params[1]
 df_train= model.predict(df_train, text_col="Tokenized Description No Stopwords")
 train_accuracy = model.accuracy(df_train, )
-print("Train accuracy after stopword removal...:  ", train_accuracy)
+print("Train accuracy after stopword removal  ", train_accuracy)
 df_test = model.predict(df_test, text_col="Tokenized Description No Stopwords")
 test_accuracy = model.accuracy(df_test)
-print("Test accuracy after stopword removal...:  ", test_accuracy)
+print("Test accuracy after stopword removal:  ", test_accuracy)
+
+# line = "work worked working"
+# stemmed_line = model.stemming_the_text(line)
+# print(stemmed_line)
+
+# Stemming
+print("Stemming...")
+df_train = model.stem(df_train, text_col="Tokenized Title No Stopwords")
+df_test = model.stem(df_test, text_col="Tokenized Title No Stopwords")
+df_train = model.stem(df_train, text_col="Tokenized Description No Stopwords")
+df_test = model.stem(df_test, text_col="Tokenized Description No Stopwords")
+df_train = model.stem(df_train, text_col="Tokenized Title Description No Stopwords")
+df_test = model.stem(df_test, text_col="Tokenized Title Description No Stopwords")
+
+# print(df_train.columns)
+# print(df_test.columns)
+
+
+# Training after stemming
+print("Training after stemming...")
+params = model.fit(df_train, smoothening=0.1, text_col="Tokenized Description No Stopwords Stemmed")
+priors = params[0]
+estimates = params[1]
+df_train= model.predict(df_train, text_col="Tokenized Description No Stopwords Stemmed")
+train_accuracy = model.accuracy(df_train)
+print("Train accuracy after stemming:  ", train_accuracy)
+df_test = model.predict(df_test, text_col="Tokenized Description No Stopwords Stemmed")
+test_accuracy = model.accuracy(df_test)
+print("Test accuracy after stemming:  ", test_accuracy)
+
+

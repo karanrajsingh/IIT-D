@@ -5,6 +5,7 @@ from wordcloud import WordCloud
 import nltk
 #nltk.download('stopwords')
 from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
 import matplotlib.pyplot as plt
 import math
 
@@ -268,3 +269,13 @@ class NaiveBayes:
         tokens = clean_punctuation.split()
         clean_stopwords = [word for word in tokens if not word.lower() in stop_words]
         return clean_stopwords
+    
+    def stem(self, df,  text_col = "Description"):
+        df[text_col + " Stemmed"] = df[text_col].apply(self.stemming_the_text)
+        return df        
+    
+    def stemming_the_text(self, text):
+        #tokens = text.split()
+        ps = PorterStemmer()
+        stemmed_text = [ps.stem(word.lower()) for word in text]
+        return stemmed_text
