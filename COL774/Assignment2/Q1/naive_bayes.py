@@ -6,8 +6,10 @@ import nltk
 #nltk.download('stopwords')
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
+from nltk.util import bigrams
 import matplotlib.pyplot as plt
 import math
+import itertools
 
 class NaiveBayes:
 
@@ -186,9 +188,11 @@ class NaiveBayes:
     
     def merge_documents(self, df,class_col = "Class Index", text_col = "Tokenized Description", class_index = '1'):
         class_df = df[df[class_col] == class_index]
-        merged_doc = class_df[text_col].apply(" ".join).str.cat(sep= " ")
-        merged_words = merged_doc.split()
-        return merged_words, len(merged_words), merged_doc
+        # merged_doc = class_df[text_col].apply(" ".join).str.cat(sep= " ")
+        # merged_words = merged_doc.split()
+        merged_words = class_df[text_col].apply(pd.Series).stack().tolist()
+        # return merged_words, len(merged_words), merged_doc
+        return merged_words, len(merged_words)
 
     def build_word_count_for_class_helper(self, merged_words, text_col = "Tokenized Description"):
         word_dict = {}
@@ -213,7 +217,6 @@ class NaiveBayes:
         return df
 
     def predict_text(self, text):
-        #print(text)
         global priors
         global word_estimates
         class_probability = {}
@@ -252,7 +255,6 @@ class NaiveBayes:
         for i in range(max):
             class_index = i+1
             merged_string = self.merge_documents(df, "Class Index", text_col, class_index)[2]
-            #merged_string = merged_string.lower()
             class_wc = WordCloud(background_color='white', max_words=20000)
             class_wc.generate(merged_string)
             plt.imshow(class_wc, interpolation='bilinear')
@@ -266,11 +268,7 @@ class NaiveBayes:
     
     def remove_stopwords_from_text(self, text):
         stop_words = set(stopwords.words('english'))
-        # clean_punctuation = self.clean_punctuation_from_cell(text)
-        # tokens = clean_punctuation.split()
-        tokens = text
-        # clean_stopwords = [word for word in tokens if not word.lower() in stop_words]
-        clean_stopwords = [word for word in tokens if not word in stop_words]
+        clean_stopwords = [word for word in text if not word in stop_words]
         return clean_stopwords
     
     def stem(self, df,  text_col):
@@ -278,8 +276,25 @@ class NaiveBayes:
         return df        
     
     def stemming_the_text(self, text):
-        #tokens = text.split()
         ps = PorterStemmer()
-        # stemmed_text = [ps.stem(word.lower()) for word in text]
         stemmed_text = [ps.stem(word) for word in text]
         return stemmed_text
+
+    def generate_bigrams(self, df, text_col = "Tokenized Description"):
+        df["Bigrams " + text_col] = df[text_col].apply(self.generate_bigrams_for_text)
+        return df
+    
+    def generate_bigrams_for_text(self, text):
+        # Assuming that text already tokenized
+        return list(bigrams(text))
+    
+    def combine_unigram_bigram(self, df, text_col1, text_col2):
+        #df[text_col1 + " " + text_col2] = df.apply("")
+        df[text_col1 + " " + text_col2] = df.apply(lambda row: self.combine_unigram_bigram_for_text(row[text_col1], row[text_col2]), axis = 1)
+        # for i in range(len(df)):
+        #     print(self.combine_unigram_bigram_for_text(df[text_col1].iloc[i], df[text_col2].iloc[i]))
+        return df
+
+    def combine_unigram_bigram_for_text(self, tokens1, tokens2):
+         merged_list = list(itertools.chain(tokens1, tokens2))
+         return merged_list
