@@ -1,12 +1,39 @@
 import cvxopt
 import numpy as np
+import cv2
 
 class SupportVectorMachine:
     '''
     Binary Classifier using Support Vector Machine
     '''
     def __init__(self):
-        pass
+        path = "../data/Q2/train/dew/2208.jpg"
+        image = cv2.imread(path)
+        # print(image.shape)
+        # cv2.imshow("image", image)
+        # cv2.waitKey(0)
+        b, g, r = cv2.split(image)
+        # cv2.imshow("blue", b)
+        # cv2.waitKey(0)
+        # cv2.imshow("green", g)
+        # cv2.waitKey(0)
+        # cv2.imshow("red", r)
+        # cv2.waitKey(0)
+        update = cv2.resize(image, (100, 100))
+        # print(update.shape)
+        # cv2.imshow("image", update)
+        # cv2.waitKey(0)
+        cropped = update[0:100, 0:100]
+        # print(cropped.shape)
+        # cv2.imshow("image", cropped)
+        # cv2.waitKey(0)
+        # print(r, g, b)
+
+        flatten = cropped.flatten()
+        # print(flatten)
+        # print(type(flatten))
+        normalized = np.multiply(flatten, 1/255)
+        print(normalized)
         
     def fit(self, X, y, kernel = 'linear', C = 1.0, gamma = 0.001):
         '''
