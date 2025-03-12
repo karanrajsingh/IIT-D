@@ -27,10 +27,13 @@ df_train = model.tokenize_col(df_train, text_col="Title")
 df_test = model.tokenize_col(df_test, text_col="Title")
 df_train = model.tokenize_col(df_train, text_col="Description")
 df_test = model.tokenize_col(df_test, text_col="Description")
+df_test = model.tokenize_col(df_test, text_col="Description")
 df_train = model.tokenize_col(df_train, text_col="Title Description")
 df_test = model.tokenize_col(df_test, text_col="Title Description")
 
 # print(df_test.iloc[0])
+
+print("Training on 'Description' column...")
 
 # Training simple data
 print("Training simple data...")
@@ -39,10 +42,10 @@ priors = params[0]
 estimates = params[1]
 df_train= model.predict(df_train)
 train_accuracy = model.accuracy(df_train)
-print("Train accuracy:  ", train_accuracy)
+print("Train accuracy for 'Tokenized Description':  ", train_accuracy)
 df_test = model.predict(df_test)
 test_accuracy = model.accuracy(df_test)
-print("Test accuracy:  ", test_accuracy)
+print("Test accuracy for 'Tokenized Description':  ", test_accuracy)
 
 # model.wordcloud(df_train)
 
@@ -52,12 +55,12 @@ print("Test accuracy:  ", test_accuracy)
 
 # Remove Stopwords
 print("Removing stopwords...")
-df_train = model.remove_stopwords(df_train, text_col="Title")
-df_test = model.remove_stopwords(df_test, text_col="Title")
-df_train = model.remove_stopwords(df_train, text_col="Description")
-df_test = model.remove_stopwords(df_test, text_col="Description")
-df_train = model.remove_stopwords(df_train, text_col="Title Description")
-df_test = model.remove_stopwords(df_test, text_col="Title Description")
+df_train = model.remove_stopwords(df_train, text_col="Tokenized Title")
+df_test = model.remove_stopwords(df_test, text_col="Tokenized Title")
+df_train = model.remove_stopwords(df_train, text_col="Tokenized Description")
+df_test = model.remove_stopwords(df_test, text_col="Tokenized Description")
+df_train = model.remove_stopwords(df_train, text_col="Tokenized Title Description")
+df_test = model.remove_stopwords(df_test, text_col="Tokenized Title Description")
 
 # Training after removing stopwords
 print("Training the model after stopword removal...")
@@ -66,10 +69,10 @@ priors = params[0]
 estimates = params[1]
 df_train= model.predict(df_train, text_col="Tokenized Description No Stopwords")
 train_accuracy = model.accuracy(df_train, )
-print("Train accuracy after stopword removal  ", train_accuracy)
+print("Train accuracy after stopword removal for 'Tokenized Description'", train_accuracy)
 df_test = model.predict(df_test, text_col="Tokenized Description No Stopwords")
 test_accuracy = model.accuracy(df_test)
-print("Test accuracy after stopword removal:  ", test_accuracy)
+print("Test accuracy after stopword removal for 'Tokenized Description':  ", test_accuracy)
 
 # line = "work worked working"
 # stemmed_line = model.stemming_the_text(line)
@@ -95,9 +98,9 @@ priors = params[0]
 estimates = params[1]
 df_train= model.predict(df_train, text_col="Tokenized Description No Stopwords Stemmed")
 train_accuracy = model.accuracy(df_train)
-print("Train accuracy after stemming:  ", train_accuracy)
+print("Train accuracy after stemming for 'Tokenized Description':  ", train_accuracy)
 df_test = model.predict(df_test, text_col="Tokenized Description No Stopwords Stemmed")
 test_accuracy = model.accuracy(df_test)
-print("Test accuracy after stemming:  ", test_accuracy)
+print("Test accuracy after stemming for 'Tokenized Description':  ", test_accuracy)
 
 

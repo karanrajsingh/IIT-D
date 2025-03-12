@@ -46,6 +46,7 @@ class NaiveBayes:
     # Cleans any text string from punctuations and returns the updated string
     def clean_punctuation_from_cell(self, text):
         punctuation = string.punctuation
+        # punctuation = string.punctuation + "1234567890"
         map = str.maketrans(punctuation, ' '*len(punctuation))
         remove_punctuation = text.translate(map)
         #list = remove_punctuation.split()
@@ -59,7 +60,9 @@ class NaiveBayes:
         return df
 
     def tokenize(self, text):
-        return text.split()
+        l = text.split()
+        word_list = [word.lower() for word in l]
+        return word_list
 
     def merge_col(self, df, text_col1, text_col2):
         df[text_col1 + " " + text_col2] = df[text_col1] + df[text_col2]
@@ -190,7 +193,6 @@ class NaiveBayes:
     def build_word_count_for_class_helper(self, merged_words, text_col = "Tokenized Description"):
         word_dict = {}
         for word in merged_words:
-            word = word.lower()
             if word in word_dict:
                 word_dict[word] += 1
             else:
@@ -230,7 +232,6 @@ class NaiveBayes:
         probability = 0
         mod_V = 1e+6
         for word in text:
-            word = word.lower()
             if word in word_dict:
                 probability += word_dict[word]
             else:
@@ -259,23 +260,26 @@ class NaiveBayes:
             plt.show()
 
 
-    def remove_stopwords(self, df, text_col = "Description"):
-        df["Tokenized "+ text_col + " No Stopwords"] = df[text_col].apply(self.remove_stopwords_from_text)
+    def remove_stopwords(self, df, text_col = "Tokenized Description"):
+        df[text_col + " No Stopwords"] = df[text_col].apply(self.remove_stopwords_from_text)
         return df
     
     def remove_stopwords_from_text(self, text):
         stop_words = set(stopwords.words('english'))
-        clean_punctuation = self.clean_punctuation_from_cell(text)
-        tokens = clean_punctuation.split()
-        clean_stopwords = [word for word in tokens if not word.lower() in stop_words]
+        # clean_punctuation = self.clean_punctuation_from_cell(text)
+        # tokens = clean_punctuation.split()
+        tokens = text
+        # clean_stopwords = [word for word in tokens if not word.lower() in stop_words]
+        clean_stopwords = [word for word in tokens if not word in stop_words]
         return clean_stopwords
     
-    def stem(self, df,  text_col = "Description"):
+    def stem(self, df,  text_col):
         df[text_col + " Stemmed"] = df[text_col].apply(self.stemming_the_text)
         return df        
     
     def stemming_the_text(self, text):
         #tokens = text.split()
         ps = PorterStemmer()
-        stemmed_text = [ps.stem(word.lower()) for word in text]
+        # stemmed_text = [ps.stem(word.lower()) for word in text]
+        stemmed_text = [ps.stem(word) for word in text]
         return stemmed_text
