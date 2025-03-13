@@ -1,40 +1,81 @@
 import cvxopt
 import numpy as np
 import cv2
+import os
 
 class SupportVectorMachine:
     '''
     Binary Classifier using Support Vector Machine
     '''
-    def __init__(self):
-        path = "../data/Q2/train/dew/2208.jpg"
-        image = cv2.imread(path)
-        # print(image.shape)
-        # cv2.imshow("image", image)
-        # cv2.waitKey(0)
-        b, g, r = cv2.split(image)
-        # cv2.imshow("blue", b)
-        # cv2.waitKey(0)
-        # cv2.imshow("green", g)
-        # cv2.waitKey(0)
-        # cv2.imshow("red", r)
-        # cv2.waitKey(0)
-        update = cv2.resize(image, (100, 100))
-        # print(update.shape)
-        # cv2.imshow("image", update)
-        # cv2.waitKey(0)
-        cropped = update[0:100, 0:100]
-        # print(cropped.shape)
-        # cv2.imshow("image", cropped)
-        # cv2.waitKey(0)
-        # print(r, g, b)
+    
+    train = ""
+    test = ""
+    
 
+    def __init__(self):
+        self.read_images("../data/Q2/")
+        self.print()
+
+    def print(self):
+        global train
+        global test
+        print("------Train global------")
+        for array in train:
+            print(array.shape)
+        print("------Test global------")
+        for array in test:    
+            print(array.shape)
+    
+    def read_images(self, path):
+        array_list_train = []
+        array_list_test = []
+        array_list_train_corrupted = []
+        array_list_test_corrupted = []
+        path_train = os.path.join(path, "train")
+        path_test = os.path.join(path, "test")
+        label_train = [label for label in os.listdir(path_train)]
+        label_test = [label for label in os.listdir(path_test)]
+        for label in label_train:
+            path_train_label = os.path.join(path_train, label)
+            X_train, X_train_corrupted = self.read_images_class(path_train_label)
+            array_list_train.append(X_train)
+            array_list_train_corrupted.append(X_train_corrupted)
+        for label in label_test:
+            path_test_label = os.path.join(path_test, label)
+            X_test, X_test_corrupted = self.read_images_class(path_test_label)
+            array_list_test.append(X_test)
+            array_list_test_corrupted.append(X_test_corrupted)
+        print(array_list_train_corrupted)
+        print(array_list_test_corrupted)
+        global train 
+        train = array_list_train
+        global test 
+        test = array_list_test
+        return array_list_train, array_list_test
+
+    def read_images_class(self, path):
+        array_list = []
+        array_list_corrupted = []
+        images = [image for image in os.listdir(path)]
+        for image in images:
+            image_path = os.path.join(path, image)
+            image_read = cv2.imread(image_path)
+            if image_read is not None:
+                x = self.pre_process_image(image_read)
+                array_list.append(x)
+            else:
+                array_list_corrupted.append(image_path)
+        X = np.array(array_list).T
+        return X, array_list_corrupted
+
+
+    def pre_process_image(self, image):
+        update = cv2.resize(image, (100, 100))
+        cropped = update[0:100, 0:100]
         flatten = cropped.flatten()
-        # print(flatten)
-        # print(type(flatten))
         normalized = np.multiply(flatten, 1/255)
-        print(normalized)
-        
+        return normalized
+
     def fit(self, X, y, kernel = 'linear', C = 1.0, gamma = 0.001):
         '''
         Learn the parameters from the given training data
@@ -56,7 +97,7 @@ class SupportVectorMachine:
             gamma: float
                 The gamma parameter for gaussian kernel, ignored for linear kernel
         '''
-        pass
+        # https://cvxopt.org/userguide/coneprog.html#quadratic-programming
 
     def predict(self, X):
         '''
