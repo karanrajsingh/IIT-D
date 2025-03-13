@@ -14,7 +14,9 @@ class SupportVectorMachine:
 
     def __init__(self):
         self.read_images("../data/Q2/")
-        self.print()
+        # self.print()
+        self.build_matrix_P()
+        self.build_matrix_G_h()
 
     def print(self):
         global train
@@ -45,8 +47,8 @@ class SupportVectorMachine:
             X_test, X_test_corrupted = self.read_images_class(path_test_label)
             array_list_test.append(X_test)
             array_list_test_corrupted.append(X_test_corrupted)
-        print(array_list_train_corrupted)
-        print(array_list_test_corrupted)
+        # print(array_list_train_corrupted)
+        # print(array_list_test_corrupted)
         global train 
         train = array_list_train
         global test 
@@ -68,13 +70,51 @@ class SupportVectorMachine:
         X = np.array(array_list).T
         return X, array_list_corrupted
 
-
     def pre_process_image(self, image):
         update = cv2.resize(image, (100, 100))
         cropped = update[0:100, 0:100]
         flatten = cropped.flatten()
         normalized = np.multiply(flatten, 1/255)
         return normalized
+
+    def build_matrix_P(self, class_index_0 = 0, class_index_1 = 1):
+        global train
+        X_train_0 = train[class_index_0]
+        X_train_1 = train[class_index_1]
+        yX_train_0 = -1*X_train_0
+        yX_train_1 = 1*X_train_1
+        # print(yX_train_0.shape)
+        # print(yX_train_1.shape)
+        p = np.hstack((yX_train_0, yX_train_1))
+        # print(p.shape)
+        P = np.matmul(p.T, p)
+        # print(P.shape)
+        P = cvxopt.matrix(P)
+        return P
+
+    def build_matrix_G_h(self, class_index_0 = 0, class_index_1 = 1, C = 1.0):
+        global train
+        X_train_0 = train[class_index_0]
+        X_train_1 = train[class_index_1]
+        m = X_train_0.shape[1] + X_train_1.shape[1]
+        # print(m)
+        g1 = -1*np.diag(np.ones(m))
+        # print(g1.shape)
+        g2 = np.identity(m)
+        # print(g2.shape)
+        G = np.vstack((g1, g2))
+        # print(G.shape)
+        G = cvxopt.matrix(G)
+        h1 = np.zeros(m)
+        # print(h1.shape)
+        h2 = C*np.ones(m)
+        # print(h2.shape)
+        h = np.hstack((h1, h2))
+        # print(h.shape)
+        h = cvxopt.matrix(h)
+        # print(G)
+        # print(h)
+        return G, h
 
     def fit(self, X, y, kernel = 'linear', C = 1.0, gamma = 0.001):
         '''
