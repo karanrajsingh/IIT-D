@@ -1,0 +1,165 @@
+Training LIBSVM for classes: 0 and 1
+Misses:  28
+Accuracy:  0.909967845659164 0.909967845659164
+Training LIBSVM for classes: 0 and 2
+Misses:  58
+Accuracy:  0.7531914893617021 0.7531914893617021
+Training LIBSVM for classes: 0 and 3
+Misses:  91
+Accuracy:  0.6604477611940298 0.6604477611940298
+Training LIBSVM for classes: 0 and 4
+Misses:  41
+Accuracy:  0.8416988416988417 0.8416988416988417
+Training LIBSVM for classes: 0 and 5
+Misses:  23
+Accuracy:  0.8935185185185185 0.8935185185185185
+Training LIBSVM for classes: 0 and 6
+Misses:  62
+Accuracy:  0.7479674796747967 0.7479674796747967
+Training LIBSVM for classes: 0 and 7
+Misses:  22
+Accuracy:  0.8823529411764706 0.8823529411764706
+Training LIBSVM for classes: 0 and 8
+Misses:  40
+Accuracy:  0.8924731182795699 0.8924731182795699
+Training LIBSVM for classes: 0 and 9
+Misses:  27
+Accuracy:  0.9032258064516129 0.9032258064516129
+Training LIBSVM for classes: 0 and 10
+Misses:  60
+Accuracy:  0.7727272727272727 0.7727272727272727
+Training LIBSVM for classes: 1 and 2
+Misses:  65
+Accuracy:  0.7556390977443609 0.7556390977443609
+Training LIBSVM for classes: 1 and 3
+Misses:  45
+Accuracy:  0.8494983277591973 0.8494983277591973
+Training LIBSVM for classes: 1 and 4
+Misses:  42
+Accuracy:  0.8551724137931035 0.8551724137931035
+Training LIBSVM for classes: 1 and 5
+Misses:  19
+Accuracy:  0.9230769230769231 0.9230769230769231
+Training LIBSVM for classes: 1 and 6
+Misses:  55
+Accuracy:  0.8014440433212996 0.8014440433212996
+Training LIBSVM for classes: 1 and 7
+Misses:  20
+Accuracy:  0.908256880733945 0.908256880733945
+Training LIBSVM for classes: 1 and 8
+Misses:  67
+Accuracy:  0.8337468982630273 0.8337468982630273
+Training LIBSVM for classes: 1 and 9
+Misses:  41
+Accuracy:  0.867741935483871 0.867741935483871
+Training LIBSVM for classes: 1 and 10
+Misses:  46
+Accuracy:  0.8440677966101695 0.8440677966101695
+Training LIBSVM for classes: 2 and 3
+Misses:  73
+Accuracy:  0.672645739910314 0.672645739910314
+Training LIBSVM for classes: 2 and 4
+Misses:  55
+Accuracy:  0.7429906542056075 0.7429906542056075
+Training LIBSVM for classes: 2 and 5
+Misses:  21
+Accuracy:  0.8771929824561403 0.8771929824561403
+Training LIBSVM for classes: 2 and 6
+Misses:  69
+Accuracy:  0.6567164179104478 0.6567164179104478
+Training LIBSVM for classes: 2 and 7
+Misses:  45
+Accuracy:  0.6830985915492958 0.6830985915492958
+Training LIBSVM for classes: 2 and 8
+Misses:  57
+Accuracy:  0.8256880733944955 0.8256880733944955
+Training LIBSVM for classes: 2 and 9
+Misses:  69
+Accuracy:  0.7051282051282052 0.7051282051282052
+Training LIBSVM for classes: 2 and 10
+Misses:  58
+Accuracy:  0.7351598173515982 0.7351598173515982
+Training LIBSVM for classes: 3 and 4
+Misses:  44
+Accuracy:  0.8218623481781376 0.8218623481781376
+Training LIBSVM for classes: 3 and 5
+Misses:  13
+Accuracy:  0.9362745098039216 0.9362745098039216
+Training LIBSVM for classes: 3 and 6
+Misses:  63
+Accuracy:  0.7307692307692307 0.7307692307692307
+Training LIBSVM for classes: 3 and 7
+Misses:  28
+Accuracy:  0.84 0.84
+Training LIBSVM for classes: 3 and 8
+Misses:  50
+Accuracy:  0.8611111111111112 0.8611111111111112
+Training LIBSVM for classes: 3 and 9
+Misses:  38
+Accuracy:  0.8576779026217228 0.8576779026217228
+Training LIBSVM for classes: 3 and 10
+Misses:  63
+Accuracy:  0.75 0.75
+Training LIBSVM for classes: 4 and 5
+Misses:  11
+Accuracy:  0.9435897435897436 0.9435897435897436
+Training LIBSVM for classes: 4 and 6
+Misses:  56
+Accuracy:  0.7511111111111111 0.7511111111111111
+Training LIBSVM for classes: 4 and 7
+Misses:  24
+Accuracy:  0.8554216867469879 0.8554216867469879
+Training LIBSVM for classes: 4 and 8
+Misses:  28
+Accuracy:  0.9202279202279202 0.9202279202279202
+Training LIBSVM for classes: 4 and 9
+Misses:  37
+Accuracy:  0.8565891472868217 0.8565891472868217
+Training LIBSVM for classes: 4 and 10
+Misses:  39
+Accuracy:  0.8395061728395061 0.8395061728395061
+Training LIBSVM for classes: 5 and 6
+Misses:  10
+Accuracy:  0.945054945054945 0.945054945054945
+Training LIBSVM for classes: 5 and 7
+Misses:  16
+Accuracy:  0.8699186991869918 0.8699186991869918
+Training LIBSVM for classes: 5 and 8
+Misses:  15
+Accuracy:  0.9512987012987013 0.9512987012987013
+Training LIBSVM for classes: 5 and 9
+Misses:  9
+Accuracy:  0.958139534883721 0.958139534883721
+Training LIBSVM for classes: 5 and 10
+Misses:  13
+Accuracy:  0.935 0.935
+Training LIBSVM for classes: 6 and 7
+Misses:  22
+Accuracy:  0.8562091503267973 0.8562091503267973
+Training LIBSVM for classes: 6 and 8
+Misses:  36
+Accuracy:  0.893491124260355 0.893491124260355
+Training LIBSVM for classes: 6 and 9
+Misses:  36
+Accuracy:  0.8530612244897959 0.8530612244897959
+Training LIBSVM for classes: 6 and 10
+Misses:  60
+Accuracy:  0.7391304347826086 0.7391304347826086
+Training LIBSVM for classes: 7 and 8
+Misses:  36
+Accuracy:  0.8709677419354839 0.8709677419354839
+Training LIBSVM for classes: 7 and 9
+Misses:  14
+Accuracy:  0.9247311827956989 0.9247311827956989
+Training LIBSVM for classes: 7 and 10
+Misses:  19
+Accuracy:  0.8888888888888888 0.8888888888888888
+Training LIBSVM for classes: 8 and 9
+Misses:  23
+Accuracy:  0.9380053908355795 0.9380053908355795
+Training LIBSVM for classes: 8 and 10
+Misses:  80
+Accuracy:  0.7752808988764045 0.7752808988764045
+Training LIBSVM for classes: 9 and 10
+Misses:  18
+Accuracy:  0.9315589353612167 0.9315589353612167

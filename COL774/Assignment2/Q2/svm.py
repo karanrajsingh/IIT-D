@@ -3,6 +3,9 @@ import numpy as np
 import cv2
 import os
 import math
+from sklearn import svm
+from sklearn.metrics import accuracy_score
+from sklearn.linear_model import SGDClassifier
 
 class SupportVectorMachine:
     '''
@@ -17,13 +20,39 @@ class SupportVectorMachine:
 
     def __init__(self):
         self.read_images("../data/Q2/")
-        self.analyse()
+        self.analyse_svc()
+        # self.analyse_sgd()
         # X_train, y_train, X_test, y_test = self.build_input()
+        # self.fit_sgd(X_train, y_train, X_test, y_test)
         # w, b = self.fit(X_train, y_train)
         # prediction = self.predict(X_test)
         # accuracy = self.accuracy(y_test, prediction)
         # self.sort_and_plot(X_train)
         # self.fit(X_train, y_train, kernel='gaussian')
+
+    def analyse_sgd(self):
+        global train, test
+        # print(len(train))
+        # print(len(test))
+        for i in range(len(train)):
+            for j in range(i+1, len(train)):
+                print("Training LIBSVM for classes: {0} and {1}".format(i, j))
+                X_train, y_train, X_test, y_test = self.build_input(class_index_0 = i, class_index_1= j)
+                self.fit_sgd(X_train, y_train, X_test, y_test)
+                # self.sort_and_plot(X_train)
+
+
+    def analyse_svc(self):
+        global train, test
+        # print(len(train))
+        # print(len(test))
+        for i in range(len(train)):
+            for j in range(i+1, len(train)):
+                print("Training LIBSVM for classes: {0} and {1}".format(i, j))
+                X_train, y_train, X_test, y_test = self.build_input(class_index_0 = i, class_index_1= j)
+                self.fit_svc(X_train, y_train, X_test, y_test, kernel='linear')
+                # self.sort_and_plot(X_train)
+
 
 
     def analyse(self):
@@ -186,13 +215,17 @@ class SupportVectorMachine:
         '''
         # https://cvxopt.org/userguide/coneprog.html#quadratic-programming
 
+        print(X)
+
+        tol = 1e-5
+
         P, G, h, q, A, b_ = self.build_matrix_linear_kernel(X, y, C)
         if kernel == 'gaussian':
             print("Inside")
             P = self.build_gaussian_P(P, X, gamma)
         solution = cvxopt.solvers.qp(P, q, G, h, A, b_)
         alphas = np.array(solution['x']).reshape((len(solution['x']), ))
-        support_vectors = [alpha for alpha in alphas  if alpha > 1e-5]
+        support_vectors = [alpha for alpha in alphas  if alpha > tol]
         print("No. of support vectors: ",len(support_vectors))
         print("Percentage of support vectors of training examples: {} %".format(float(100*len(support_vectors))/X.shape[1]))
 
@@ -211,16 +244,52 @@ class SupportVectorMachine:
         b = b/num_supp_vec       
         '''       
         b = 0
+        max = -float("inf")
+        min = float("inf")
         for i in range(len(alphas)):
-            if alphas[i] > 1e-5:
+            if alphas[i] > tol:
+                val = np.matmul(w.T, X[:,i])
                 if y[i] > 0:
                     b += -1 - np.matmul(w.T, X[:,i])
+                    # if(val < min):
+                    #     min = val
+                    #     min_idx = i                    
                 else:
-                    b += 1 - np.matmul(w.T, X[:,i])                    
-            b = float(b)/len(support_vectors)
+                    b += 1 - np.matmul(w.T, X[:,i])   
+                    # if(val > max):
+                    #     max = val
+                    #     max_idx = i                 
+        b = float(b)/len(support_vectors)
+        # print(max, min, max_idx, min_idx)
+        # b = -1*float(max + min)/2
         print("Weight vector: ", w)
         print("Intercept: ", b)
+
         return w, b
+
+
+    def fit_svc(self, X, y, X_, y_, kernel = 'linear', C = 1.0, gamma = 0.001):
+        model = svm.SVC(C=C, kernel=kernel, gamma=gamma)
+        param = model.fit(X.T,y)
+        print(model.n_support_)
+        print("Total support vectors:", sum(model.n_support_))
+        y_pred = model.predict(X_.T)
+        print("Weights: ", model.coef_)
+        print("Intercept: ", model.intercept_)
+        accuracy = self.accuracy(y_, y_pred)
+        svc_accuracy = accuracy_score(y_, y_pred)
+        print("Accuracy: ", accuracy, svc_accuracy)
+        self.sort_and_plot(X, model.coef_)
+
+    def fit_sgd(self, X, y, X_, y_):
+        model = SGDClassifier()
+        param = model.fit(X.T,y)
+        y_pred = model.predict(X_.T)
+        accuracy = self.accuracy(y_, y_pred)
+        sgd_accuracy = model.score(X_.T, y_)
+        print("Accuracy: ", accuracy, sgd_accuracy)
+        # self.sort_and_plot(X, model.coef_)
+
 
     def predict(self, X):
         '''
@@ -243,19 +312,17 @@ class SupportVectorMachine:
     
     def accuracy(self, y, prediction):
         miss = 0
-        print(y.shape)
-        print(prediction.shape)
         for i in range(len(y)):
             if y[i] != prediction[i]:
                 miss += 1
         accuracy = float(len(y) - miss)/len(y)
         print("Misses: ", miss)
-        print("Accuracy: ", accuracy)
+        # print("Accuracy: ", accuracy)
         return accuracy
     
-    def sort_and_plot(self, X):
-        global w
-        index = np.argsort(w)[-5:]
+    def sort_and_plot(self, X, w):
+        index = np.argsort(w.reshape((30000,)))[-5:][::-1]
+        print(index)
         for i in range(len(index)):
             X_ = X[:,i]
             # print(X_.shape)         

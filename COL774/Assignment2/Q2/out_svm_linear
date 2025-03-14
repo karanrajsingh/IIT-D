@@ -1,0 +1,433 @@
+Training LIBSVM for classes: 0 and 1
+[242 118]
+Total support vectors: 360
+Weights:  [[-0.00381809 -0.01632375 -0.01150667 ... -0.01421504 -0.02685273
+  -0.00738517]]
+Intercept:  [0.04839695]
+Misses:  34
+Accuracy:  0.8906752411575563 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 0 and 2
+[252 332]
+Total support vectors: 584
+Weights:  [[-5.47501688e-04 -9.54622070e-03 -5.89588478e-03 ... -7.97961441e-03
+  -1.49151720e-02 -1.95242948e-05]]
+Intercept:  [-0.42215585]
+Misses:  59
+Accuracy:  0.7489361702127659 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 0 and 3
+[231 364]
+Total support vectors: 595
+Weights:  [[-0.00117292 -0.00677849 -0.0033133  ... -0.01385115 -0.01441607
+  -0.00401259]]
+Intercept:  [-0.78160726]
+Misses:  45
+Accuracy:  0.832089552238806 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 0 and 4
+[225 294]
+Total support vectors: 519
+Weights:  [[-0.00606499 -0.01079805 -0.00730602 ...  0.00107079 -0.00510133
+   0.00427422]]
+Intercept:  [-1.33869274]
+Misses:  44
+Accuracy:  0.8301158301158301 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 0 and 5
+[174  90]
+Total support vectors: 264
+Weights:  [[ 0.0052021  -0.00077086  0.00152517 ... -0.00566757 -0.00678412
+   0.00664005]]
+Intercept:  [0.12095529]
+Misses:  24
+Accuracy:  0.8888888888888888 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 0 and 6
+[237 305]
+Total support vectors: 542
+Weights:  [[-0.00111455 -0.00826291 -0.00582323 ... -0.01793702 -0.02394314
+  -0.00877822]]
+Intercept:  [-0.38417769]
+Misses:  40
+Accuracy:  0.8373983739837398 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 0 and 7
+[206  66]
+Total support vectors: 272
+Weights:  [[-0.00138149 -0.00365855 -0.00419386 ... -0.00399515 -0.00170822
+   0.00893242]]
+Intercept:  [-1.28794808]
+Misses:  23
+Accuracy:  0.8770053475935828 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 0 and 8
+[190 330]
+Total support vectors: 520
+Weights:  [[-0.00253862 -0.0132738  -0.01086148 ...  0.00458121 -0.00434208
+   0.00300582]]
+Intercept:  [-1.75615521]
+Misses:  34
+Accuracy:  0.9086021505376344 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 0 and 9
+[253 116]
+Total support vectors: 369
+Weights:  [[-0.00368036 -0.01454442 -0.01394915 ... -0.01077827 -0.01991494
+  -0.00600346]]
+Intercept:  [-0.29796601]
+Misses:  29
+Accuracy:  0.8960573476702509 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 0 and 10
+[181 265]
+Total support vectors: 446
+Weights:  [[ 0.00461547 -0.00293568  0.0005973  ...  0.00012522 -0.0026467
+   0.00668366]]
+Intercept:  [-1.81492861]
+Misses:  23
+Accuracy:  0.9128787878787878 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 1 and 2
+[165 352]
+Total support vectors: 517
+Weights:  [[ 0.0018294   0.00369091 -0.00013234 ...  0.00144615  0.00618433
+   0.00497309]]
+Intercept:  [-0.20304058]
+Misses:  74
+Accuracy:  0.7218045112781954 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 1 and 3
+[187 413]
+Total support vectors: 600
+Weights:  [[-0.00189516 -0.00510744 -0.00135369 ... -0.00856514  0.00109999
+  -0.00439006]]
+Intercept:  [-0.41664386]
+Misses:  63
+Accuracy:  0.7892976588628763 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 1 and 4
+[118 314]
+Total support vectors: 432
+Weights:  [[-0.00387834  0.00435485  0.00245765 ...  0.00996355  0.01302701
+   0.00693176]]
+Intercept:  [-0.68167464]
+Misses:  45
+Accuracy:  0.8448275862068966 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 1 and 5
+[90 82]
+Total support vectors: 172
+Weights:  [[-1.69915993e-03 -1.00190507e-05  5.34768520e-03 ...  1.74207311e-02
+   1.95457320e-02  1.65261315e-02]]
+Intercept:  [0.7928681]
+Misses:  16
+Accuracy:  0.9352226720647774 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 1 and 6
+[143 344]
+Total support vectors: 487
+Weights:  [[ 0.01068986  0.01352778  0.00497027 ... -0.00628677 -0.00082246
+  -0.01307815]]
+Intercept:  [-0.00793962]
+Misses:  62
+Accuracy:  0.776173285198556 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 1 and 7
+[145  95]
+Total support vectors: 240
+Weights:  [[-0.00559713 -0.00308909  0.00027458 ... -0.02601021  0.02612604
+   0.0234011 ]]
+Intercept:  [-0.79285381]
+Misses:  22
+Accuracy:  0.8990825688073395 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 1 and 8
+[160 534]
+Total support vectors: 694
+Weights:  [[-0.02999095 -0.03258757 -0.02561412 ...  0.00247631  0.00255404
+   0.00229091]]
+Intercept:  [-1.994013]
+Misses:  78
+Accuracy:  0.8064516129032258 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 1 and 9
+[261 192]
+Total support vectors: 453
+Weights:  [[-0.01915313 -0.01877126 -0.02554213 ... -0.02224288  0.05698057
+   0.0146693 ]]
+Intercept:  [-0.32564578]
+Misses:  47
+Accuracy:  0.8483870967741935 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 1 and 10
+[141 379]
+Total support vectors: 520
+Weights:  [[0.01055882 0.01052039 0.01559194 ... 0.01123509 0.01102035 0.00237384]]
+Intercept:  [-1.48358118]
+Misses:  64
+Accuracy:  0.7830508474576271 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 2 and 3
+[331 392]
+Total support vectors: 723
+Weights:  [[ 0.00636942  0.00229717  0.00539091 ... -0.0023939   0.00011293
+  -0.00219599]]
+Intercept:  [-0.54244903]
+Misses:  68
+Accuracy:  0.695067264573991 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 2 and 4
+[291 265]
+Total support vectors: 556
+Weights:  [[-0.00068215  0.00189342  0.00273262 ...  0.00632484  0.00905138
+   0.004448  ]]
+Intercept:  [-1.80212341]
+Misses:  50
+Accuracy:  0.7663551401869159 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 2 and 5
+[240  68]
+Total support vectors: 308
+Weights:  [[ 0.00158781 -0.00330921 -0.00180747 ...  0.00706193  0.00602944
+   0.00521907]]
+Intercept:  [0.39471793]
+Misses:  36
+Accuracy:  0.7894736842105263 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 2 and 6
+[341 299]
+Total support vectors: 640
+Weights:  [[ 0.00466888  0.0041529   0.00140017 ... -0.00443942 -0.0036156
+  -0.00568252]]
+Intercept:  [-0.09757935]
+Misses:  72
+Accuracy:  0.6417910447761194 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 2 and 7
+[282  66]
+Total support vectors: 348
+Weights:  [[-1.59109647e-05 -2.16692621e-03 -2.26857225e-03 ...  2.28842069e-03
+   8.31098768e-03  6.30215486e-03]]
+Intercept:  [-1.82361704]
+Misses:  36
+Accuracy:  0.7464788732394366 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 2 and 8
+[257 288]
+Total support vectors: 545
+Weights:  [[-0.00446119 -0.00983756 -0.00819188 ...  0.01075467  0.00665288
+   0.00307238]]
+Intercept:  [-2.38954775]
+Misses:  44
+Accuracy:  0.8654434250764526 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 2 and 9
+[315 124]
+Total support vectors: 439
+Weights:  [[ 0.00249145 -0.00134745 -0.00020121 ... -0.00285148  0.00488499
+  -0.00191828]]
+Intercept:  [-0.44727119]
+Misses:  59
+Accuracy:  0.7478632478632479 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 2 and 10
+[267 245]
+Total support vectors: 512
+Weights:  [[0.0102392  0.01021275 0.01142583 ... 0.00737252 0.0082221  0.00689847]]
+Intercept:  [-2.74420438]
+Misses:  42
+Accuracy:  0.8082191780821918 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 3 and 4
+[290 264]
+Total support vectors: 554
+Weights:  [[-0.00294863  0.00452746  0.0025101  ...  0.00898614  0.00601783
+   0.0061332 ]]
+Intercept:  [-0.79876198]
+Misses:  41
+Accuracy:  0.8340080971659919 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 3 and 5
+[230  59]
+Total support vectors: 289
+Weights:  [[-0.00721267 -0.00816935 -0.00790525 ...  0.00693878  0.00162534
+   0.00048228]]
+Intercept:  [0.86692697]
+Misses:  21
+Accuracy:  0.8970588235294118 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 3 and 6
+[381 306]
+Total support vectors: 687
+Weights:  [[-0.00449561  0.00139556 -0.00339443 ...  0.00453225  0.00155099
+   0.00080014]]
+Intercept:  [0.73206552]
+Misses:  64
+Accuracy:  0.7264957264957265 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 3 and 7
+[335  87]
+Total support vectors: 422
+Weights:  [[-0.00276172 -0.0019674  -0.00509693 ... -0.0039249   0.01064923
+   0.00828387]]
+Intercept:  [-1.0954346]
+Misses:  42
+Accuracy:  0.76 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 3 and 8
+[327 366]
+Total support vectors: 693
+Weights:  [[-0.00634906 -0.01304523 -0.00896975 ...  0.00801282  0.00280309
+  -0.00046989]]
+Intercept:  [-1.69145623]
+Misses:  62
+Accuracy:  0.8277777777777777 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 3 and 9
+[372 118]
+Total support vectors: 490
+Weights:  [[0.00185446 0.00814841 0.00395228 ... 0.00164407 0.0063545  0.00427914]]
+Intercept:  [-0.00741644]
+Misses:  49
+Accuracy:  0.8164794007490637 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 3 and 10
+[333 316]
+Total support vectors: 649
+Weights:  [[-0.00392049 -0.00087637 -0.00118022 ...  0.01031727  0.00704684
+   0.00804389]]
+Intercept:  [-1.5096151]
+Misses:  43
+Accuracy:  0.8293650793650794 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 4 and 5
+[203  59]
+Total support vectors: 262
+Weights:  [[ 0.00274309 -0.00408876 -0.00298592 ... -0.00046543 -0.00229488
+   0.0014294 ]]
+Intercept:  [1.57919253]
+Misses:  20
+Accuracy:  0.8974358974358975 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 4 and 6
+[310 282]
+Total support vectors: 592
+Weights:  [[ 0.00100498 -0.00666058 -0.00932816 ... -0.00543387 -0.0084386
+  -0.00888803]]
+Intercept:  [1.56802325]
+Misses:  63
+Accuracy:  0.72 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 4 and 7
+[253  57]
+Total support vectors: 310
+Weights:  [[ 0.00116552 -0.00355025 -0.00546355 ... -0.01134101  0.00497033
+   0.00834983]]
+Intercept:  [-0.24841913]
+Misses:  34
+Accuracy:  0.7951807228915663 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 4 and 8
+[193 250]
+Total support vectors: 443
+Weights:  [[-0.00448769 -0.00854353 -0.00592162 ...  0.01104553  0.01028596
+   0.01183086]]
+Intercept:  [-1.03978158]
+Misses:  27
+Accuracy:  0.9230769230769231 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 4 and 9
+[282  93]
+Total support vectors: 375
+Weights:  [[ 0.01142499  0.00831332  0.00478123 ... -0.01493175 -0.00743542
+  -0.00504083]]
+Intercept:  [-0.17360298]
+Misses:  38
+Accuracy:  0.8527131782945736 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 4 and 10
+[224 234]
+Total support vectors: 458
+Weights:  [[0.00910929 0.00527833 0.00605633 ... 0.00251755 0.0015822  0.0053112 ]]
+Intercept:  [-0.90411229]
+Misses:  41
+Accuracy:  0.831275720164609 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 5 and 6
+[ 79 194]
+Total support vectors: 273
+Weights:  [[-0.00369624 -0.00106926 -0.00622303 ... -0.01330402 -0.00833677
+  -0.00650444]]
+Intercept:  [-0.41255799]
+Misses:  23
+Accuracy:  0.8736263736263736 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 5 and 7
+[104  86]
+Total support vectors: 190
+Weights:  [[-0.0125755  -0.00235979 -0.00237848 ... -0.02574993 -0.02176657
+  -0.03000699]]
+Intercept:  [-1.10563494]
+Misses:  18
+Accuracy:  0.8536585365853658 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 5 and 8
+[ 63 290]
+Total support vectors: 353
+Weights:  [[-0.01154973 -0.01392609 -0.01369337 ...  0.00089584 -0.00412452
+  -0.01043264]]
+Intercept:  [-1.87377264]
+Misses:  28
+Accuracy:  0.9090909090909091 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 5 and 9
+[55 45]
+Total support vectors: 100
+Weights:  [[ 0.00544332  0.00353606  0.00034733 ... -0.0074902  -0.006038
+  -0.00246214]]
+Intercept:  [-0.86604538]
+Misses:  4
+Accuracy:  0.9813953488372092 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 5 and 10
+[ 56 197]
+Total support vectors: 253
+Weights:  [[0.00311954 0.0080095  0.00483093 ... 0.00580298 0.00602633 0.00446608]]
+Intercept:  [-1.52963076]
+Misses:  15
+Accuracy:  0.925 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 6 and 7
+[244  77]
+Total support vectors: 321
+Weights:  [[ 0.004297    0.0001931   0.00175563 ... -0.00514134  0.00858623
+   0.00743083]]
+Intercept:  [-1.90462461]
+Misses:  27
+Accuracy:  0.8235294117647058 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 6 and 8
+[221 261]
+Total support vectors: 482
+Weights:  [[ 0.00636036 -0.00323716 -0.00033067 ...  0.00469274  0.00199977
+  -0.00113843]]
+Intercept:  [-2.8571139]
+Misses:  34
+Accuracy:  0.8994082840236687 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 6 and 9
+[287 101]
+Total support vectors: 388
+Weights:  [[-0.00662137 -0.0053899   0.00109708 ...  0.00325108  0.01433834
+   0.00516931]]
+Intercept:  [-0.87416884]
+Misses:  60
+Accuracy:  0.7551020408163265 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 6 and 10
+[282 329]
+Total support vectors: 611
+Weights:  [[0.01139131 0.00520818 0.00767882 ... 0.00994758 0.00751538 0.00694764]]
+Intercept:  [-2.61446073]
+Misses:  57
+Accuracy:  0.7521739130434782 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 7 and 8
+[ 97 547]
+Total support vectors: 644
+Weights:  [[-0.02271238 -0.03260115 -0.01722188 ...  0.02172703 -0.00567752
+  -0.00054818]]
+Intercept:  [-0.70525439]
+Misses:  69
+Accuracy:  0.7526881720430108 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 7 and 9
+[ 85 115]
+Total support vectors: 200
+Weights:  [[-0.00328766 -0.00313395 -0.00108267 ... -0.00228339 -0.02070431
+  -0.01593203]]
+Intercept:  [0.93516226]
+Misses:  17
+Accuracy:  0.9086021505376344 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 7 and 10
+[ 75 300]
+Total support vectors: 375
+Weights:  [[ 3.58618764e-05  4.71375635e-03  9.80717140e-03 ...  3.35991274e-02
+   3.18695598e-04 -2.37733574e-03]]
+Intercept:  [-0.19019835]
+Misses:  38
+Accuracy:  0.7777777777777778 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 8 and 9
+[303  77]
+Total support vectors: 380
+Weights:  [[ 0.00969204  0.0139457   0.00860742 ... -0.00562796  0.00491307
+   0.00256414]]
+Intercept:  [1.74020532]
+Misses:  37
+Accuracy:  0.9002695417789758 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 8 and 10
+[514 397]
+Total support vectors: 911
+Weights:  [[0.00576798 0.008977   0.00482318 ... 0.0196863  0.01981743 0.01733738]]
+Intercept:  [0.2750214]
+Misses:  74
+Accuracy:  0.7921348314606742 <function accuracy_score at 0x0000028EFDAFE2A0>
+Training LIBSVM for classes: 9 and 10
+[ 71 266]
+Total support vectors: 337
+Weights:  [[ 0.00776637  0.00457126  0.00231639 ...  0.00912106 -0.00049219
+   0.00181652]]
+Intercept:  [-0.94481896]
+Misses:  31
+Accuracy:  0.8821292775665399 <function accuracy_score at 0x0000028EFDAFE2A0>
