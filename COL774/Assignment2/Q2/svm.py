@@ -10,13 +10,28 @@ class SupportVectorMachine:
     
     train = ""
     test = ""
+    w = ""
+    b = ""
     
 
     def __init__(self):
         self.read_images("../data/Q2/")
         # self.print()
-        self.build_matrix_P()
-        self.build_matrix_G_h()
+        # self.build_matrix_P()
+        # self.build_matrix_G_h()
+        # self.build_matrix_rest()
+        X_train, y_train, X_test, y_test = self.build_input()
+        # P = self.build_matrix_P(X, y)
+        # G, h = self.build_matrix_G_h(X, y)
+        # q, A, b = self.build_matrix_rest(X, y)
+
+        w, b = self.fit(X_train, y_train)
+        prediction = self.predict(X_test)
+        accuracy = self.accuracy(y_test, prediction)
+        print("Accuracy: ", accuracy)
+
+        # print(P[0])
+        # print(P[P.shape[1]-1])
 
     def print(self):
         global train
@@ -47,8 +62,6 @@ class SupportVectorMachine:
             X_test, X_test_corrupted = self.read_images_class(path_test_label)
             array_list_test.append(X_test)
             array_list_test_corrupted.append(X_test_corrupted)
-        # print(array_list_train_corrupted)
-        # print(array_list_test_corrupted)
         global train 
         train = array_list_train
         global test 
@@ -76,45 +89,84 @@ class SupportVectorMachine:
         flatten = cropped.flatten()
         normalized = np.multiply(flatten, 1/255)
         return normalized
+    
+    def build_matrix_linear_kernel(self, X, y, C = 1.0):
+        P = self.build_matrix_P(X, y)
+        G, h = self.build_matrix_G_h(X, y, C)
+        q, A, b = self.build_matrix_rest(X, y)
+        return P, G, h, q, A, b
 
-    def build_matrix_P(self, class_index_0 = 0, class_index_1 = 1):
+    def build_input(self, class_index_0 = 0, class_index_1 = 1):
         global train
         X_train_0 = train[class_index_0]
         X_train_1 = train[class_index_1]
-        yX_train_0 = -1*X_train_0
-        yX_train_1 = 1*X_train_1
-        # print(yX_train_0.shape)
-        # print(yX_train_1.shape)
-        p = np.hstack((yX_train_0, yX_train_1))
-        # print(p.shape)
+        X_train = np.hstack((X_train_0, X_train_1))
+        m0 = X_train_0.shape[1]
+        m1 = X_train_1.shape[1]
+        y_train_0 = -1*np.ones(m0)
+        y_train_1 = np.ones(m1)
+        y_train = np.hstack((y_train_0, y_train_1))
+        # print(X.shape)
+        # print(y.shape)
+        global test
+        X_test_0 = test[class_index_0]
+        X_test_1 = test[class_index_1]
+        X_test = np.hstack((X_test_0, X_test_1))
+        m0 = X_test_0.shape[1]
+        m1 = X_test_1.shape[1]
+        y_test_0 = -1*np.ones(m0)
+        y_test_1 = np.ones(m1)
+        y_test = np.hstack((y_test_0, y_test_1))
+        return X_train, y_train, X_test, y_test 
+
+    def build_matrix_P(self, X, y):
+        # global train
+        # X_train_0 = train[class_index_0]
+        # X_train_1 = train[class_index_1]
+        # yX_train_0 = -1*X_train_0
+        # yX_train_1 = 1*X_train_1
+
+        # p = np.hstack((yX_train_0, yX_train_1))        
+        p = np.multiply(X, y)
         P = np.matmul(p.T, p)
-        # print(P.shape)
         P = cvxopt.matrix(P)
         return P
 
-    def build_matrix_G_h(self, class_index_0 = 0, class_index_1 = 1, C = 1.0):
-        global train
-        X_train_0 = train[class_index_0]
-        X_train_1 = train[class_index_1]
-        m = X_train_0.shape[1] + X_train_1.shape[1]
-        # print(m)
+    def build_matrix_G_h(self, X, y, C = 1.0):
+        # global train
+        # X_train_0 = train[class_index_0]
+        # X_train_1 = train[class_index_1]
+        # m = X_train_0.shape[1] + X_train_1.shape[1]
+        m = X.shape[1]
         g1 = -1*np.diag(np.ones(m))
-        # print(g1.shape)
         g2 = np.identity(m)
-        # print(g2.shape)
         G = np.vstack((g1, g2))
-        # print(G.shape)
         G = cvxopt.matrix(G)
         h1 = np.zeros(m)
-        # print(h1.shape)
         h2 = C*np.ones(m)
-        # print(h2.shape)
         h = np.hstack((h1, h2))
         # print(h.shape)
         h = cvxopt.matrix(h)
-        # print(G)
-        # print(h)
         return G, h
+    
+    def build_matrix_rest(self, X, y):
+        # global train
+        # X_train_0 = train[class_index_0]
+        # X_train_1 = train[class_index_1]
+        # m = X_train_0.shape[1] + X_train_1.shape[1]
+        m = X.shape[1]
+        q = -1*np.ones(m)
+        # a1 = -1*np.ones(X_train_0.shape[1])
+        # a2 = np.ones(X_train_1.shape[1])
+        # A = np.hstack((a1, a2)).reshape((1,m))
+        A = y.reshape((1,m))
+        # print(A.shape)
+        b = np.zeros((1,1))
+        # print(b)
+        q = cvxopt.matrix(q)
+        A = cvxopt.matrix(A)
+        b = cvxopt.matrix(b)
+        return q, A, b
 
     def fit(self, X, y, kernel = 'linear', C = 1.0, gamma = 0.001):
         '''
@@ -139,6 +191,42 @@ class SupportVectorMachine:
         '''
         # https://cvxopt.org/userguide/coneprog.html#quadratic-programming
 
+        P, G, h, q, A, b_ = self.build_matrix_linear_kernel(X, y, C)
+
+        solution = cvxopt.solvers.qp(P, q, G, h, A, b_)
+        alphas = np.array(solution['x']).reshape((len(solution['x']), ))
+        # print(alphas)
+        support_vectors = [alpha for alpha in alphas  if alpha > 1e-5]
+        print("No. of support vectors: ",len(support_vectors))
+        print("Percentage of support vectors of training examples: {} %".format(float(100*len(support_vectors))/X.shape[1]))
+
+        global w, b
+        w = np.dot(X, np.multiply(alphas, y))
+        # print(w.shape)
+        # b = np.max(1 - np.matmul(w.T, X))
+        # print(b)
+        '''
+        b = 0
+        y_i(w.T*x_i + b) = 1, for support vectors
+        if y_i == -1
+            (w.T*x_i + b) = -1
+            b += -1 - w.T*x_i
+        if y_i == 1
+            (w.T*x_i + b) = 1
+            b += 1 - w.T*x_i
+        b = b/num_supp_vec       
+        '''       
+        b = 0
+        for i in range(len(alphas)):
+            if alphas[i] > 1e-5:
+                if y[i] > 0:
+                    b += -1 - np.matmul(w.T, X[:,i])
+                else:
+                    b += 1 - np.matmul(w.T, X[:,i])                    
+            b = float(b)/len(support_vectors)
+        # print("b: ", b)
+        return w, b
+
     def predict(self, X):
         '''
         Predict the class of the input data
@@ -153,4 +241,18 @@ class SupportVectorMachine:
                 ith sample (0 or 1)
         '''
         
-        pass
+        global w, b
+        print("b: ", b)
+        distance = np.matmul(w.T, X) + b
+        prediction = np.sign(distance)
+        return prediction
+    
+    def accuracy(self, y, prediction):
+        miss = 0
+        print(y.shape)
+        print(prediction.shape)
+        for i in range(len(y)):
+            if y[i] != prediction[i]:
+                miss += 1
+        print("Misses: ", miss)
+        return float(len(y) - miss)/len(y)
