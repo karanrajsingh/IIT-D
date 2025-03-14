@@ -16,22 +16,12 @@ class SupportVectorMachine:
 
     def __init__(self):
         self.read_images("../data/Q2/")
-        # self.print()
-        # self.build_matrix_P()
-        # self.build_matrix_G_h()
-        # self.build_matrix_rest()
         X_train, y_train, X_test, y_test = self.build_input()
-        # P = self.build_matrix_P(X, y)
-        # G, h = self.build_matrix_G_h(X, y)
-        # q, A, b = self.build_matrix_rest(X, y)
-
         w, b = self.fit(X_train, y_train)
         prediction = self.predict(X_test)
         accuracy = self.accuracy(y_test, prediction)
-        print("Accuracy: ", accuracy)
+        self.sort_and_plot(X_train)
 
-        # print(P[0])
-        # print(P[P.shape[1]-1])
 
     def print(self):
         global train
@@ -202,9 +192,6 @@ class SupportVectorMachine:
 
         global w, b
         w = np.dot(X, np.multiply(alphas, y))
-        # print(w.shape)
-        # b = np.max(1 - np.matmul(w.T, X))
-        # print(b)
         '''
         b = 0
         y_i(w.T*x_i + b) = 1, for support vectors
@@ -224,7 +211,8 @@ class SupportVectorMachine:
                 else:
                     b += 1 - np.matmul(w.T, X[:,i])                    
             b = float(b)/len(support_vectors)
-        # print("b: ", b)
+        print("Weight vector: ", w)
+        print("Intercept: ", b)
         return w, b
 
     def predict(self, X):
@@ -239,8 +227,7 @@ class SupportVectorMachine:
             np.array of shape (N,)
                 where N is the number of samples and y[i] is the class of the
                 ith sample (0 or 1)
-        '''
-        
+        '''       
         global w, b
         print("b: ", b)
         distance = np.matmul(w.T, X) + b
@@ -254,5 +241,22 @@ class SupportVectorMachine:
         for i in range(len(y)):
             if y[i] != prediction[i]:
                 miss += 1
+        accuracy = float(len(y) - miss)/len(y)
         print("Misses: ", miss)
-        return float(len(y) - miss)/len(y)
+        print("Accuracy: ", accuracy)
+        return accuracy
+    
+    def sort_and_plot(self, X):
+        global w
+        index = np.argsort(w)[-5:]
+        for i in range(len(index)):
+            X_ = X[:,i]
+            # print(X_.shape)         
+            X_ = X_.reshape((100, 100, 3))
+            # print(X_.shape)
+            cv2.imshow("Image", X_)
+            cv2.waitKey(0)
+        w_ = w.reshape((100, 100, 3))
+        w_ = np.multiply(w_, 255)
+        cv2.imshow("Image", w_)
+        cv2.waitKey(0)
