@@ -2,6 +2,7 @@ import cvxopt
 import numpy as np
 import cv2
 import os
+import math
 
 class SupportVectorMachine:
     '''
@@ -16,12 +17,27 @@ class SupportVectorMachine:
 
     def __init__(self):
         self.read_images("../data/Q2/")
-        X_train, y_train, X_test, y_test = self.build_input()
-        w, b = self.fit(X_train, y_train)
-        prediction = self.predict(X_test)
-        accuracy = self.accuracy(y_test, prediction)
-        self.sort_and_plot(X_train)
+        self.analyse()
+        # X_train, y_train, X_test, y_test = self.build_input()
+        # w, b = self.fit(X_train, y_train)
+        # prediction = self.predict(X_test)
+        # accuracy = self.accuracy(y_test, prediction)
+        # self.sort_and_plot(X_train)
+        # self.fit(X_train, y_train, kernel='gaussian')
 
+
+    def analyse(self):
+        global train, test
+        print(len(train))
+        print(len(test))
+        for i in range(len(train)):
+            for j in range(i+1, len(train)):
+                print("Training for classes: {0} and {1}".format(i, j))
+                X_train, y_train, X_test, y_test = self.build_input(class_index_0 = i, class_index_1= j)
+                w, b = self.fit(X_train, y_train)
+                prediction = self.predict(X_test)
+                accuracy = self.accuracy(y_test, prediction)
+                # self.sort_and_plot(X_train)
 
     def print(self):
         global train
@@ -96,8 +112,6 @@ class SupportVectorMachine:
         y_train_0 = -1*np.ones(m0)
         y_train_1 = np.ones(m1)
         y_train = np.hstack((y_train_0, y_train_1))
-        # print(X.shape)
-        # print(y.shape)
         global test
         X_test_0 = test[class_index_0]
         X_test_1 = test[class_index_1]
@@ -109,24 +123,13 @@ class SupportVectorMachine:
         y_test = np.hstack((y_test_0, y_test_1))
         return X_train, y_train, X_test, y_test 
 
-    def build_matrix_P(self, X, y):
-        # global train
-        # X_train_0 = train[class_index_0]
-        # X_train_1 = train[class_index_1]
-        # yX_train_0 = -1*X_train_0
-        # yX_train_1 = 1*X_train_1
-
-        # p = np.hstack((yX_train_0, yX_train_1))        
+    def build_matrix_P(self, X, y):     
         p = np.multiply(X, y)
         P = np.matmul(p.T, p)
         P = cvxopt.matrix(P)
         return P
 
     def build_matrix_G_h(self, X, y, C = 1.0):
-        # global train
-        # X_train_0 = train[class_index_0]
-        # X_train_1 = train[class_index_1]
-        # m = X_train_0.shape[1] + X_train_1.shape[1]
         m = X.shape[1]
         g1 = -1*np.diag(np.ones(m))
         g2 = np.identity(m)
@@ -135,28 +138,30 @@ class SupportVectorMachine:
         h1 = np.zeros(m)
         h2 = C*np.ones(m)
         h = np.hstack((h1, h2))
-        # print(h.shape)
         h = cvxopt.matrix(h)
         return G, h
     
     def build_matrix_rest(self, X, y):
-        # global train
-        # X_train_0 = train[class_index_0]
-        # X_train_1 = train[class_index_1]
-        # m = X_train_0.shape[1] + X_train_1.shape[1]
         m = X.shape[1]
         q = -1*np.ones(m)
-        # a1 = -1*np.ones(X_train_0.shape[1])
-        # a2 = np.ones(X_train_1.shape[1])
-        # A = np.hstack((a1, a2)).reshape((1,m))
         A = y.reshape((1,m))
-        # print(A.shape)
         b = np.zeros((1,1))
-        # print(b)
         q = cvxopt.matrix(q)
         A = cvxopt.matrix(A)
         b = cvxopt.matrix(b)
         return q, A, b
+    
+    def build_gaussian_P(self, P, X, gamma):
+        for i in range(P.size[0]):
+            for j in range(P.size[0]):
+                P[[i],[j]] *= self.guassian(X[:,i], X[:,j], gamma)
+        return P
+
+    def guassian(self, X_0, X_1, gamma):
+        diff = X_0 - X_1
+        norm = np.matmul(diff.T, diff)
+        norm = -gamma*norm
+        return np.exp(norm)
 
     def fit(self, X, y, kernel = 'linear', C = 1.0, gamma = 0.001):
         '''
@@ -182,16 +187,18 @@ class SupportVectorMachine:
         # https://cvxopt.org/userguide/coneprog.html#quadratic-programming
 
         P, G, h, q, A, b_ = self.build_matrix_linear_kernel(X, y, C)
-
+        if kernel == 'gaussian':
+            print("Inside")
+            P = self.build_gaussian_P(P, X, gamma)
         solution = cvxopt.solvers.qp(P, q, G, h, A, b_)
         alphas = np.array(solution['x']).reshape((len(solution['x']), ))
-        # print(alphas)
         support_vectors = [alpha for alpha in alphas  if alpha > 1e-5]
         print("No. of support vectors: ",len(support_vectors))
         print("Percentage of support vectors of training examples: {} %".format(float(100*len(support_vectors))/X.shape[1]))
 
         global w, b
         w = np.dot(X, np.multiply(alphas, y))
+
         '''
         b = 0
         y_i(w.T*x_i + b) = 1, for support vectors
