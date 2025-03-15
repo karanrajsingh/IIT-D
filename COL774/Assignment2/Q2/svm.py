@@ -20,7 +20,8 @@ class SupportVectorMachine:
 
     def __init__(self):
         self.read_images("../data/Q2/")
-        self.analyse_svc()
+        self.analyse()
+        # self.analyse_svc()
         # self.analyse_sgd()
         # X_train, y_train, X_test, y_test = self.build_input()
         # self.fit_sgd(X_train, y_train, X_test, y_test)
@@ -57,8 +58,8 @@ class SupportVectorMachine:
 
     def analyse(self):
         global train, test
-        print(len(train))
-        print(len(test))
+        # print(len(train))
+        # print(len(test))
         for i in range(len(train)):
             for j in range(i+1, len(train)):
                 print("Training for classes: {0} and {1}".format(i, j))
@@ -215,7 +216,7 @@ class SupportVectorMachine:
         '''
         # https://cvxopt.org/userguide/coneprog.html#quadratic-programming
 
-        print(X)
+        # print(X)
 
         tol = 1e-5
 
@@ -225,12 +226,42 @@ class SupportVectorMachine:
             P = self.build_gaussian_P(P, X, gamma)
         solution = cvxopt.solvers.qp(P, q, G, h, A, b_)
         alphas = np.array(solution['x']).reshape((len(solution['x']), ))
-        support_vectors = [alpha for alpha in alphas  if alpha > tol]
+        # support_vectors = [alpha for alpha in alphas  if alpha > tol]
+        support_indices = [i for i in range(len(alphas)) if alphas[i] > tol]
+        support_vectors = alphas[support_indices]
+        X_supp_T = X.T[support_indices]
+        X_supp = X_supp_T.T
+        y_supp = y[support_indices]
         print("No. of support vectors: ",len(support_vectors))
         print("Percentage of support vectors of training examples: {} %".format(float(100*len(support_vectors))/X.shape[1]))
 
+        # print("Shape of X:", X.shape)
+        # print("Shape of y:", y.shape)
+        # print("Shape of @:", alphas.shape)
+        # print("Shape of X_supp:", X_supp.shape)
+        # print("Shape of y_supp:", y_supp.shape)
+        # print("Shape of supp_vec:", support_vectors.shape)
+
         global w, b
-        w = np.dot(X, np.multiply(alphas, y))
+        # w = np.dot(X, np.multiply(alphas, y))
+        w = np.dot(X_supp, np.multiply(support_vectors, y_supp))
+
+        # print("Shape of w:", w.shape)        
+        print("Coeff: ", w)
+
+        w_b = np.matmul(w.T, X_supp)       
+        indices_pos = [i for i in range(len(y_supp)) if y_supp[i] == 1]
+        indices_neg = [i for i in range(len(y_supp)) if y_supp[i] == -1]
+        w_b_T_pos = w_b[indices_pos]
+        w_b_T_neg = w_b[indices_neg]
+        # print("Shape of w_b_T_pos:", w_b_T_pos.shape)
+        # print("Shape of w_b_T_neg:", w_b_T_neg.shape)   
+        max = np.max(w_b_T_neg)
+        min = np.min(w_b_T_pos)
+        b = -1*(max + min)/2
+        print("Intercept: ", b)
+
+        return w, b;
 
         '''
         b = 0
@@ -243,29 +274,29 @@ class SupportVectorMachine:
             b += 1 - w.T*x_i
         b = b/num_supp_vec       
         '''       
-        b = 0
-        max = -float("inf")
-        min = float("inf")
-        for i in range(len(alphas)):
-            if alphas[i] > tol:
-                val = np.matmul(w.T, X[:,i])
-                if y[i] > 0:
-                    b += -1 - np.matmul(w.T, X[:,i])
-                    # if(val < min):
-                    #     min = val
-                    #     min_idx = i                    
-                else:
-                    b += 1 - np.matmul(w.T, X[:,i])   
-                    # if(val > max):
-                    #     max = val
-                    #     max_idx = i                 
-        b = float(b)/len(support_vectors)
-        # print(max, min, max_idx, min_idx)
-        # b = -1*float(max + min)/2
-        print("Weight vector: ", w)
-        print("Intercept: ", b)
+        # b = 0
+        # max = -float("inf")
+        # min = float("inf")
+        # for i in range(len(alphas)):
+        #     if alphas[i] > tol:
+        #         val = np.matmul(w.T, X[:,i])
+        #         if y[i] > 0:
+        #             b += -1 - np.matmul(w.T, X[:,i])
+        #             # if(val < min):
+        #             #     min = val
+        #             #     min_idx = i                    
+        #         else:
+        #             b += 1 - np.matmul(w.T, X[:,i])   
+        #             # if(val > max):
+        #             #     max = val
+        #             #     max_idx = i                 
+        # b = float(b)/len(support_vectors)
+        # # print(max, min, max_idx, min_idx)
+        # # b = -1*float(max + min)/2
+        # print("Weight vector: ", w)
+        # print("Intercept: ", b)
 
-        return w, b
+        # return w, b
 
 
     def fit_svc(self, X, y, X_, y_, kernel = 'linear', C = 1.0, gamma = 0.001):
@@ -317,7 +348,7 @@ class SupportVectorMachine:
                 miss += 1
         accuracy = float(len(y) - miss)/len(y)
         print("Misses: ", miss)
-        # print("Accuracy: ", accuracy)
+        print("Accuracy: ", accuracy)
         return accuracy
     
     def sort_and_plot(self, X, w):
