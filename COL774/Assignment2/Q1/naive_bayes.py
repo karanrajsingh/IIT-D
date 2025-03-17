@@ -19,6 +19,9 @@ class NaiveBayes:
     priors = ""
     word_estimates = ""
 
+    word_estimates_1 = ""
+    word_estimates_2 = ""
+
     def __init__(self):
         
         """
@@ -234,7 +237,7 @@ class NaiveBayes:
         global word_estimates
         word_dict = word_estimates[class_index]
         probability = 0
-        mod_V = 1e+6
+        mod_V = 1e+7
         for word in text:
             if word in word_dict:
                 probability += word_dict[word]
@@ -248,6 +251,14 @@ class NaiveBayes:
         total = len(df["Class Index"])
         for i in range(len(df["Class Index"])):
             if df["Class Index"].iloc[i] == df["Predicted"].iloc[i]:
+                accuracy += 1
+        return float(accuracy)/total
+    
+    def baseline_accuracy(self, df, class_val):
+        accuracy = 0;
+        total = len(df["Class Index"])
+        for i in range(len(df["Class Index"])):
+            if df["Class Index"].iloc[i] == class_val:
                 accuracy += 1
         return float(accuracy)/total
     
@@ -299,3 +310,59 @@ class NaiveBayes:
     def combine_unigram_bigram_for_text(self, tokens1, tokens2):
          merged_list = list(itertools.chain(tokens1, tokens2))
          return merged_list
+    
+    def fit_two_features(self, df, smoothening, class_col = "Class Index", text_col1 = "Tokenized Title", text_col2 = "Tokenized Description"):
+
+        self.fit(df, smoothening, class_col=class_col, text_col=text_col1)
+
+        global priors, word_estimates, word_estimates_1
+        word_estimates_1 = word_estimates
+
+        self.fit(df, smoothening, class_col=class_col, text_col=text_col2)
+
+        global word_estimates_2
+        word_estimates_2 = word_estimates
+
+    def predict_two_features(self, df, text_col1 = "Tokenized Title", text_col2 = "Tokenized Description", predicted_col = "Predicted"):
+
+        df[predicted_col] = df.apply(lambda row: self.predict_text_two_features(row[text_col1], row[text_col2]), axis=1)
+        return df
+
+
+    # def predict_two_features(self, df, text_col1 = "Tokenized Title", text_col2 = "Tokenized Description"):
+    #     return pre
+
+    def predict_text_two_features(self, text1, text2):
+        global priors
+        class_probability = {}
+        for class_index in priors:
+            class_probability[class_index] = self.get_probability_two_features(text1, text2, class_index)
+        max_prob = max(class_probability.values())
+        for class_index in class_probability:
+            if class_probability[class_index] == max_prob:
+                predicted_class = class_index
+        return predicted_class
+
+    def get_probability_two_features(self, text1, text2, class_index = 1):
+        global priors
+        global word_estimates_1, word_estimates_2
+
+        word_dict = word_estimates_1[class_index]
+        probability = 0
+        for word in text1:
+            if word in word_dict:
+                probability += word_dict[word]
+            else:
+                probability += word_dict[";;;"]
+        
+        word_dict = word_estimates_2[class_index]
+ 
+        for word in text2:
+            if word in word_dict:
+                probability += word_dict[word]
+            else:
+                probability += word_dict[";;;"]
+        
+        probability += priors[class_index]
+        
+        return probability

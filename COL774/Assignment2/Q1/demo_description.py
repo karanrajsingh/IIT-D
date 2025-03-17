@@ -161,6 +161,23 @@ def train_and_check(model, df_train, df_test, text = "Title"):
     get_metrics(df_test)
 
     print("Combining unigrams and bigrams for removed stopwords...")
+    df_train = model.combine_unigram_bigram(df_train, text_col1="Tokenized {} No Stopwords".format(text), text_col2="Bigrams Tokenized {} No Stopwords".format(text))
+    df_test = model.combine_unigram_bigram(df_test, text_col1="Tokenized {} No Stopwords".format(text), text_col2="Bigrams Tokenized {} No Stopwords".format(text))
+
+    print("Training bigrams over combined data for removed stopwords...")
+    params = model.fit(df_train, smoothening, text_col="Tokenized {0} No Stopwords Bigrams Tokenized {1} No Stopwords".format(text, text))
+    priors = params[0]
+    estimates = params[1]
+    df_train= model.predict(df_train, text_col="Tokenized {0} No Stopwords Bigrams Tokenized {1} No Stopwords".format(text, text))
+    train_accuracy = model.accuracy(df_train)
+    print("Train accuracy for 'Tokenized {0} No Stopwords Bigrams Tokenized {1} No Stopwords':  ".format(text, text), train_accuracy)
+    df_test = model.predict(df_test, text_col="Tokenized {0} No Stopwords Bigrams Tokenized {1} No Stopwords".format(text, text))
+    test_accuracy = model.accuracy(df_test)
+    print("Test accuracy for 'Tokenized {0} No Stopwords Bigrams Tokenized {1} No Stopwords':  ".format(text, text), test_accuracy)
+    get_metrics(df_test)
+
+
+    print("Combining unigrams and bigrams for stemming...")
     df_train = model.combine_unigram_bigram(df_train, text_col1="Tokenized {} Stemmed".format(text), text_col2="Bigrams Tokenized {} Stemmed".format(text))
     df_test = model.combine_unigram_bigram(df_test, text_col1="Tokenized {} Stemmed".format(text), text_col2="Bigrams Tokenized {} Stemmed".format(text))
 
@@ -205,4 +222,4 @@ path_test = '../data/Q1/test.csv'
 df_train = model.read(path_train)
 df_test = model.read(path_test)
 
-df_train, df_test = train_and_check(model, df_train, df_test, text="Title")
+df_train, df_test = train_and_check(model, df_train, df_test, text="Description")
