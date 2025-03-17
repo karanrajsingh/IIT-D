@@ -6,6 +6,9 @@ import math
 from sklearn import svm
 from sklearn.metrics import accuracy_score
 from sklearn.linear_model import SGDClassifier
+from sklearn.metrics import confusion_matrix, classification_report
+import matplotlib.pyplot as plt
+from sklearn.model_selection import cross_val_score
 
 class SupportVectorMachine:
     '''
@@ -21,33 +24,21 @@ class SupportVectorMachine:
     y_supp = ""
 
     def __init__(self):
-        self.read_images("../data/Q2/")
-        self.analyse()
-        # self.analyse_svc(kernel='rbf')
-        # self.analyse_sgd()
-        # X_train, y_train, X_test, y_test = self.build_input()
-        # self.fit_sgd(X_train, y_train, X_test, y_test)
-        # self.fit(X_train, y_train, kernel='gaussian')
-        # self.fit_svc(X_train, y_train, X_test, y_test, kernel='rbf')
-        # prediction = self.predict(X_test)
-        # accuracy = self.accuracy(y_test, prediction)
-        # self.sort_and_plot(X_train)
-        # self.fit(X_train, y_train, kernel='gaussian')
+        """
+        1. Read images for all classes.
+        2. Process them as: Resize to (100, 100, 3) -> centre crop -> flatten -> pixel normalization.
+        3. Store images in global 'train' and 'test' variables, with the structure:
+            var:: train/test:
+                        class 'dew'         : X_var_dew
+                        class 'fogsmog''    : X_var_dew
+                        :
+                        :
+                        class 'i'           : X_var_i
+                        :
+                        :
+                        class 'snow'        : X_var_snow
+        """
 
-    """
-    1. Read images for all classes.
-    2. Process them as: Resize to (100, 100, 3) -> centre crop -> flatten -> pixel normalization.
-    3. Store images in global 'train' and 'test' variables, with the structure:
-        var:: train/test:
-                    class 'dew'         : X_var_dew
-                    class 'fogsmog''    : X_var_dew
-                    :
-                    :
-                    class 'i'           : X_var_i
-                    :
-                    :
-                    class 'snow'        : X_var_snow
-    """
 
     def read_images(self, path):
         array_list_train = []
@@ -61,13 +52,11 @@ class SupportVectorMachine:
         for label in label_train:
             path_train_label = os.path.join(path_train, label)
             X_train, X_train_corrupted = self.read_images_class(path_train_label)
-            # print("Shape of X_train for {}: ".format(label), X_train.shape)
             array_list_train.append(X_train)
             array_list_train_corrupted.append(X_train_corrupted)
         for label in label_test:
             path_test_label = os.path.join(path_test, label)
             X_test, X_test_corrupted = self.read_images_class(path_test_label)
-            # print("Shape of X_test for {}: ".format(label), X_test.shape)
             array_list_test.append(X_test)
             array_list_test_corrupted.append(X_test_corrupted)
         global train 
@@ -88,7 +77,6 @@ class SupportVectorMachine:
                 array_list.append(x)
             else:
                 array_list_corrupted.append(image_path)
-        # X = np.array(array_list).T
         X = np.array(array_list)
         return X, array_list_corrupted
 
@@ -127,10 +115,6 @@ class SupportVectorMachine:
         y_test_0 = -1*np.ones(m0)
         y_test_1 = np.ones(m1)
         y_test = np.hstack((y_test_0, y_test_1))
-        # print("Shape of X_train", X_train.shape)
-        # print("Shape of y_train", y_train.shape)
-        # print("Shape of X_test", X_test.shape)
-        # print("Shape of y_test", y_test.shape)
         return X_train, y_train, X_test, y_test
     
     """
@@ -143,7 +127,6 @@ class SupportVectorMachine:
             for j in range(i+1, len(train)):
                 print("Training for classes: {0} and {1}".format(i, j))
                 X_train, y_train, X_test, y_test = self.build_input(class_index_0 = i, class_index_1= j)
-                # w, b = self.fit(X_train, y_train)
                 self.fit(X_train, y_train, kernel='gaussian')
                 prediction = self.predict_gaussian(X_test)
                 accuracy = self.accuracy(y_test, prediction)
@@ -211,44 +194,15 @@ class SupportVectorMachine:
         return P, G, h, q, A, b
     
     def build_gaussian_P(self, X, y, gamma):
-        # P = cvxopt.matrix(0.0, (X.shape[0], X.shape[0]))
-        # for i in range(X.shape[0]):
-        #     for j in range(X.shape[0]):
-        #         P[[i],[j]] = self.guassian(X[i,:], X[j,:], gamma)*y[i]*y[j]
-        # return P
         K = self.guassian(X, X, gamma)
         P = np.outer(y, y) * K
-        # print(P.shape)
         return cvxopt.matrix(P)
 
 
     def guassian(self, X1, X2, gamma):
-        # diff = X_0 - X_1
-        # # print(diff.shape)
-        # # norm = np.matmul(diff.T, diff)
-        # norm = np.linalg.norm(diff) ** 2
-        # # print("Norm:", norm)
-        # norm = -gamma*norm
-        # return np.exp(norm)
-
-        # X1_sq = np.sum(X1**2, axis=1)
-        # print(X1_sq.shape)
-        # X2_sq = np.sum(X2**2, axis=1)
-        # print(X2_sq.shape)
-        # sq_dists = X1_sq + X2_sq - 2 * np.dot(X1, X2.T)
-        # return np.exp(-gamma * sq_dists)
-        # prod = np.reshape(np.einsum('ij,ij->i', X1, X1), (X1.shape[0], 1)) + \
-        #    np.reshape(np.einsum('ij,ij->i', X2, X2), (X2.shape[0], 1)).T \
-        #      - 2 * np.matmul(X1, X2.T)
-        # return np.exp(-gamma * prod)
-            # Compute squared norms of each row in X1 and X2
-        X1_sq = np.einsum('ij,ij->i', X1, X1)[:, np.newaxis]  # (N, 1)
-        X2_sq = np.einsum('ij,ij->i', X2, X2)[np.newaxis, :]  # (1, M)
-
-        # Compute pairwise squared Euclidean distances
-        sq_dists = X1_sq + X2_sq - 2 * np.einsum('ik,jk->ij', X1, X2)  # (N, M)
-
-        # Compute the RBF kernel
+        X1_sq = np.einsum('ij,ij->i', X1, X1)[:, np.newaxis]
+        X2_sq = np.einsum('ij,ij->i', X2, X2)[np.newaxis, :]
+        sq_dists = X1_sq + X2_sq - 2 * np.einsum('ik,jk->ij', X1, X2)
         return np.exp(-gamma * sq_dists)
 
 
@@ -279,9 +233,7 @@ class SupportVectorMachine:
         if kernel == 'linear':
             P, G, h, q, A, b_ = self.build_matrix_linear_kernel(X, y, C)
         if kernel == 'gaussian':
-            # print("It's Gaussian!")
             P, G, h, q, A, b_ = self.build_matrix_gaussian_kernel(X, y, C, gamma)
-            # print("Matrix built!")
         solution = cvxopt.solvers.qp(P, q, G, h, A, b_,  options={'show_progress': False})
         alphas = np.array(solution['x']).reshape((len(solution['x']), ))
         global support_vectors, X_supp, y_supp
@@ -291,16 +243,6 @@ class SupportVectorMachine:
         y_supp = y[support_indices]
         print("No. of support vectors: ",len(support_vectors))
         print("Percentage of support vectors of training examples: {} %".format(float(100*len(support_vectors))/X.shape[0]))
-
-        # for i in range(len(support_vectors)):
-        #     print("{0} {1} {2}".format(support_indices[i], y[support_indices[i]], support_vectors[i]))
-
-        # print("Shape of X:", X.shape)
-        # print("Shape of y:", y.shape)
-        # print("Shape of @:", alphas.shape)
-        # print("Shape of X_supp:", X_supp.shape)
-        # print("Shape of y_supp:", y_supp.shape)
-        # print("Shape of supp_vec:", support_vectors.shape)
 
         global w, b
         if kernel == 'linear':
@@ -317,15 +259,7 @@ class SupportVectorMachine:
             b = -1*(max + min)/2
             print("Intercept: ", b)  
         if kernel == 'gaussian':
-            # w_b = np.zeros((len(support_vectors),))
-            # for j in range(len(support_vectors)):
-            #     for i in range(len(support_vectors)): 
-            #         val = self.guassian(X_supp[i,:], X_supp[j,:], gamma)
-            #         w_b[j] += support_vectors[i]*y_supp[i]*val
-            # print(w_b)
-            # print(w_b.shape)
-            wxt = np.sum(support_vectors * y_supp * self.guassian(X_supp, X_supp, gamma), axis=1)
-            # wxt = wxt[support_indices]
+            wxt = np.sum((support_vectors * y_supp).reshape((1, len(y_supp))) * self.guassian(X_supp, X_supp, gamma), axis = 0)
             b = np.mean(y_supp - wxt)
             print("Intercept: ", b)
 
@@ -336,11 +270,6 @@ class SupportVectorMachine:
         print(model.n_support_)
         support_indices = model.support_
         alpha_y = model.dual_coef_
-
-        # print(len(alpha_y[0]))
-        # print(alpha_y)
-        # for i in range(len(support_indices)):
-        #     print(support_indices[i], y[support_indices[i]], alpha_y[0][i])
         # print("Weights: ", model.coef_)
         print("Intercept: ", model.intercept_)
         print("Total support vectors:", sum(model.n_support_))
@@ -381,16 +310,8 @@ class SupportVectorMachine:
     
     def predict_gaussian(self, X, gamma=0.001):
         global support_vectors, X_supp, y_supp, b
-        # wTx = np.zeros((X.shape[0],))
-        # for j in range(X.shape[0]):
-        #     for i in range(len(support_vectors)): 
-        #         val = self.guassian(X_supp[i,:], X_supp[j,:], gamma)
-        #         wTx[j] += support_vectors[i]*y_supp[i]*val        
-        # # print(wTx)
-        # wTx =  wxt = np.sum(support_vectors * y_supp * self.guassian(X_supp, X, gamma))
-        wTx = np.sum((support_vectors * y_supp)[:, np.newaxis] * self.guassian(X_supp, X, gamma), axis=0)
+        wTx = np.sum((support_vectors * y_supp).reshape((len(y_supp), 1)) * self.guassian(X_supp, X, gamma), axis = 0)
         wTx += b
-        # print(wTx)
         prediction = np.sign(wTx)
         return prediction
 
@@ -408,13 +329,85 @@ class SupportVectorMachine:
         index = np.argsort(w.reshape((30000,)))[-5:][::-1]
         print(index)
         for i in range(len(index)):
-            X_ = X[:,i]
-            # print(X_.shape)         
+            X_ = X[:,i]      
             X_ = X_.reshape((100, 100, 3))
-            # print(X_.shape)
             cv2.imshow("Image", X_)
             cv2.waitKey(0)
         w_ = w.reshape((100, 100, 3))
         w_ = np.multiply(w_, 255)
         cv2.imshow("Image", w_)
         cv2.waitKey(0)
+
+    def predict_multiclass(self):
+        X, y = self.build_complete_test_input()
+        votes = np.zeros((len(train), X.shape[0]))
+        for i in range(len(train)):
+            for j in range(i+1, len(train)):
+                print("Training for classes: {0} and {1}".format(i, j))
+                X_train, y_train, garbage, garbage_  = self.build_input(class_index_0 = i, class_index_1= j)
+                self.fit(X_train, y_train, kernel='gaussian')
+                prediction = self.predict_gaussian(X)
+                print(prediction.shape)
+                for k in range(X.shape[0]):
+                    if prediction[k] == 1:
+                        votes[j][k] += 1
+                    else:
+                        votes[i][k] += 1
+        predicted_class = np.argmax(votes, axis = 0)
+        accuracy = self.accuracy(y, predicted_class)
+        print("Accuracy multi-class:", accuracy)
+        print("Drawing confusion matrix...")
+        cm = confusion_matrix(y, predicted_class)
+        print(cm)
+        # Print classification report
+        print("\nClassification Report:")
+        print(classification_report(y, predicted_class))
+        return predicted_class
+
+    def predict_multiclass_gaussian(self):
+        print("Building data...")
+        X_train, y_train = self.build_complete_train_input()
+        X_test, y_test = self.build_complete_test_input()
+        print("Training model...")
+        model = svm.SVC(C=1.0, kernel='rbf', gamma=0.001, verbose=True)
+        param = model.fit(X_train,y_train)
+        print("Predicting...")
+        prediction = model.predict(X_test)
+        accuracy = self.accuracy(y_test, prediction)
+        print("Accuracy multi-class gaussian:", accuracy)
+        print("Drawing confusion matrix...")
+        cm = confusion_matrix(y_test, prediction)
+        print(cm)
+        # Print classification report
+        print("\nClassification Report:")
+        print(classification_report(y_test, prediction))
+        return prediction
+
+    def build_complete_test_input(self):
+        global test
+        X = test[0]
+        y = np.zeros(test[0].shape[0])
+        for i in range(len(test)):
+            X = np.vstack((X, test[i]))
+            y = np.hstack((y, i*np.ones(test[i].shape[0])))
+        return X, y
+    
+    def build_complete_train_input(self):
+        global train
+        X = train[0]
+        y = np.zeros(train[0].shape[0])
+        for i in range(len(train)):
+            X = np.vstack((X, train[i]))
+            y = np.hstack((y, i*np.ones(train[i].shape[0])))
+        return X, y
+    
+    def cross_validation_for_c(self, c, X, y, X_test, y_test):
+        model = svm.SVC(C=c, kernel='rbf', gamma=0.001, verbose=True)
+        cross_val_acc = np.mean(cross_val_score(model, X, y, cv = 5, verbose = 1000))
+        model.fit(X, y)
+        y_predicted = model.predict(X_test)
+        test_acc = self.accuracy(y_test, y_predicted)
+        
+        print("cross validation accuracies for {}: ".format(c), cross_val_acc)
+        print("test accuracies for {}".format(c), test_acc)
+        return cross_val_acc, test_acc

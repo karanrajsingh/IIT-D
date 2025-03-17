@@ -1,0 +1,258 @@
+Building data...
+Training model...
+*
+optimization finished, #iter = 551
+obj = -123.171593, rho = -1.194426
+nSV = 366, nBSV = 99
+*.*
+optimization finished, #iter = 1127
+obj = -267.809596, rho = 0.281493
+nSV = 786, nBSV = 145
+*.*
+optimization finished, #iter = 1215
+obj = -269.480936, rho = 0.152281
+nSV = 852, nBSV = 136
+*.*
+optimization finished, #iter = 1097
+obj = -241.100758, rho = 0.104847
+nSV = 775, nBSV = 116
+*
+optimization finished, #iter = 686
+obj = -137.075259, rho = -0.785072
+nSV = 452, nBSV = 93
+*.*
+optimization finished, #iter = 1004
+obj = -226.072086, rho = -0.049568
+nSV = 696, nBSV = 117
+*
+optimization finished, #iter = 546
+obj = -109.435743, rho = -0.935030
+nSV = 364, nBSV = 87
+*.*
+optimization finished, #iter = 1117
+obj = -201.995691, rho = 0.039825
+nSV = 739, nBSV = 95
+*
+optimization finished, #iter = 710
+obj = -134.862628, rho = -1.057353
+nSV = 457, nBSV = 89
+*
+optimization finished, #iter = 989
+obj = -194.758559, rho = 0.161260
+nSV = 671, nBSV = 87
+*
+optimization finished, #iter = 586
+obj = -145.397183, rho = 1.514627
+nSV = 408, nBSV = 133
+*
+optimization finished, #iter = 715
+obj = -185.076398, rho = 1.807613
+nSV = 486, nBSV = 162
+*
+optimization finished, #iter = 586
+obj = -142.175497, rho = 1.404038
+nSV = 395, nBSV = 124
+*
+optimization finished, #iter = 418
+obj = -106.594607, rho = 0.441482
+nSV = 275, nBSV = 93
+*
+optimization finished, #iter = 534
+obj = -149.489113, rho = 1.323769
+nSV = 376, nBSV = 140
+*
+optimization finished, #iter = 492
+obj = -150.620661, rho = 0.366196
+nSV = 325, nBSV = 146
+*
+optimization finished, #iter = 753
+obj = -254.606590, rho = 1.959756
+nSV = 543, nBSV = 255
+*
+optimization finished, #iter = 809
+obj = -310.881540, rho = 0.350056
+nSV = 557, nBSV = 322
+*
+optimization finished, #iter = 599
+obj = -187.573755, rho = 1.490080
+nSV = 424, nBSV = 179
+*.*
+optimization finished, #iter = 1097
+obj = -368.151656, rho = -0.160386
+nSV = 835, nBSV = 280
+*.*
+optimization finished, #iter = 1005
+obj = -290.238603, rho = -0.258704
+nSV = 742, nBSV = 210
+*.*
+optimization finished, #iter = 759
+obj = -118.270398, rho = -0.872260
+nSV = 465, nBSV = 77
+*.*
+optimization finished, #iter = 990
+obj = -289.667777, rho = -0.430390
+nSV = 710, nBSV = 223
+*
+optimization finished, #iter = 562
+obj = -108.378503, rho = -1.065305
+nSV = 398, nBSV = 87
+*.*
+optimization finished, #iter = 1038
+obj = -242.043871, rho = -0.290640
+nSV = 684, nBSV = 148
+*
+optimization finished, #iter = 650
+obj = -143.436297, rho = -1.229941
+nSV = 448, nBSV = 113
+*.*
+optimization finished, #iter = 985
+obj = -237.845652, rho = -0.053206
+nSV = 663, nBSV = 148
+*.*
+optimization finished, #iter = 1116
+obj = -295.484709, rho = -0.145159
+nSV = 784, nBSV = 203
+*
+optimization finished, #iter = 758
+obj = -118.183543, rho = -0.852758
+nSV = 489, nBSV = 70
+*.*
+optimization finished, #iter = 1127
+obj = -308.899953, rho = -0.291920
+nSV = 782, nBSV = 233
+*
+optimization finished, #iter = 580
+obj = -127.290704, rho = -1.182887
+nSV = 414, nBSV = 107
+*.*
+optimization finished, #iter = 1241
+obj = -331.082882, rho = -0.272645
+nSV = 882, nBSV = 241
+*
+optimization finished, #iter = 825
+obj = -172.420821, rho = -1.403118
+nSV = 540, nBSV = 140
+*.*
+optimization finished, #iter = 1116
+obj = -302.308920, rho = 0.052552
+nSV = 782, nBSV = 212
+*
+optimization finished, #iter = 728
+obj = -112.496671, rho = -0.809121
+nSV = 471, nBSV = 70
+*.*
+optimization finished, #iter = 1039
+obj = -299.962168, rho = -0.150185
+nSV = 766, nBSV = 226
+*
+optimization finished, #iter = 610
+obj = -113.944907, rho = -1.067158
+nSV = 417, nBSV = 81
+*.*
+optimization finished, #iter = 1066
+obj = -229.179772, rho = -0.165251
+nSV = 723, nBSV = 140
+*
+optimization finished, #iter = 702
+obj = -143.334319, rho = -1.075801
+nSV = 462, nBSV = 120
+*.*
+optimization finished, #iter = 1032
+obj = -247.346904, rho = 0.077323
+nSV = 717, nBSV = 158
+*
+optimization finished, #iter = 706
+obj = -121.976636, rho = 0.670171
+nSV = 457, nBSV = 78
+*.*
+optimization finished, #iter = 486
+obj = -114.604064, rho = -0.366305
+nSV = 304, nBSV = 95
+*
+optimization finished, #iter = 702
+obj = -126.591188, rho = 0.802640
+nSV = 467, nBSV = 82
+*
+optimization finished, #iter = 479
+obj = -88.789259, rho = -0.165738
+nSV = 285, nBSV = 67
+*
+optimization finished, #iter = 631
+obj = -93.938949, rho = 0.707022
+nSV = 406, nBSV = 52
+*
+optimization finished, #iter = 591
+obj = -110.387339, rho = -0.937537
+nSV = 391, nBSV = 83
+*.*
+optimization finished, #iter = 1018
+obj = -258.847108, rho = -0.094873
+nSV = 720, nBSV = 178
+*
+optimization finished, #iter = 634
+obj = -133.633619, rho = -0.976200
+nSV = 429, nBSV = 106
+*.*
+optimization finished, #iter = 1030
+obj = -317.999269, rho = 0.180642
+nSV = 764, nBSV = 249
+*
+optimization finished, #iter = 843
+obj = -192.209584, rho = 1.222496
+nSV = 560, nBSV = 153
+*
+optimization finished, #iter = 467
+obj = -131.695541, rho = 0.016125
+nSV = 307, nBSV = 128
+*
+optimization finished, #iter = 557
+obj = -134.903940, rho = 1.004401
+nSV = 391, nBSV = 117
+*
+optimization finished, #iter = 744
+obj = -152.841621, rho = -1.029539
+nSV = 476, nBSV = 121
+.*
+optimization finished, #iter = 1355
+obj = -459.248843, rho = 0.327792
+nSV = 1021, nBSV = 382
+*
+optimization finished, #iter = 680
+obj = -127.298954, rho = 0.979415
+nSV = 446, nBSV = 92
+Total nSV = 4719
+[LibSVM]Predicting...
+Misses:  504
+Accuracy:  0.6677653263019117
+Accuracy multi-class gaussian: 0.6677653263019117
+Drawing confusion matrix...
+[[202   4  10   8  18  12   2   2   8   6   8]
+ [  0 153   0   1   1   2   2   0   5   5   2]
+ [  6   0  42  18   5   1   2   0   8   3  10]
+ [  5   5  14  60   5   0  11   0  17   1  10]
+ [  5   3   7   4  73   3  13   0   5   0   6]
+ [  4   4   0   0   1  64   0   0   2   0   1]
+ [  5   6   6   9   9   2  53   0   2   1  13]
+ [  0   6   1   0   1   2   4  13  13   6   1]
+ [  0  15   3  10   3   1   4   2 179   0  15]
+ [  1  19   1   2   1   3   2   2   4 104   0]
+ [  0   5   4   8   8   0   7   0  21   1  70]]
+
+Classification Report:
+              precision    recall  f1-score   support
+
+         0.0       0.89      0.72      0.80       280
+         1.0       0.70      0.89      0.78       171
+         2.0       0.48      0.44      0.46        95
+         3.0       0.50      0.47      0.48       128
+         4.0       0.58      0.61      0.60       119
+         5.0       0.71      0.84      0.77        76
+         6.0       0.53      0.50      0.51       106
+         7.0       0.68      0.28      0.39        47
+         8.0       0.68      0.77      0.72       232
+         9.0       0.82      0.75      0.78       139
+        10.0       0.51      0.56      0.54       124
+
+    accuracy                           0.67      1517
+   macro avg       0.64      0.62      0.62      1517
+weighted avg       0.67      0.67      0.66      1517

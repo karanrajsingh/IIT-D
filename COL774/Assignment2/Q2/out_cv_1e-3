@@ -1,0 +1,1013 @@
+*
+optimization finished, #iter = 317
+obj = -0.479824, rho = 0.995231
+nSV = 490, nBSV = 474
+*
+optimization finished, #iter = 305
+obj = -0.478679, rho = 0.975277
+nSV = 482, nBSV = 482
+*
+optimization finished, #iter = 296
+obj = -0.479512, rho = 0.994758
+nSV = 490, nBSV = 474
+*
+optimization finished, #iter = 148
+obj = -0.295404, rho = -1.000071
+nSV = 296, nBSV = 296
+*
+optimization finished, #iter = 437
+obj = -0.670702, rho = 0.993097
+nSV = 677, nBSV = 667
+*
+optimization finished, #iter = 388
+obj = -0.667214, rho = 0.954834
+nSV = 672, nBSV = 672
+*
+optimization finished, #iter = 380
+obj = -0.670705, rho = 0.991317
+nSV = 674, nBSV = 670
+*
+optimization finished, #iter = 206
+obj = -0.295808, rho = 1.000504
+nSV = 316, nBSV = 276
+*
+optimization finished, #iter = 195
+obj = -0.295383, rho = 0.995281
+nSV = 299, nBSV = 293
+*
+optimization finished, #iter = 177
+obj = -0.295543, rho = 1.000264
+nSV = 306, nBSV = 286
+*
+optimization finished, #iter = 454
+obj = -0.873653, rho = -0.987981
+nSV = 888, nBSV = 884
+*
+optimization finished, #iter = 423
+obj = -0.793351, rho = -0.995806
+nSV = 803, nBSV = 785
+*
+optimization finished, #iter = 398
+obj = -0.784939, rho = -0.920695
+nSV = 794, nBSV = 794
+Total nSV = 4728
+[LibSVM][CV] END ................................ score: (test=0.185) total time=60.1min
+[Parallel(n_jobs=1)]: Done   2 tasks      | elapsed: 123.2min
+[CV] START .....................................................................
+*
+optimization finished, #iter = 549
+obj = -1.055672, rho = -0.988976
+nSV = 1086, nBSV = 1086
+*
+optimization finished, #iter = 315
+obj = -0.607539, rho = -0.998134
+nSV = 616, nBSV = 600
+*
+optimization finished, #iter = 424
+obj = -0.816644, rho = -0.995635
+nSV = 823, nBSV = 812
+*
+optimization finished, #iter = 388
+obj = -0.754752, rho = -0.996078
+nSV = 762, nBSV = 750
+*
+optimization finished, #iter = 246
+obj = -0.480885, rho = -0.999210
+nSV = 485, nBSV = 479
+*
+optimization finished, #iter = 349
+obj = -0.670951, rho = -0.997682
+nSV = 677, nBSV = 667
+*
+optimization finished, #iter = 150
+obj = -0.295453, rho = -0.999990
+nSV = 296, nBSV = 296
+*
+optimization finished, #iter = 742
+obj = -1.453342, rho = -0.941684
+nSV = 1484, nBSV = 1484
+*
+optimization finished, #iter = 447
+obj = -0.874721, rho = -0.997051
+nSV = 887, nBSV = 881
+*
+optimization finished, #iter = 403
+obj = -0.790544, rho = -0.991464
+nSV = 797, nBSV = 791
+*
+optimization finished, #iter = 309
+obj = -0.603968, rho = -0.951067
+nSV = 608, nBSV = 608
+*
+optimization finished, #iter = 411
+obj = -0.810487, rho = -0.922914
+nSV = 818, nBSV = 818
+*
+optimization finished, #iter = 379
+obj = -0.747231, rho = -0.922496
+nSV = 756, nBSV = 756
+*
+optimization finished, #iter = 246
+obj = -0.478156, rho = -0.966812
+nSV = 483, nBSV = 481
+*
+optimization finished, #iter = 338
+obj = -0.665553, rho = -0.938389
+nSV = 673, nBSV = 671
+*
+optimization finished, #iter = 159
+obj = -0.295680, rho = -0.995268
+nSV = 300, nBSV = 292
+*
+optimization finished, #iter = 600
+obj = -1.068214, rho = 0.996226
+nSV = 1088, nBSV = 1084
+*
+optimization finished, #iter = 453
+obj = -0.874502, rho = -0.944007
+nSV = 884, nBSV = 884
+*
+optimization finished, #iter = 398
+obj = -0.785123, rho = -0.920597
+nSV = 794, nBSV = 794
+*
+optimization finished, #iter = 373
+obj = -0.607669, rho = 0.998344
+nSV = 632, nBSV = 584
+*
+optimization finished, #iter = 364
+obj = -0.607434, rho = 0.996453
+nSV = 617, nBSV = 599
+*
+optimization finished, #iter = 250
+obj = -0.480256, rho = -0.998334
+nSV = 487, nBSV = 477
+*
+optimization finished, #iter = 333
+obj = -0.607343, rho = 0.993228
+nSV = 611, nBSV = 605
+*
+optimization finished, #iter = 154
+obj = -0.295377, rho = -0.999994
+nSV = 301, nBSV = 291
+*
+optimization finished, #iter = 401
+obj = -0.606931, rho = 0.992850
+nSV = 615, nBSV = 601
+*
+optimization finished, #iter = 373
+obj = -0.605315, rho = 0.967422
+nSV = 610, nBSV = 606
+*
+optimization finished, #iter = 355
+obj = -0.606682, rho = 0.991033
+nSV = 612, nBSV = 604
+*
+optimization finished, #iter = 380
+obj = -0.754692, rho = -0.991952
+nSV = 757, nBSV = 755
+*
+optimization finished, #iter = 256
+obj = -0.480242, rho = -0.998169
+nSV = 490, nBSV = 474
+*
+optimization finished, #iter = 341
+obj = -0.671087, rho = -0.996632
+nSV = 675, nBSV = 669
+*
+optimization finished, #iter = 149
+obj = -0.295614, rho = -1.000506
+nSV = 297, nBSV = 295
+*
+optimization finished, #iter = 530
+obj = -0.816307, rho = 0.989499
+nSV = 823, nBSV = 813
+*
+optimization finished, #iter = 426
+obj = -0.811898, rho = 0.930887
+nSV = 818, nBSV = 818
+*
+optimization finished, #iter = 398
+obj = -0.791489, rho = -0.983858
+nSV = 794, nBSV = 794
+*
+optimization finished, #iter = 252
+obj = -0.479987, rho = -0.997619
+nSV = 487, nBSV = 477
+*
+optimization finished, #iter = 339
+obj = -0.671228, rho = -0.996490
+nSV = 674, nBSV = 670
+*
+optimization finished, #iter = 152
+obj = -0.295520, rho = -1.000178
+nSV = 300, nBSV = 292
+*
+optimization finished, #iter = 497
+obj = -0.754080, rho = 0.989349
+nSV = 763, nBSV = 749
+*
+optimization finished, #iter = 416
+obj = -0.749693, rho = 0.941203
+nSV = 756, nBSV = 756
+*
+optimization finished, #iter = 397
+obj = -0.753507, rho = 0.977688
+nSV = 756, nBSV = 756
+*
+optimization finished, #iter = 299
+obj = -0.480049, rho = 0.996344
+nSV = 489, nBSV = 475
+*
+optimization finished, #iter = 152
+obj = -0.295133, rho = -0.993763
+nSV = 298, nBSV = 294
+*
+optimization finished, #iter = 315
+obj = -0.479643, rho = 0.995534
+nSV = 491, nBSV = 473
+*
+optimization finished, #iter = 303
+obj = -0.478609, rho = 0.976985
+nSV = 483, nBSV = 481
+*
+optimization finished, #iter = 290
+obj = -0.479202, rho = 0.994521
+nSV = 490, nBSV = 474
+*
+optimization finished, #iter = 149
+obj = -0.295439, rho = -0.999691
+nSV = 297, nBSV = 295
+*
+optimization finished, #iter = 448
+obj = -0.670707, rho = 0.992959
+nSV = 681, nBSV = 663
+*
+optimization finished, #iter = 390
+obj = -0.667166, rho = 0.956314
+nSV = 673, nBSV = 671
+*
+optimization finished, #iter = 378
+obj = -0.670719, rho = 0.991046
+nSV = 675, nBSV = 669
+*
+optimization finished, #iter = 199
+obj = -0.295812, rho = 1.000226
+nSV = 309, nBSV = 283
+*
+optimization finished, #iter = 200
+obj = -0.295535, rho = 0.996147
+nSV = 299, nBSV = 293
+*
+optimization finished, #iter = 175
+obj = -0.295587, rho = 1.000092
+nSV = 302, nBSV = 290
+*
+optimization finished, #iter = 453
+obj = -0.872544, rho = -0.988685
+nSV = 885, nBSV = 883
+*
+optimization finished, #iter = 423
+obj = -0.793323, rho = -0.995955
+nSV = 803, nBSV = 785
+*
+optimization finished, #iter = 397
+obj = -0.785213, rho = -0.923576
+nSV = 794, nBSV = 794
+Total nSV = 4731
+[LibSVM][CV] END ................................ score: (test=0.185) total time=59.9min
+[Parallel(n_jobs=1)]: Done   3 tasks      | elapsed: 183.2min
+[CV] START .....................................................................
+*
+optimization finished, #iter = 549
+obj = -1.055688, rho = -0.988648
+nSV = 1088, nBSV = 1088
+*
+optimization finished, #iter = 316
+obj = -0.607538, rho = -0.998297
+nSV = 617, nBSV = 599
+*
+optimization finished, #iter = 423
+obj = -0.816682, rho = -0.996217
+nSV = 824, nBSV = 812
+*
+optimization finished, #iter = 384
+obj = -0.752765, rho = -0.996470
+nSV = 758, nBSV = 750
+*
+optimization finished, #iter = 244
+obj = -0.479011, rho = -0.999277
+nSV = 482, nBSV = 478
+*
+optimization finished, #iter = 346
+obj = -0.671012, rho = -0.997997
+nSV = 677, nBSV = 667
+*
+optimization finished, #iter = 152
+obj = -0.295478, rho = -1.000143
+nSV = 297, nBSV = 295
+*
+optimization finished, #iter = 743
+obj = -1.454878, rho = -0.942193
+nSV = 1486, nBSV = 1486
+*
+optimization finished, #iter = 445
+obj = -0.874116, rho = -0.997237
+nSV = 885, nBSV = 883
+*
+optimization finished, #iter = 402
+obj = -0.790527, rho = -0.991726
+nSV = 795, nBSV = 793
+*
+optimization finished, #iter = 311
+obj = -0.603985, rho = -0.949889
+nSV = 609, nBSV = 607
+*
+optimization finished, #iter = 409
+obj = -0.809938, rho = -0.916481
+nSV = 818, nBSV = 818
+*
+optimization finished, #iter = 378
+obj = -0.745100, rho = -0.919509
+nSV = 754, nBSV = 754
+*
+optimization finished, #iter = 247
+obj = -0.476452, rho = -0.967192
+nSV = 481, nBSV = 479
+*
+optimization finished, #iter = 338
+obj = -0.665460, rho = -0.935313
+nSV = 673, nBSV = 671
+*
+optimization finished, #iter = 156
+obj = -0.295679, rho = -0.995047
+nSV = 299, nBSV = 293
+*
+optimization finished, #iter = 602
+obj = -1.069813, rho = 0.996916
+nSV = 1091, nBSV = 1085
+*
+optimization finished, #iter = 451
+obj = -0.873213, rho = -0.937176
+nSV = 885, nBSV = 883
+*
+optimization finished, #iter = 397
+obj = -0.785251, rho = -0.917332
+nSV = 794, nBSV = 794
+*
+optimization finished, #iter = 372
+obj = -0.607678, rho = 0.998456
+nSV = 633, nBSV = 583
+*
+optimization finished, #iter = 362
+obj = -0.607439, rho = 0.996494
+nSV = 618, nBSV = 598
+*
+optimization finished, #iter = 247
+obj = -0.478505, rho = -0.998219
+nSV = 483, nBSV = 477
+*
+optimization finished, #iter = 332
+obj = -0.607420, rho = 0.994166
+nSV = 610, nBSV = 606
+*
+optimization finished, #iter = 154
+obj = -0.295476, rho = -1.000069
+nSV = 301, nBSV = 291
+*
+optimization finished, #iter = 412
+obj = -0.607015, rho = 0.993452
+nSV = 620, nBSV = 596
+*
+optimization finished, #iter = 368
+obj = -0.605248, rho = 0.966566
+nSV = 609, nBSV = 607
+*
+optimization finished, #iter = 359
+obj = -0.606773, rho = 0.992122
+nSV = 611, nBSV = 605
+*
+optimization finished, #iter = 379
+obj = -0.752695, rho = -0.991261
+nSV = 755, nBSV = 753
+*
+optimization finished, #iter = 253
+obj = -0.478537, rho = -0.998257
+nSV = 487, nBSV = 473
+*
+optimization finished, #iter = 341
+obj = -0.671126, rho = -0.997122
+nSV = 674, nBSV = 670
+*
+optimization finished, #iter = 149
+obj = -0.295620, rho = -1.000375
+nSV = 297, nBSV = 295
+*
+optimization finished, #iter = 522
+obj = -0.816069, rho = 0.988108
+nSV = 823, nBSV = 813
+*
+optimization finished, #iter = 427
+obj = -0.811499, rho = 0.927798
+nSV = 818, nBSV = 818
+*
+optimization finished, #iter = 398
+obj = -0.791186, rho = -0.981363
+nSV = 794, nBSV = 794
+*
+optimization finished, #iter = 257
+obj = -0.478326, rho = -0.997811
+nSV = 490, nBSV = 470
+*
+optimization finished, #iter = 339
+obj = -0.671174, rho = -0.996291
+nSV = 674, nBSV = 670
+*
+optimization finished, #iter = 150
+obj = -0.295542, rho = -1.000000
+nSV = 298, nBSV = 294
+*
+optimization finished, #iter = 493
+obj = -0.752081, rho = 0.989556
+nSV = 759, nBSV = 749
+*
+optimization finished, #iter = 410
+obj = -0.747572, rho = 0.939935
+nSV = 754, nBSV = 754
+*
+optimization finished, #iter = 395
+obj = -0.751476, rho = 0.978534
+nSV = 754, nBSV = 754
+*
+optimization finished, #iter = 302
+obj = -0.478424, rho = 0.996722
+nSV = 490, nBSV = 470
+*
+optimization finished, #iter = 152
+obj = -0.295298, rho = -0.995147
+nSV = 297, nBSV = 295
+*
+optimization finished, #iter = 317
+obj = -0.478023, rho = 0.995844
+nSV = 490, nBSV = 470
+*
+optimization finished, #iter = 302
+obj = -0.476778, rho = 0.976411
+nSV = 480, nBSV = 480
+*
+optimization finished, #iter = 292
+obj = -0.477564, rho = 0.994996
+nSV = 487, nBSV = 473
+*
+optimization finished, #iter = 151
+obj = -0.295481, rho = -0.999617
+nSV = 299, nBSV = 293
+*
+optimization finished, #iter = 436
+obj = -0.670704, rho = 0.992804
+nSV = 679, nBSV = 665
+*
+optimization finished, #iter = 391
+obj = -0.667109, rho = 0.954912
+nSV = 674, nBSV = 670
+*
+optimization finished, #iter = 376
+obj = -0.670617, rho = 0.989992
+nSV = 674, nBSV = 670
+*
+optimization finished, #iter = 205
+obj = -0.295830, rho = 1.000138
+nSV = 315, nBSV = 277
+*
+optimization finished, #iter = 198
+obj = -0.295488, rho = 0.995402
+nSV = 301, nBSV = 291
+*
+optimization finished, #iter = 181
+obj = -0.295610, rho = 1.000123
+nSV = 306, nBSV = 286
+*
+optimization finished, #iter = 452
+obj = -0.871873, rho = -0.987999
+nSV = 885, nBSV = 883
+*
+optimization finished, #iter = 423
+obj = -0.793361, rho = -0.995959
+nSV = 802, nBSV = 786
+*
+optimization finished, #iter = 398
+obj = -0.784857, rho = -0.922349
+nSV = 794, nBSV = 794
+Total nSV = 4727
+[LibSVM][CV] END ................................ score: (test=0.185) total time=59.5min
+[Parallel(n_jobs=1)]: Done   4 tasks      | elapsed: 242.7min
+[CV] START .....................................................................
+*
+optimization finished, #iter = 548
+obj = -1.055499, rho = -0.988608
+nSV = 1086, nBSV = 1086
+*
+optimization finished, #iter = 318
+obj = -0.607558, rho = -0.998154
+nSV = 619, nBSV = 597
+*
+optimization finished, #iter = 420
+obj = -0.816602, rho = -0.995282
+nSV = 823, nBSV = 813
+*
+optimization finished, #iter = 388
+obj = -0.752714, rho = -0.996306
+nSV = 761, nBSV = 747
+*
+optimization finished, #iter = 245
+obj = -0.480946, rho = -0.999134
+nSV = 486, nBSV = 478
+*
+optimization finished, #iter = 350
+obj = -0.671047, rho = -0.997715
+nSV = 681, nBSV = 663
+*
+optimization finished, #iter = 151
+obj = -0.295443, rho = -0.999863
+nSV = 298, nBSV = 294
+*
+optimization finished, #iter = 745
+obj = -1.454531, rho = -0.940174
+nSV = 1487, nBSV = 1485
+*
+optimization finished, #iter = 444
+obj = -0.874626, rho = -0.996975
+nSV = 885, nBSV = 883
+*
+optimization finished, #iter = 400
+obj = -0.790585, rho = -0.991110
+nSV = 795, nBSV = 793
+*
+optimization finished, #iter = 310
+obj = -0.603995, rho = -0.950354
+nSV = 608, nBSV = 608
+*
+optimization finished, #iter = 410
+obj = -0.810419, rho = -0.920238
+nSV = 818, nBSV = 818
+*
+optimization finished, #iter = 377
+obj = -0.745142, rho = -0.922093
+nSV = 754, nBSV = 754
+*
+optimization finished, #iter = 246
+obj = -0.478205, rho = -0.967396
+nSV = 482, nBSV = 482
+*
+optimization finished, #iter = 337
+obj = -0.665587, rho = -0.937232
+nSV = 672, nBSV = 672
+*
+optimization finished, #iter = 151
+obj = -0.295665, rho = -0.994645
+nSV = 297, nBSV = 295
+*
+optimization finished, #iter = 592
+obj = -1.068262, rho = 0.996544
+nSV = 1088, nBSV = 1084
+*
+optimization finished, #iter = 449
+obj = -0.874648, rho = -0.943657
+nSV = 884, nBSV = 884
+*
+optimization finished, #iter = 399
+obj = -0.785220, rho = -0.918973
+nSV = 794, nBSV = 794
+*
+optimization finished, #iter = 370
+obj = -0.607646, rho = 0.998365
+nSV = 627, nBSV = 589
+*
+optimization finished, #iter = 364
+obj = -0.607427, rho = 0.995928
+nSV = 618, nBSV = 598
+*
+optimization finished, #iter = 251
+obj = -0.480278, rho = -0.998286
+nSV = 487, nBSV = 477
+*
+optimization finished, #iter = 332
+obj = -0.607442, rho = 0.994479
+nSV = 612, nBSV = 604
+*
+optimization finished, #iter = 154
+obj = -0.295397, rho = -0.999914
+nSV = 302, nBSV = 290
+*
+optimization finished, #iter = 398
+obj = -0.606987, rho = 0.993073
+nSV = 617, nBSV = 599
+*
+optimization finished, #iter = 375
+obj = -0.605206, rho = 0.966280
+nSV = 609, nBSV = 607
+*
+optimization finished, #iter = 357
+obj = -0.606744, rho = 0.992156
+nSV = 614, nBSV = 602
+*
+optimization finished, #iter = 379
+obj = -0.752541, rho = -0.991535
+nSV = 754, nBSV = 754
+*
+optimization finished, #iter = 254
+obj = -0.480212, rho = -0.998208
+nSV = 488, nBSV = 476
+*
+optimization finished, #iter = 342
+obj = -0.671075, rho = -0.996627
+nSV = 677, nBSV = 667
+*
+optimization finished, #iter = 150
+obj = -0.295593, rho = -1.000503
+nSV = 298, nBSV = 294
+*
+optimization finished, #iter = 527
+obj = -0.816280, rho = 0.988578
+nSV = 823, nBSV = 813
+*
+optimization finished, #iter = 426
+obj = -0.811754, rho = 0.930869
+nSV = 818, nBSV = 818
+*
+optimization finished, #iter = 400
+obj = -0.791499, rho = -0.983443
+nSV = 794, nBSV = 794
+*
+optimization finished, #iter = 255
+obj = -0.480025, rho = -0.997601
+nSV = 489, nBSV = 475
+*
+optimization finished, #iter = 338
+obj = -0.671247, rho = -0.995837
+nSV = 673, nBSV = 671
+*
+optimization finished, #iter = 149
+obj = -0.295519, rho = -1.000236
+nSV = 297, nBSV = 295
+*
+optimization finished, #iter = 489
+obj = -0.751996, rho = 0.989385
+nSV = 759, nBSV = 749
+*
+optimization finished, #iter = 414
+obj = -0.747433, rho = 0.941165
+nSV = 755, nBSV = 753
+*
+optimization finished, #iter = 396
+obj = -0.751449, rho = 0.980072
+nSV = 755, nBSV = 753
+*
+optimization finished, #iter = 303
+obj = -0.480134, rho = 0.996758
+nSV = 491, nBSV = 473
+*
+optimization finished, #iter = 154
+obj = -0.295160, rho = -0.993890
+nSV = 298, nBSV = 294
+*
+optimization finished, #iter = 313
+obj = -0.479561, rho = 0.995258
+nSV = 493, nBSV = 471
+*
+optimization finished, #iter = 304
+obj = -0.478546, rho = 0.976532
+nSV = 482, nBSV = 482
+*
+optimization finished, #iter = 292
+obj = -0.479143, rho = 0.994920
+nSV = 489, nBSV = 475
+*
+optimization finished, #iter = 149
+obj = -0.295435, rho = -0.999804
+nSV = 297, nBSV = 295
+*
+optimization finished, #iter = 445
+obj = -0.670705, rho = 0.992480
+nSV = 682, nBSV = 662
+*
+optimization finished, #iter = 389
+obj = -0.667078, rho = 0.955027
+nSV = 673, nBSV = 671
+*
+optimization finished, #iter = 378
+obj = -0.670649, rho = 0.990953
+nSV = 674, nBSV = 670
+*
+optimization finished, #iter = 199
+obj = -0.295826, rho = 1.000274
+nSV = 313, nBSV = 279
+*
+optimization finished, #iter = 199
+obj = -0.295478, rho = 0.995613
+nSV = 300, nBSV = 292
+*
+optimization finished, #iter = 179
+obj = -0.295587, rho = 1.000117
+nSV = 305, nBSV = 287
+*
+optimization finished, #iter = 453
+obj = -0.872515, rho = -0.988470
+nSV = 887, nBSV = 881
+*
+optimization finished, #iter = 429
+obj = -0.793353, rho = -0.995695
+nSV = 802, nBSV = 786
+*
+optimization finished, #iter = 397
+obj = -0.785122, rho = -0.923848
+nSV = 794, nBSV = 794
+Total nSV = 4736
+[LibSVM][CV] END ................................ score: (test=0.185) total time=59.0min
+[Parallel(n_jobs=1)]: Done   5 tasks      | elapsed: 301.8min
+[Parallel(n_jobs=1)]: Done   5 tasks      | elapsed: 301.8min
+*
+optimization finished, #iter = 685
+obj = -1.309540, rho = -0.986544
+nSV = 1358, nBSV = 1358
+*
+optimization finished, #iter = 396
+obj = -0.759362, rho = -0.998059
+nSV = 771, nBSV = 749
+*
+optimization finished, #iter = 530
+obj = -1.020050, rho = -0.995209
+nSV = 1028, nBSV = 1016
+*
+optimization finished, #iter = 482
+obj = -0.942188, rho = -0.995678
+nSV = 950, nBSV = 938
+*
+optimization finished, #iter = 309
+obj = -0.600472, rho = -0.999197
+nSV = 607, nBSV = 597
+*
+optimization finished, #iter = 432
+obj = -0.838545, rho = -0.997429
+nSV = 845, nBSV = 835
+*
+optimization finished, #iter = 188
+obj = -0.369180, rho = -1.000194
+nSV = 370, nBSV = 370
+*
+optimization finished, #iter = 928
+obj = -1.808159, rho = -0.927705
+nSV = 1856, nBSV = 1856
+*
+optimization finished, #iter = 557
+obj = -1.091109, rho = -0.996488
+nSV = 1109, nBSV = 1103
+*
+optimization finished, #iter = 501
+obj = -0.986996, rho = -0.989790
+nSV = 993, nBSV = 991
+*
+optimization finished, #iter = 386
+obj = -0.753733, rho = -0.937523
+nSV = 760, nBSV = 760
+*
+optimization finished, #iter = 512
+obj = -1.009887, rho = -0.898260
+nSV = 1023, nBSV = 1021
+*
+optimization finished, #iter = 473
+obj = -0.929969, rho = -0.900249
+nSV = 944, nBSV = 944
+*
+optimization finished, #iter = 307
+obj = -0.596193, rho = -0.958320
+nSV = 602, nBSV = 602
+*
+optimization finished, #iter = 423
+obj = -0.830015, rho = -0.921215
+nSV = 841, nBSV = 839
+*
+optimization finished, #iter = 194
+obj = -0.369499, rho = -0.993990
+nSV = 371, nBSV = 369
+*
+optimization finished, #iter = 473
+obj = -0.929969, rho = -0.900249
+nSV = 944, nBSV = 944
+*
+optimization finished, #iter = 307
+obj = -0.596193, rho = -0.958320
+nSV = 602, nBSV = 602
+*
+optimization finished, #iter = 423
+obj = -0.830015, rho = -0.921215
+nSV = 841, nBSV = 839
+*
+optimization finished, #iter = 194
+obj = -0.369499, rho = -0.993990
+nSV = 371, nBSV = 369
+*
+optimization finished, #iter = 743
+obj = -1.329909, rho = 0.996067
+nSV = 1361, nBSV = 1355
+*
+optimization finished, #iter = 563
+obj = -1.090302, rho = -0.926155
+nSV = 1106, nBSV = 1106
+*
+optimization finished, #iter = 498
+obj = -0.978293, rho = -0.898463
+nSV = 992, nBSV = 992
+*
+optimization finished, #iter = 464
+obj = -0.759563, rho = 0.998236
+nSV = 784, nBSV = 736
+*
+optimization finished, #iter = 452
+obj = -0.759208, rho = 0.995520
+nSV = 771, nBSV = 749
+*
+optimization finished, #iter = 312
+obj = -0.599538, rho = -0.997989
+nSV = 607, nBSV = 597
+*
+optimization finished, #iter = 417
+obj = -0.759184, rho = 0.992622
+nSV = 764, nBSV = 756
+*
+nSV = 771, nBSV = 749
+*
+optimization finished, #iter = 312
+obj = -0.599538, rho = -0.997989
+nSV = 607, nBSV = 597
+*
+optimization finished, #iter = 417
+obj = -0.759184, rho = 0.992622
+nSV = 764, nBSV = 756
+*
+*
+optimization finished, #iter = 312
+obj = -0.599538, rho = -0.997989
+nSV = 607, nBSV = 597
+*
+optimization finished, #iter = 417
+obj = -0.759184, rho = 0.992622
+nSV = 764, nBSV = 756
+*
+obj = -0.599538, rho = -0.997989
+nSV = 607, nBSV = 597
+*
+optimization finished, #iter = 417
+obj = -0.759184, rho = 0.992622
+nSV = 764, nBSV = 756
+*
+*
+optimization finished, #iter = 417
+obj = -0.759184, rho = 0.992622
+nSV = 764, nBSV = 756
+*
+optimization finished, #iter = 417
+obj = -0.759184, rho = 0.992622
+nSV = 764, nBSV = 756
+*
+obj = -0.759184, rho = 0.992622
+nSV = 764, nBSV = 756
+*
+nSV = 764, nBSV = 756
+*
+optimization finished, #iter = 190
+*
+optimization finished, #iter = 190
+optimization finished, #iter = 190
+obj = -0.369122, rho = -1.000241
+obj = -0.369122, rho = -1.000241
+nSV = 373, nBSV = 367
+*
+optimization finished, #iter = 502
+obj = -0.758506, rho = 0.991597
+nSV = 770, nBSV = 750
+*
+optimization finished, #iter = 459
+obj = -0.755772, rho = 0.958076
+nSV = 761, nBSV = 759
+*
+optimization finished, #iter = 443
+obj = -0.758216, rho = 0.990344
+nSV = 766, nBSV = 754
+*
+optimization finished, #iter = 473
+obj = -0.941979, rho = -0.989381
+nSV = 944, nBSV = 944
+*
+optimization finished, #iter = 319
+obj = -0.599540, rho = -0.998122
+nSV = 610, nBSV = 594
+*
+optimization finished, #iter = 428
+obj = -0.838697, rho = -0.996573
+nSV = 843, nBSV = 837
+*
+optimization finished, #iter = 185
+obj = -0.369394, rho = -1.000953
+nSV = 370, nBSV = 370
+*
+optimization finished, #iter = 650
+obj = -1.019224, rho = 0.985511
+nSV = 1029, nBSV = 1015
+*
+optimization finished, #iter = 528
+obj = -1.012179, rho = 0.911462
+nSV = 1022, nBSV = 1022
+*
+optimization finished, #iter = 497
+obj = -0.988102, rho = -0.978440
+nSV = 992, nBSV = 992
+*
+optimization finished, #iter = 318
+obj = -0.599193, rho = -0.997392
+nSV = 611, nBSV = 593
+*
+optimization finished, #iter = 423
+obj = -0.838875, rho = -0.995938
+nSV = 842, nBSV = 838
+*
+optimization finished, #iter = 189
+obj = -0.369272, rho = -1.000364
+nSV = 374, nBSV = 366
+*
+optimization finished, #iter = 614
+obj = -0.941029, rho = 0.986482
+nSV = 953, nBSV = 935
+*
+optimization finished, #iter = 513
+obj = -0.933846, rho = 0.924382
+nSV = 944, nBSV = 944
+*
+optimization finished, #iter = 494
+obj = -0.940262, rho = 0.974025
+nSV = 944, nBSV = 944
+*
+optimization finished, #iter = 375
+obj = -0.599331, rho = 0.995969
+nSV = 610, nBSV = 594
+*
+optimization finished, #iter = 189
+obj = -0.368787, rho = -0.993347
+nSV = 372, nBSV = 368
+*
+optimization finished, #iter = 390
+obj = -0.598592, rho = 0.994607
+nSV = 612, nBSV = 592
+*
+optimization finished, #iter = 373
+obj = -0.596836, rho = 0.970292
+nSV = 603, nBSV = 601
+*
+optimization finished, #iter = 362
+obj = -0.597978, rho = 0.993900
+nSV = 609, nBSV = 595
+*
+optimization finished, #iter = 187
+obj = -0.369165, rho = -1.000037
+nSV = 372, nBSV = 368
+*
+optimization finished, #iter = 551
+obj = -0.838068, rho = 0.991103
+nSV = 852, nBSV = 828
+*
+optimization finished, #iter = 482
+obj = -0.832475, rho = 0.944284
+nSV = 840, nBSV = 840
+*
+optimization finished, #iter = 472
+obj = -0.838049, rho = 0.988961
+nSV = 842, nBSV = 838
+*
+optimization finished, #iter = 252
+obj = -0.369750, rho = 1.000452
+nSV = 386, nBSV = 354
+*
+optimization finished, #iter = 249
+obj = -0.369207, rho = 0.994729
+nSV = 375, nBSV = 365
+*
+optimization finished, #iter = 219
+obj = -0.369392, rho = 1.000377
+nSV = 379, nBSV = 361
+*
+optimization finished, #iter = 567
+obj = -1.087538, rho = -0.985392
+nSV = 1108, nBSV = 1104
+*
+optimization finished, #iter = 530
+obj = -0.991091, rho = -0.994813
+nSV = 1003, nBSV = 981
+*
+optimization finished, #iter = 496
+obj = -0.978194, rho = -0.903181
+nSV = 992, nBSV = 992
+Total nSV = 5914
+[LibSVM]Misses:  1237
+Accuracy:  0.1845748187211602
+cross validation accuracies for 0.001:  0.184737536905877
+test accuracies for 0.001 0.1845748187211602

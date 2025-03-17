@@ -15,18 +15,19 @@ class NaiveBayes:
 
     df_train = ""
     df_test = ""
-    mod_V = 1e+6
 
     priors = ""
     word_estimates = ""
 
     def __init__(self):
         
-
-        global df_train, df_test
+        """
+        NAIVE BAYES TEXT CLASSIFICATION
+        """
+        # global df_train, df_test
         #Initial test for test.csv (as dataset is smaller)
-        path_train = '../data/Q1/train.csv'
-        path_test = '../data/Q1/test.csv'
+        # path_train = '../data/Q1/train.csv'
+        # path_test = '../data/Q1/test.csv'
         #df = self.preprocessing(path_test)
         #df_train, df_test = self.read(path_train, path_test)
         #self.tokenize(text_col="Description")
@@ -96,7 +97,7 @@ class NaiveBayes:
         word_count = self.build_word_count(df, class_col, text_col)[0]
         total_words = self.build_word_count(df, class_col, text_col)[1]
 
-        mod_V = 1e+6
+        mod_V = 1e+7
 
         """
 
@@ -254,9 +255,9 @@ class NaiveBayes:
         max = df["Class Index"].max(axis=0)
         for i in range(max):
             class_index = i+1
-            merged_string = self.merge_documents(df, "Class Index", text_col, class_index)[2]
+            merged_words = self.merge_documents(df, "Class Index", text_col, class_index)[0]
             class_wc = WordCloud(background_color='white', max_words=20000)
-            class_wc.generate(merged_string)
+            class_wc.generate(" ".join(merged_words))
             plt.imshow(class_wc, interpolation='bilinear')
             plt.axis('off')
             plt.show()

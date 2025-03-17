@@ -1,0 +1,318 @@
+Reading data...
+Removing punctuations...
+Tokenizing text columns...
+Training simple data over Title...
+Estimating class wise conditional probabilities of each word...
+Estimating class priors...
+Train accuracy for 'Tokenized Title':   0.8885083333333333
+Test accuracy for 'Tokenized Title':   0.8657894736842106
+Accuracy:  0.8657894736842106
+Precision:  0.8658456395934124
+Recall:  0.8657894736842106
+F1-score:  0.865550460106949
+
+Classification Report:
+              precision    recall  f1-score   support
+
+           1       0.84      0.89      0.87      1900
+           2       0.92      0.92      0.92      1900
+           3       0.85      0.81      0.83      1900
+           4       0.85      0.84      0.85      1900
+
+    accuracy                           0.87      7600
+   macro avg       0.87      0.87      0.87      7600
+weighted avg       0.87      0.87      0.87      7600
+
+Removing stopwords...
+Training the model after stopword removal for 'Title'...
+Estimating class wise conditional probabilities of each word...
+Estimating class priors...
+Train accuracy for 'Tokenized Title No Stopwords' 0.8896083333333333
+Test accuracy for 'Tokenized Title No Stopwords':   0.8610526315789474
+Accuracy:  0.8610526315789474
+Precision:  0.8612034570161612
+Recall:  0.8610526315789474
+F1-score:  0.8609343731029754
+
+Classification Report:
+              precision    recall  f1-score   support
+
+           1       0.84      0.88      0.86      1900
+           2       0.92      0.91      0.91      1900
+           3       0.84      0.81      0.83      1900
+           4       0.85      0.83      0.84      1900
+
+    accuracy                           0.86      7600
+   macro avg       0.86      0.86      0.86      7600
+weighted avg       0.86      0.86      0.86      7600
+
+Stemming...
+Training the model after stemming for 'Title'...
+Estimating class wise conditional probabilities of each word...
+Estimating class priors...
+Train accuracy for 'Tokenized Title Stemmed' 0.8778666666666667
+Test accuracy for 'Tokenized Title Stemmed':   0.8601315789473685
+Accuracy:  0.8601315789473685
+Precision:  0.8602927671427393
+Recall:  0.8601315789473685
+F1-score:  0.8598961402349546
+
+Classification Report:
+              precision    recall  f1-score   support
+
+           1       0.84      0.89      0.86      1900
+           2       0.92      0.91      0.91      1900
+           3       0.84      0.81      0.82      1900
+           4       0.85      0.83      0.84      1900
+
+    accuracy                           0.86      7600
+   macro avg       0.86      0.86      0.86      7600
+weighted avg       0.86      0.86      0.86      7600
+
+Remove stopwords and stemming...
+Training after removing stopwords and stemming...
+Estimating class wise conditional probabilities of each word...
+Estimating class priors...
+Train accuracy after removing stopwords and stemming for 'Tokenized Title':   0.8784083333333333
+Test accuracy after removing stopwords and stemming for 'Tokenized Title':   0.8580263157894736
+Accuracy:  0.8580263157894736
+Precision:  0.8583914094689911
+Recall:  0.8580263157894736
+F1-score:  0.8579023964006048
+
+Classification Report:
+              precision    recall  f1-score   support
+
+           1       0.83      0.89      0.86      1900
+           2       0.92      0.91      0.91      1900
+           3       0.83      0.81      0.82      1900
+           4       0.84      0.83      0.84      1900
+
+    accuracy                           0.86      7600
+   macro avg       0.86      0.86      0.86      7600
+weighted avg       0.86      0.86      0.86      7600
+
+Generating bigrams for simple data...
+Training bigrams...
+Estimating class wise conditional probabilities of each word...
+Estimating class priors...
+Train accuracy for 'Bigrams Tokenized Title':   0.9647666666666667
+Test accuracy for 'Bigrams Tokenized Title':   0.7873684210526316
+Accuracy:  0.7873684210526316
+Precision:  0.789248392261542
+Recall:  0.7873684210526316
+F1-score:  0.7871421077216598
+
+Classification Report:
+              precision    recall  f1-score   support
+
+           1       0.83      0.80      0.81      1900
+           2       0.75      0.85      0.80      1900
+           3       0.80      0.75      0.77      1900
+           4       0.79      0.75      0.77      1900
+
+    accuracy                           0.79      7600
+   macro avg       0.79      0.79      0.79      7600
+weighted avg       0.79      0.79      0.79      7600
+
+Estimating class wise conditional probabilities of each word...
+Estimating class priors...
+Train accuracy for 'Bigrams Tokenized Title No Stopwords':   0.9748
+Test accuracy for 'Bigrams Tokenized Title No Stopwords':   0.7663157894736842
+Accuracy:  0.7663157894736842
+Precision:  0.7836575901761352
+Recall:  0.7663157894736842
+F1-score:  0.7669054773213038
+
+Classification Report:
+              precision    recall  f1-score   support
+
+           1       0.86      0.74      0.80      1900
+           2       0.65      0.91      0.76      1900
+           3       0.82      0.72      0.76      1900
+           4       0.81      0.70      0.75      1900
+
+    accuracy                           0.77      7600
+   macro avg       0.78      0.77      0.77      7600
+weighted avg       0.78      0.77      0.77      7600
+
+Estimating class wise conditional probabilities of each word...
+Estimating class priors...
+Train accuracy for 'Bigrams Tokenized Title Stemmed':   0.960175
+Test accuracy for 'Bigrams Tokenized Title Stemmed':   0.7976315789473685
+Accuracy:  0.7976315789473685
+Precision:  0.7986176125182556
+Recall:  0.7976315789473685
+F1-score:  0.7972975132459298
+
+Classification Report:
+              precision    recall  f1-score   support
+
+           1       0.82      0.81      0.82      1900
+           2       0.77      0.85      0.81      1900
+           3       0.81      0.75      0.78      1900
+           4       0.79      0.77      0.78      1900
+
+    accuracy                           0.80      7600
+   macro avg       0.80      0.80      0.80      7600
+weighted avg       0.80      0.80      0.80      7600
+
+Estimating class wise conditional probabilities of each word...
+Estimating class priors...
+Train accuracy for 'Bigrams Tokenized Title No Stopwords Stemmed':   0.9711333333333333
+Test accuracy for 'Bigrams Tokenized Title No Stopwords Stemmed':   0.7784210526315789
+Accuracy:  0.7784210526315789
+Precision:  0.788282552806269
+Recall:  0.7784210526315789
+F1-score:  0.7784627564887944
+    accuracy                           0.80      7600
+   macro avg       0.80      0.80      0.80      7600
+weighted avg       0.80      0.80      0.80      7600
+
+Estimating class wise conditional probabilities of each word...
+Estimating class priors...
+Train accuracy for 'Bigrams Tokenized Title No Stopwords Stemmed':   0.9711333333333333
+Test accuracy for 'Bigrams Tokenized Title No Stopwords Stemmed':   0.7784210526315789
+Accuracy:  0.7784210526315789
+Precision:  0.788282552806269
+Recall:  0.7784210526315789
+F1-score:  0.7784627564887944
+
+    accuracy                           0.80      7600
+   macro avg       0.80      0.80      0.80      7600
+weighted avg       0.80      0.80      0.80      7600
+
+Estimating class wise conditional probabilities of each word...
+Estimating class priors...
+Train accuracy for 'Bigrams Tokenized Title No Stopwords Stemmed':   0.9711333333333333
+Test accuracy for 'Bigrams Tokenized Title No Stopwords Stemmed':   0.7784210526315789
+Accuracy:  0.7784210526315789
+Precision:  0.788282552806269
+Recall:  0.7784210526315789
+F1-score:  0.7784627564887944
+   macro avg       0.80      0.80      0.80      7600
+weighted avg       0.80      0.80      0.80      7600
+
+Estimating class wise conditional probabilities of each word...
+Estimating class priors...
+Train accuracy for 'Bigrams Tokenized Title No Stopwords Stemmed':   0.9711333333333333
+Test accuracy for 'Bigrams Tokenized Title No Stopwords Stemmed':   0.7784210526315789
+Accuracy:  0.7784210526315789
+Precision:  0.788282552806269
+Recall:  0.7784210526315789
+F1-score:  0.7784627564887944
+weighted avg       0.80      0.80      0.80      7600
+
+Estimating class wise conditional probabilities of each word...
+Estimating class priors...
+Train accuracy for 'Bigrams Tokenized Title No Stopwords Stemmed':   0.9711333333333333
+Test accuracy for 'Bigrams Tokenized Title No Stopwords Stemmed':   0.7784210526315789
+Accuracy:  0.7784210526315789
+Precision:  0.788282552806269
+Recall:  0.7784210526315789
+F1-score:  0.7784627564887944
+Estimating class wise conditional probabilities of each word...
+Estimating class priors...
+Train accuracy for 'Bigrams Tokenized Title No Stopwords Stemmed':   0.9711333333333333
+Test accuracy for 'Bigrams Tokenized Title No Stopwords Stemmed':   0.7784210526315789
+Accuracy:  0.7784210526315789
+Precision:  0.788282552806269
+Recall:  0.7784210526315789
+F1-score:  0.7784627564887944
+Train accuracy for 'Bigrams Tokenized Title No Stopwords Stemmed':   0.9711333333333333
+Test accuracy for 'Bigrams Tokenized Title No Stopwords Stemmed':   0.7784210526315789
+Accuracy:  0.7784210526315789
+Precision:  0.788282552806269
+Recall:  0.7784210526315789
+F1-score:  0.7784627564887944
+Accuracy:  0.7784210526315789
+Precision:  0.788282552806269
+Recall:  0.7784210526315789
+F1-score:  0.7784627564887944
+Precision:  0.788282552806269
+Recall:  0.7784210526315789
+F1-score:  0.7784627564887944
+
+Classification Report:
+
+Classification Report:
+Classification Report:
+              precision    recall  f1-score   support
+
+
+           1       0.85      0.77      0.81      1900
+           2       0.69      0.89      0.78      1900
+           3       0.81      0.73      0.77      1900
+           4       0.81      0.72      0.76      1900
+
+    accuracy                           0.78      7600
+   macro avg       0.79      0.78      0.78      7600
+weighted avg       0.79      0.78      0.78      7600
+
+Combining unigrams and bigrams for simple data...
+Training bigrams over combined data...
+Estimating class wise conditional probabilities of each word...
+Estimating class priors...
+Train accuracy for 'Tokenized Title Bigrams Tokenized Title':   0.9421083333333333
+Test accuracy for 'Tokenized Title Bigrams Tokenized Title':   0.8713157894736843
+Accuracy:  0.8713157894736843
+Precision:  0.8711821845923936
+Recall:  0.8713157894736843
+F1-score:  0.8710823837448365
+
+Classification Report:
+              precision    recall  f1-score   support
+
+           1       0.86      0.89      0.87      1900
+           2       0.92      0.93      0.92      1900
+           3       0.85      0.82      0.84      1900
+           4       0.86      0.85      0.85      1900
+
+    accuracy                           0.87      7600
+   macro avg       0.87      0.87      0.87      7600
+weighted avg       0.87      0.87      0.87      7600
+
+Combining unigrams and bigrams for removed stopwords...
+Training bigrams over combined data for stemmed...
+Estimating class wise conditional probabilities of each word...
+Estimating class priors...
+Train accuracy for 'Tokenized Title Stemmed Bigrams Tokenized Title Stemmed':   0.9375416666666667
+Test accuracy for 'Tokenized Title Stemmed Bigrams Tokenized Title Stemmed':   0.87
+Accuracy:  0.87
+Precision:  0.8700446688517234
+Recall:  0.87
+F1-score:  0.8697698331172614
+
+Classification Report:
+              precision    recall  f1-score   support
+
+           1       0.85      0.89      0.87      1900
+           2       0.92      0.92      0.92      1900
+           3       0.86      0.82      0.84      1900
+           4       0.85      0.85      0.85      1900
+
+    accuracy                           0.87      7600
+   macro avg       0.87      0.87      0.87      7600
+weighted avg       0.87      0.87      0.87      7600
+
+Training bigrams over combined data for removed stopwords and stemmed...
+Estimating class wise conditional probabilities of each word...
+Estimating class priors...
+Train accuracy for 'Tokenized Title No Stopwords Stemmed Bigrams Tokenized Title No Stopwords Stemmed':   0.94075
+Test accuracy for 'Tokenized Title No Stopwords Stemmed Bigrams Tokenized Title No Stopwords Stemmed':   0.8721052631578947
+Accuracy:  0.8721052631578947
+Precision:  0.8722966931573637
+Recall:  0.8721052631578947
+F1-score:  0.8719810000137795
+
+Classification Report:
+              precision    recall  f1-score   support
+
+           1       0.85      0.89      0.87      1900
+           2       0.93      0.92      0.92      1900
+           3       0.86      0.82      0.84      1900
+           4       0.86      0.85      0.85      1900
+
+    accuracy                           0.87      7600
+   macro avg       0.87      0.87      0.87      7600
+weighted avg       0.87      0.87      0.87      7600
