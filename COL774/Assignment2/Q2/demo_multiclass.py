@@ -1,10 +1,10 @@
 import svm
+import helper
+import analysis
 
 model = svm.SupportVectorMachine()
 
 path = "../data/Q2/"
-model.read_images(path)
+array_list_train, array_list_test = helper.read_images(path)
 
-model.predict_multiclass()
-# model.predict_multiclass_gaussian()
-# model.cross_validation()
+analysis.predict_multiclass(array_list_train, array_list_test)

@@ -1,12 +1,4 @@
-import numpy as np
 import matplotlib.pyplot as plt
-from sklearn import svm
-import svm
-
-# model = svm.SupportVectorMachine()
-# path = "../data/Q2/"
-# model.read_images(path)
-
 
 cross_val_acc = []
 test_acc = []
@@ -21,8 +13,3 @@ plt.xlabel("C")
 plt.ylabel("Accuracy")
 plt.legend()
 plt.show()
-
-# C_max = C[np.argmax(cross_val_acc)]
-# model_best = svm.SVC(C=C_max, kernel='rbf', gamma=0.001, verbose=True)
-# y_predicted = model_best.fit(X_test)
-# print("Accuracy for best model: ", model.accuracy(y_test, y_predicted))

@@ -1,24 +1,11 @@
-import numpy as np
 import pandas as pd
-import string
-from wordcloud import WordCloud
-import nltk
-#nltk.download('stopwords')
-from nltk.corpus import stopwords
-from nltk.stem import PorterStemmer
-from nltk.util import bigrams
-import matplotlib.pyplot as plt
+import numpy as np
 import math
-import itertools
 
 class NaiveBayes:
 
-    df_train = ""
-    df_test = ""
-
     priors = ""
     word_estimates = ""
-
     word_estimates_1 = ""
     word_estimates_2 = ""
 
@@ -27,52 +14,42 @@ class NaiveBayes:
         """
         NAIVE BAYES TEXT CLASSIFICATION
         """
-        # global df_train, df_test
-        #Initial test for test.csv (as dataset is smaller)
-        # path_train = '../data/Q1/train.csv'
-        # path_test = '../data/Q1/test.csv'
-        #df = self.preprocessing(path_test)
-        #df_train, df_test = self.read(path_train, path_test)
-        #self.tokenize(text_col="Description")
-        #self.wordcloud(text_col="Description")
-        #self.wordcloud(text_col="Description", class_index=1)
-        #print(df)
     
         
-    def read(self, path):
-        df= pd.read_csv(path)
-        return df
+    # def read(self, path):
+    #     df= pd.read_csv(path)
+    #     return df
 
-    # Cleans a dataframe column from punctuations, and returns the updated dataframe
-    def clean_punctuation(self, df, text_col):
-        df[text_col] = df[text_col].apply(self.clean_punctuation_from_cell)
-        return df
+    # # Cleans a dataframe column from punctuations, and returns the updated dataframe
+    # def clean_punctuation(self, df, text_col):
+    #     df[text_col] = df[text_col].apply(self.clean_punctuation_from_cell)
+    #     return df
 
 
-    # Cleans any text string from punctuations and returns the updated string
-    def clean_punctuation_from_cell(self, text):
-        punctuation = string.punctuation
-        # punctuation = string.punctuation + "1234567890"
-        map = str.maketrans(punctuation, ' '*len(punctuation))
-        remove_punctuation = text.translate(map)
-        #list = remove_punctuation.split()
-        #return list
-        #return " ".join(list)
-        return remove_punctuation
+    # # Cleans any text string from punctuations and returns the updated string
+    # def clean_punctuation_from_cell(self, text):
+    #     punctuation = string.punctuation
+    #     # punctuation = string.punctuation + "1234567890"
+    #     map = str.maketrans(punctuation, ' '*len(punctuation))
+    #     remove_punctuation = text.translate(map)
+    #     #list = remove_punctuation.split()
+    #     #return list
+    #     #return " ".join(list)
+    #     return remove_punctuation
     
-    # Returns a list of tokens for each cell in the dataframe column
-    def tokenize_col(self, df, text_col):
-        df["Tokenized" + " " + text_col] = df[text_col].apply(self.tokenize)
-        return df
+    # # Returns a list of tokens for each cell in the dataframe column
+    # def tokenize_col(self, df, text_col):
+    #     df["Tokenized" + " " + text_col] = df[text_col].apply(self.tokenize)
+    #     return df
 
-    def tokenize(self, text):
-        l = text.split()
-        word_list = [word.lower() for word in l]
-        return word_list
+    # def tokenize(self, text):
+    #     l = text.split()
+    #     word_list = [word.lower() for word in l]
+    #     return word_list
 
-    def merge_col(self, df, text_col1, text_col2):
-        df[text_col1 + " " + text_col2] = df[text_col1] + df[text_col2]
-        return df
+    # def merge_col(self, df, text_col1, text_col2):
+    #     df[text_col1 + " " + text_col2] = df[text_col1] + df[text_col2]
+    #     return df
     
     def fit(self, df, smoothening, class_col = "Class Index", text_col = "Tokenized Description"):
         """Learn the parameters of the model from the training data.
@@ -262,54 +239,14 @@ class NaiveBayes:
                 accuracy += 1
         return float(accuracy)/total
     
-    def wordcloud(self, df, text_col = "Tokenized Description"):
-        max = df["Class Index"].max(axis=0)
-        for i in range(max):
-            class_index = i+1
-            merged_words = self.merge_documents(df, "Class Index", text_col, class_index)[0]
-            class_wc = WordCloud(background_color='white', max_words=20000)
-            class_wc.generate(" ".join(merged_words))
-            plt.imshow(class_wc, interpolation='bilinear')
-            plt.axis('off')
-            plt.show()
-
-
-    def remove_stopwords(self, df, text_col = "Tokenized Description"):
-        df[text_col + " No Stopwords"] = df[text_col].apply(self.remove_stopwords_from_text)
-        return df
+    def baseline_accuracy_random(self, df):
+        accuracy = 0;
+        total = len(df["Class Index"])
+        for i in range(len(df["Class Index"])):
+            if df["Class Index"].iloc[i] == np.random.randint[1, 5]:
+                accuracy += 1
+        return float(accuracy)/total
     
-    def remove_stopwords_from_text(self, text):
-        stop_words = set(stopwords.words('english'))
-        clean_stopwords = [word for word in text if not word in stop_words]
-        return clean_stopwords
-    
-    def stem(self, df,  text_col):
-        df[text_col + " Stemmed"] = df[text_col].apply(self.stemming_the_text)
-        return df        
-    
-    def stemming_the_text(self, text):
-        ps = PorterStemmer()
-        stemmed_text = [ps.stem(word) for word in text]
-        return stemmed_text
-
-    def generate_bigrams(self, df, text_col = "Tokenized Description"):
-        df["Bigrams " + text_col] = df[text_col].apply(self.generate_bigrams_for_text)
-        return df
-    
-    def generate_bigrams_for_text(self, text):
-        # Assuming that text already tokenized
-        return list(bigrams(text))
-    
-    def combine_unigram_bigram(self, df, text_col1, text_col2):
-        #df[text_col1 + " " + text_col2] = df.apply("")
-        df[text_col1 + " " + text_col2] = df.apply(lambda row: self.combine_unigram_bigram_for_text(row[text_col1], row[text_col2]), axis = 1)
-        # for i in range(len(df)):
-        #     print(self.combine_unigram_bigram_for_text(df[text_col1].iloc[i], df[text_col2].iloc[i]))
-        return df
-
-    def combine_unigram_bigram_for_text(self, tokens1, tokens2):
-         merged_list = list(itertools.chain(tokens1, tokens2))
-         return merged_list
     
     def fit_two_features(self, df, smoothening, class_col = "Class Index", text_col1 = "Tokenized Title", text_col2 = "Tokenized Description"):
 
@@ -324,13 +261,8 @@ class NaiveBayes:
         word_estimates_2 = word_estimates
 
     def predict_two_features(self, df, text_col1 = "Tokenized Title", text_col2 = "Tokenized Description", predicted_col = "Predicted"):
-
         df[predicted_col] = df.apply(lambda row: self.predict_text_two_features(row[text_col1], row[text_col2]), axis=1)
         return df
-
-
-    # def predict_two_features(self, df, text_col1 = "Tokenized Title", text_col2 = "Tokenized Description"):
-    #     return pre
 
     def predict_text_two_features(self, text1, text2):
         global priors
