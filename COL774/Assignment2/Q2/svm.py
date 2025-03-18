@@ -11,6 +11,7 @@ class SupportVectorMachine:
     w = ""
     b = ""
     support_vectors = ""
+    support_indices = ""
     X_supp = ""
     y_supp = ""
     model_kernel = ""
@@ -122,7 +123,7 @@ class SupportVectorMachine:
         end = time.time()
         print("Training time for cxvopt: ", end - start)
         alphas = np.array(solution['x']).reshape((len(solution['x']), ))
-        global support_vectors, X_supp, y_supp
+        global support_vectors, support_indices, X_supp, y_supp
         support_indices = [i for i in range(len(alphas)) if alphas[i] > tol]
         support_vectors = alphas[support_indices]
         X_supp = X[support_indices]
@@ -145,11 +146,11 @@ class SupportVectorMachine:
             min = np.min(w_b_T_pos)
             b = -1*(max + min)/2
             print("Intercept: ", b)
-            return w, b
         if kernel == 'gaussian':
             wxt = np.sum((support_vectors * y_supp).reshape((1, len(y_supp))) * self.guassian(X_supp, X_supp, gamma), axis = 0)
             b = np.mean(y_supp - wxt)
             print("Intercept: ", b)
+
 
     """"
     PREDICTION FUNCTIONS FOR CVXOPT
@@ -199,3 +200,10 @@ class SupportVectorMachine:
         print("Misses: ", miss)
         print("Accuracy: ", accuracy)
         return accuracy
+    
+    def get_params(self):
+        global model_kernel, w, b, support_vectors, X_supp, support_indices
+        if model_kernel == 'linear':
+            return w, b, support_vectors, X_supp, support_indices
+        else:
+            return support_vectors, X_supp, support_indices

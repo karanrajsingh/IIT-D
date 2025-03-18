@@ -243,7 +243,8 @@ class NaiveBayes:
         accuracy = 0;
         total = len(df["Class Index"])
         for i in range(len(df["Class Index"])):
-            if df["Class Index"].iloc[i] == np.random.randint[1, 5]:
+            class_val = np.random.randint(1, 5)
+            if df["Class Index"].iloc[i] == class_val:
                 accuracy += 1
         return float(accuracy)/total
     

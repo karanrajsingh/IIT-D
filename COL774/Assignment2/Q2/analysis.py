@@ -22,9 +22,9 @@ def fit_svc(X, y, X_, y_, kernel = 'linear', C = 1.0, gamma = 0.001):
     end = time.time()
     print(model.n_support_)
     support_indices = model.support_
-    # alpha_y = model.dual_coef_
-    # print("Weights: ", model.coef_)
-    # print("Intercept: ", model.intercept_)
+    alpha_y = model.dual_coef_
+    print("Weights: ", model.coef_)
+    print("Intercept: ", model.intercept_)
     print("Total support vectors:", sum(model.n_support_))
     # print("Support vector indices: ", support_indices)
     y_pred = model.predict(X_)
@@ -33,6 +33,26 @@ def fit_svc(X, y, X_, y_, kernel = 'linear', C = 1.0, gamma = 0.001):
     print("Accuracy: ", accuracy, svc_accuracy)
     print("Training time for {} case".format(kernel), end - start)
     # sort_and_plot(X, model.coef_)
+    return support_indices
+
+def fit_svc_gaussian(X, y, X_, y_, kernel = 'linear', C = 1.0, gamma = 0.001):
+    model = svm.SVC(C=C, kernel=kernel, gamma=gamma)
+    start = time.time()
+    param = model.fit(X,y)
+    end = time.time()
+    print(model.n_support_)
+    support_indices = model.support_
+    alpha_y = model.dual_coef_
+    # print("Weights: ", model.coef_)
+    print("Intercept: ", model.intercept_)
+    print("Total support vectors:", sum(model.n_support_))
+    print("Support vector indices: ", support_indices)
+    y_pred = model.predict(X_)
+    accuracy = svm_model.accuracy(y_, y_pred)
+    svc_accuracy = accuracy_score(y_, y_pred)
+    print("Accuracy: ", accuracy, svc_accuracy)
+    print("Training time for {} case".format(kernel), end - start)
+    return support_indices
 
 def fit_sgd(X, y, X_, y_):
     model = SGDClassifier()
@@ -64,12 +84,11 @@ def fit_liblinear(X, y, X_, y_, C = 1.0):
     print("Training time for LinearSVC case", end - start)
     # sort_and_plot(X, model.coef_)
 
-
-def sort_and_plot(X, w):
-    index = np.argsort(w.reshape((30000,)))[-5:][::-1]
+def sort_and_plot(X_supp, support_alpha, w):
+    index = np.argsort(support_alpha)[-5:][::-1]
     print(index)
     for i in range(len(index)):
-        X_ = X[i, :]      
+        X_ = X_supp[i, :]      
         X_ = X_.reshape((100, 100, 3))
         cv2.imshow("Image", X_)
         cv2.waitKey(0)
@@ -78,6 +97,14 @@ def sort_and_plot(X, w):
     cv2.imshow("Image", w_)
     cv2.waitKey(0)
 
+def sort_and_plot_gaussian(X_supp, support_vector):
+    index = np.argsort(support_vector)[-5:][::-1]
+    print(index)
+    for i in range(len(index)):
+        X_ = X_supp[i, :]      
+        X_ = X_.reshape((100, 100, 3))
+        cv2.imshow("Image", X_)
+        cv2.waitKey(0)
 
 """
 ANALYSIS: MULTICLASS CVXOPT AND SVC FOR GAUSSIAN KERNEL

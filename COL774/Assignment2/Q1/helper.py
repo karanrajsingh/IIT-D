@@ -83,10 +83,26 @@ def generate_bigrams_for_text(text):
     # Assuming that text already tokenized
     return list(bigrams(text))
 
+def generate_trigrams(df, text_col = "Tokenized Description"):
+    df["Trigrams " + text_col] = df[text_col].apply(generate_trigrams_for_text)
+    return df
+
+def generate_trigrams_for_text(text):
+    # Assuming that text already tokenized
+    return list(bigrams(text))
+
 def combine_unigram_bigram(df, text_col1, text_col2):
     df[text_col1 + " " + text_col2] = df.apply(lambda row: combine_unigram_bigram_for_text(row[text_col1], row[text_col2]), axis = 1)
     return df
 
 def combine_unigram_bigram_for_text(tokens1, tokens2):
+        merged_list = list(itertools.chain(tokens1, tokens2))
+        return merged_list
+
+def combine_unigram_trigram(df, text_col1, text_col2):
+    df[text_col1 + " " + text_col2] = df.apply(lambda row: combine_unigram_trigram_for_text(row[text_col1], row[text_col2]), axis = 1)
+    return df
+
+def combine_unigram_trigram_for_text(tokens1, tokens2):
         merged_list = list(itertools.chain(tokens1, tokens2))
         return merged_list

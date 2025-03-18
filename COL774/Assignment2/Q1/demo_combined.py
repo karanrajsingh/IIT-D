@@ -91,9 +91,42 @@ def train_and_check(model, df_train, df_test, text_col1 = "Title", text_col2 = "
     df_test = helper.combine_unigram_bigram(df_test, text_col1="Tokenized Title Description No Stopwords Stemmed", text_col2="Bigrams Tokenized Title Description No Stopwords Stemmed")
 
 
+    # Generate trigrams
+    print("Generating trigrams...")
+    df_train = helper.generate_trigrams(df_train, text_col="Tokenized Description No Stopwords Stemmed")
+    df_test = helper.generate_trigrams(df_test, text_col="Tokenized Description No Stopwords Stemmed")
+    df_train = helper.generate_trigrams(df_train, text_col="Tokenized Title No Stopwords Stemmed")
+    df_test = helper.generate_trigrams(df_test, text_col="Tokenized Title No Stopwords Stemmed")
+    df_train = helper.generate_trigrams(df_train, text_col="Tokenized Title Description No Stopwords Stemmed")
+    df_test = helper.generate_trigrams(df_test, text_col="Tokenized Title Description No Stopwords Stemmed")
+
+
+
+    # Combining unigrams and bigrams
+    print("Combining unigrams, bigrams and trigrams...")
+    df_train = helper.combine_unigram_trigram(df_train, text_col1="Tokenized Description No Stopwords Stemmed", text_col2="Trigrams Tokenized Description No Stopwords Stemmed")
+    df_test = helper.combine_unigram_trigram(df_test, text_col1="Tokenized Description No Stopwords Stemmed", text_col2="Trigrams Tokenized Description No Stopwords Stemmed")
+    df_train = helper.combine_unigram_trigram(df_train, text_col1="Tokenized Title No Stopwords Stemmed", text_col2="Trigrams Tokenized Title No Stopwords Stemmed")
+    df_test = helper.combine_unigram_trigram(df_test, text_col1="Tokenized Title No Stopwords Stemmed", text_col2="Trigrams Tokenized Title No Stopwords Stemmed")
+    df_train = helper.combine_unigram_trigram(df_train, text_col1="Tokenized Title Description No Stopwords Stemmed", text_col2="Trigrams Tokenized Title Description No Stopwords Stemmed")
+    df_test = helper.combine_unigram_trigram(df_test, text_col1="Tokenized Title Description No Stopwords Stemmed", text_col2="Trigrams Tokenized Title Description No Stopwords Stemmed")
+
+
+    # Combining unigrams, bigrams and trigram
+    print("Combining unigrams, bigrams and trigrams...")
+    df_train = helper.combine_unigram_trigram(df_train, text_col1="Tokenized Description No Stopwords Stemmed Bigrams Tokenized Description No Stopwords Stemmed", text_col2="Trigrams Tokenized Description No Stopwords Stemmed")
+    df_test = helper.combine_unigram_trigram(df_test, text_col1="Tokenized Description No Stopwords Stemmed Bigrams Tokenized Description No Stopwords Stemmed", text_col2="Trigrams Tokenized Description No Stopwords Stemmed")
+    df_train = helper.combine_unigram_trigram(df_train, text_col1="Tokenized Title No Stopwords Stemmed Bigrams Tokenized Title No Stopwords Stemmed", text_col2="Trigrams Tokenized Title No Stopwords Stemmed")
+    df_test = helper.combine_unigram_trigram(df_test, text_col1="Tokenized Title No Stopwords Stemmed Bigrams Tokenized Title No Stopwords Stemmed", text_col2="Trigrams Tokenized Title No Stopwords Stemmed")
+    df_train = helper.combine_unigram_trigram(df_train, text_col1="Tokenized Title Description No Stopwords Stemmed Bigrams Tokenized Title Description No Stopwords Stemmed", text_col2="Trigrams Tokenized Title Description No Stopwords Stemmed")
+    df_test = helper.combine_unigram_trigram(df_test, text_col1="Tokenized Title Description No Stopwords Stemmed Bigrams Tokenized Title Description No Stopwords Stemmed", text_col2="Trigrams Tokenized Title Description No Stopwords Stemmed")
+
+
+
     print("Training...")
 
     # Part 6.b
+    print("Different theta bigrams...")
 
     str1 = "Tokenized Title No Stopwords Stemmed Bigrams Tokenized Title No Stopwords Stemmed"
     str2 = "Tokenized Description No Stopwords Stemmed Bigrams Tokenized Description No Stopwords Stemmed"
@@ -102,19 +135,33 @@ def train_and_check(model, df_train, df_test, text_col1 = "Title", text_col2 = "
     df_train= model.predict_two_features(df_train, text_col1 = str1, text_col2= str2, predicted_col = "Predicted")
     train_accuracy = model.accuracy(df_train)
     print("Train accuracy:  ", train_accuracy)
-    df_train= model.predict_two_features(df_test, text_col1 = str1, text_col2= str2, predicted_col = "Predicted")
+    df_test= model.predict_two_features(df_test, text_col1 = str1, text_col2= str2, predicted_col = "Predicted")
+    test_accuracy = model.accuracy(df_test)
+    print("Test accuracy for:  ", test_accuracy)
+    get_metrics(df_test)
+    # Part 9
+    print("Different theta trigrams...")
+
+    str1 = "Tokenized Title No Stopwords Stemmed Trigrams Tokenized Title No Stopwords Stemmed"
+    str2 = "Tokenized Description No Stopwords Stemmed Trigrams Tokenized Description No Stopwords Stemmed"
+
+    model.fit_two_features(df_train, smoothening, text_col1 = str1, text_col2= str2)
+    df_train= model.predict_two_features(df_train, text_col1 = str1, text_col2= str2, predicted_col = "Predicted")
+    train_accuracy = model.accuracy(df_train)
+    print("Train accuracy:  ", train_accuracy)
+    df_test= model.predict_two_features(df_test, text_col1 = str1, text_col2= str2, predicted_col = "Predicted")
     test_accuracy = model.accuracy(df_test)
     print("Test accuracy for:  ", test_accuracy)
     get_metrics(df_test)
 
     # Part 7.a and 7.b
-    class_val = np.random.randint(1,4)
-    baseline_train_accuracy = model.baseline_accuracy(df_train, class_val)
-    baseline_test_accuracy = model.baseline_accuracy(df_test, class_val)
+    class_val = np.random.randint(1,5)
+    baseline_train_accuracy = model.baseline_accuracy_random(df_train)
+    baseline_test_accuracy = model.baseline_accuracy_random(df_test)
     print("Training accuracy, for random class: ", baseline_train_accuracy)
     print("Testing accuracy, for random class", baseline_test_accuracy)
-    baseline_train_accuracy = model.baseline_accuracy(df_train, 1)
-    baseline_test_accuracy = model.baseline_accuracy(df_test, 1)
+    baseline_train_accuracy = model.baseline_accuracy(df_train, class_val)
+    baseline_test_accuracy = model.baseline_accuracy(df_test, class_val)
     print("Training accuracy, for always predicting 1: ", baseline_train_accuracy)
     print("Testing accuracy, for always predicting 1", baseline_test_accuracy)
 
@@ -122,6 +169,21 @@ def train_and_check(model, df_train, df_test, text_col1 = "Title", text_col2 = "
     # Part 6.a
 
     str3 = "Tokenized Title Description No Stopwords Stemmed Bigrams Tokenized Title Description No Stopwords Stemmed"
+    print("Merged Tokenized Title Description No Stopwords Stemmed Bigrams Tokenized Title Description No Stopwords Stemmed")
+    params = model.fit(df_train, smoothening, text_col=str3)
+    priors = params[0]
+    estimates = params[1]
+    df_train= model.predict(df_train, text_col=str3)
+    train_accuracy = model.accuracy(df_train)
+    print("Train accuracy:  ", train_accuracy)
+    df_test = model.predict(df_test, text_col=str3)
+    test_accuracy = model.accuracy(df_test)
+    print("Test accuracy:  ", test_accuracy)
+    get_metrics(df_test)
+
+    # Part 9
+    str3 = "Tokenized Title Description No Stopwords Stemmed Trigrams Tokenized Title Description No Stopwords Stemmed"
+    print("Merged Tokenized Title Description No Stopwords Stemmed Trigrams Tokenized Title Description No Stopwords Stemmed")
     params = model.fit(df_train, smoothening, text_col=str3)
     priors = params[0]
     estimates = params[1]
