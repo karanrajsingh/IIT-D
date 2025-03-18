@@ -1,6 +1,7 @@
 import naive_bayes
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, classification_report
+from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, f1_score, classification_report
 import helper
+import numpy as np
 
 model = naive_bayes.NaiveBayes()
 
@@ -22,6 +23,8 @@ def get_metrics(df):
     precision = precision_score(y_test, y_predicted, average='weighted')
     recall = recall_score(y_test, y_predicted, average='weighted')
     f1 = f1_score(y_test, y_predicted, average='weighted')
+    cm = confusion_matrix(y_test, y_predicted)
+    print(cm)
 
     print(f'Accuracy: ', accuracy)
     print(f'Precision: ', precision)
@@ -226,8 +229,19 @@ def train_and_check(model, df_train, df_test, text = "Title"):
     print("Test accuracy for 'Tokenized {0} No Stopwords Stemmed Bigrams Tokenized {1} No Stopwords Stemmed':  ".format(text, text), test_accuracy)
     get_metrics(df_test)
 
+
+    class_val = np.random.randint(1,5)
+    baseline_train_accuracy = model.baseline_accuracy_random(df_train)
+    baseline_test_accuracy = model.baseline_accuracy_random(df_test)
+    print("Training accuracy, for random class: ", baseline_train_accuracy)
+    print("Testing accuracy, for random class", baseline_test_accuracy)
+    baseline_train_accuracy = model.baseline_accuracy(df_train, class_val)
+    baseline_test_accuracy = model.baseline_accuracy(df_test, class_val)
+    print("Training accuracy, for always predicting 1: ", baseline_train_accuracy)
+    print("Testing accuracy, for always predicting 1", baseline_test_accuracy)
+
+
     return df_train, df_test
 
 
-train_and_check(model, df_train, df_test, text="Title")
 train_and_check(model, df_train, df_test, text="Description")
