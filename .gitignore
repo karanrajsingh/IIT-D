@@ -2,6 +2,7 @@
 #.gitignore file is used to omit certain files from being pushed into the repo. It is created in the root directory of the repo.
 
 #Assign 2 is large. Hence, ignored.
-data/*
+COL774/Assignment2/data/*
+COL774/Assignment3/data/*
 __pycache__/
 ~$*
