@@ -99,24 +99,37 @@ def grow_tree(df, depth, parent_attribute = "", parent_val = -1, current_level =
             elif len(df_label_0) < len(df_label_1):
                 label_val = label_1
             else:
-                value = random.randint(0, 10)%2
-                if(value == 0):
-                    label_val = label_0
-                else:
-                    label_val = label_1
+                # value = random.randint(0, 10)%2
+                # if(value == 0):
+                #     label_val = label_0
+                # else:
+                #     label_val = label_1
+                label_val = label_0
         elif len(df_label_0) == 0:
-            label_val = label_0
-        else:
             label_val = label_1
+        elif len(df_label_1) == 0:
+            label_val = label_0
         return tree.Tree(attribute = "", parent_attribute = parent_attribute, parent_val = parent_val, median = -sys.maxsize, cat_val_list = [], child_list = [], label = label_val, level = current_level)
 
     attribute, median = choose_attribute(df)
 
     # Creating Decision Tree node
     node = tree.Tree(attribute = attribute, parent_attribute = parent_attribute, parent_val = parent_val, median = None, cat_val_list = [], child_list = [], label = -1, level = current_level)
+    # Store majority label at each node
+    if len(df_label_0) > len(df_label_1):
+        label_val = label_0
+    elif len(df_label_0) < len(df_label_1):
+        label_val = label_1
+    else:
+        # value = random.randint(0, 10)%2
+        # if value == 0 :
+        #     label_val = label_0
+        # elif value == 1:
+        #     label_val = label_1
+        label_val = label_0
+    node.label = label_val
 
     if attribute in categorical:
-       
         cat_val_list = df[attribute].unique()
         node.cat_val_list = cat_val_list
         for val in cat_val_list:
@@ -124,7 +137,7 @@ def grow_tree(df, depth, parent_attribute = "", parent_val = -1, current_level =
             child_node = grow_tree(child_df, depth, attribute, val, current_level + 1)
             if child_node is not None:
                 node.add_child_node(child_node)
-    else:
+    elif attribute in continuous:
         node.median = median
         # Left child has values less or equal to median
         left_child_df = df[df[attribute] <= median]
@@ -138,7 +151,7 @@ def grow_tree(df, depth, parent_attribute = "", parent_val = -1, current_level =
             node.add_child_node(right_child)
     return node
 
-decision_tree = grow_tree(df_train, depth=5)
+decision_tree = grow_tree(df_train, depth = 20)
 
 def print_node(node):
     print(node.level, node.attribute)
@@ -159,5 +172,90 @@ def bfs_traversal(root):
 
     return result
 
-bfs_traversal(decision_tree)
+# bfs_traversal(decision_tree)
 
+# def predict(df, dec_tree):
+#     df["predicted"] = df.apply(lambda row: predict_label(row, dec_tree), axis = 1)
+#     return df
+
+# def predict_label(df, current_node):
+    
+#     if current_node.attribute == "":
+#         return current_node.label
+    
+#     attribute = current_node.attribute
+#     if attribute in categorical:
+#         attr_val = df.at[0, attribute]
+#         for child in current_node.child_list:
+#             if child.parent_attribute == attribute and child.parent_val == attr_val:
+#                 if child.attribute != "":
+#                     predict_label(df, child)
+#                 else:
+#                     return child.label
+#         # if attr_val is not present in child nodes, return current as leaf
+#         return current_node.label
+#     if attribute in continuous:
+#         attr_val = df.at[0, attribute]
+#         median = current_node.median
+#         for child in current_node.child_list:
+#             if attr_val <= median and child.parent_val == "left":
+#                 if child.attribute != "":
+#                     predict_label(df, child)
+#                 else:
+#                     return child.label
+#             elif attr_val > median and child.parent_val == "right": 
+#                 if child.attribute != "":
+#                     predict_label(df, child)
+#                 else:
+#                     return child.label           
+
+def predict(df, dec_tree):
+    df["predicted"] = df.apply(lambda row: predict_label(row, dec_tree), axis=1)
+    return df
+
+def predict_label(row, current_node):
+    if current_node.attribute == "":
+        return current_node.label
+
+    attribute = current_node.attribute
+
+    if attribute in categorical:
+        attr_val = row[attribute]
+        for child in current_node.child_list:
+            if child.parent_attribute == attribute and child.parent_val == attr_val:
+                return predict_label(row, child)
+
+    if attribute in continuous:
+        attr_val = row[attribute]
+        median = current_node.median
+        if attr_val <= median:
+            for child in current_node.child_list:
+                if child.parent_val == "left":
+                    return predict_label(row, child)
+        else:
+            for child in current_node.child_list:
+                if child.parent_val == "right":
+                    return predict_label(row, child)
+
+        return current_node.label
+df_train = predict(df_train, decision_tree)
+df_valid = predict(df_valid, decision_tree)
+
+# def accuracy(df):
+#     hits = 0
+#     for i in range(len(df)):
+#         if df.at[i, label] == df.at[i, "predicted"]:
+#             hits += 1
+#     accuracy = float(hits)/len(df)
+#     print("Misses: {0}, Accuracy: {1}".format(len(df) - hits, accuracy))
+#     return accuracy
+
+def accuracy(df, label_col= label):
+    correct = (df[label_col].astype(str).str.strip().str.lower() == 
+               df["predicted"].astype(str).str.strip().str.lower()).sum()
+    total = len(df)
+    acc = correct / total
+    print(f"Misses: {total - correct}, Accuracy: {acc:.4f}")
+    return acc
+accuracy(df_train)
+accuracy(df_valid)
