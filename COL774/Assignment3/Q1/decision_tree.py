@@ -44,7 +44,169 @@ def entropy(df):
     entropy = -(log_0 + log_1)
     return entropy
 
-def choose_attribute(df):
+# def choose_attribute(df):
+#     # H(Y)
+#     H_y = entropy(df)
+#     I_gain_max = 0
+#     split_attr = ""
+#     median = -sys.maxsize
+#     count = len(df)
+
+#     for attribute in categorical:
+#         attr_val = df[attribute].unique()
+#         H_y_val = 0
+#         for val in attr_val:
+#             df_attr = df[df[attribute] == val]
+#             prob_attr = float(len(df_attr))/count
+#             H_y_val += prob_attr*entropy(df_attr)        
+#         I_gain = H_y - H_y_val
+#         if I_gain > I_gain_max:
+#             split_attr = attribute
+#             I_gain_max = I_gain
+
+#     for attribute in continuous:
+#         H_y_val = 0
+#         median = df[attribute].median()
+        
+#         df_attr = df[df[attribute] <= median]
+#         if len(df_attr) != 0:
+#             prob_attr = float(len(df_attr))/count
+#             H_y_val += prob_attr*entropy(df_attr)     
+        
+#         df_attr = df[df[attribute] > median]
+#         if len(df_attr) != 0:
+#             prob_attr = float(len(df_attr))/count
+#             H_y_val += prob_attr*entropy(df_attr) 
+        
+#         I_gain = H_y - H_y_val
+#         if I_gain > I_gain_max:
+#             split_attr = attribute
+#             I_gain_max = I_gain
+
+#     return split_attr, median
+
+# def grow_tree(df, depth, parent_attribute = "", parent_val = -1, current_level = 1):
+
+#     df_label_0 = df[df[label] == label_0]
+#     df_label_1 = df[df[label] == label_1]
+#     if len(df_label_0) == 0 or len(df_label_1) == 0 or current_level >= depth:
+#         if current_level >= depth:
+#             if len(df_label_0) > len(df_label_1):
+#                 label_val = label_0
+#             elif len(df_label_0) < len(df_label_1):
+#                 label_val = label_1
+#             else:
+#                 label_val = label_0
+#         elif len(df_label_0) == 0:
+#             label_val = label_1
+#         elif len(df_label_1) == 0:
+#             label_val = label_0
+#         return tree.Tree(attribute = "", parent_attribute = parent_attribute, parent_val = parent_val, median = -sys.maxsize, cat_val_list = [], child_list = [], label = label_val, level = current_level)
+
+#     attribute, median = choose_attribute(df)
+
+#     # Creating Decision Tree node
+#     node = tree.Tree(attribute = attribute, parent_attribute = parent_attribute, parent_val = parent_val, median = None, cat_val_list = [], child_list = [], label = -1, level = current_level)
+#     # Store majority label at each node
+#     if len(df_label_0) > len(df_label_1):
+#         label_val = label_0
+#     elif len(df_label_0) < len(df_label_1):
+#         label_val = label_1
+#     else:
+#         label_val = label_0
+#     node.label = label_val
+
+#     if attribute in categorical:
+#         cat_val_list = df[attribute].unique()
+#         node.cat_val_list = cat_val_list
+#         for val in cat_val_list:
+#             child_df = df[df[attribute] == val]
+#             child_node = grow_tree(child_df, depth, attribute, val, current_level + 1)
+#             if child_node is not None:
+#                 node.add_child_node(child_node)
+#     elif attribute in continuous:
+#         node.median = median
+#         # Left child has values less or equal to median
+#         left_child_df = df[df[attribute] <= median]
+#         left_child = grow_tree(left_child_df, depth, attribute, "left", current_level + 1)
+#         if left_child is not None:
+#             node.add_child_node(left_child)
+#         # Right child has values greater than median
+#         right_child_df = df[df[attribute] > median]
+#         right_child = grow_tree(right_child_df, depth, attribute, "right", current_level + 1)
+#         if right_child is not None:
+#             node.add_child_node(right_child)
+#     return node
+
+# decision_tree = grow_tree(df_train, depth = 5)         
+
+# def predict(df, dec_tree):
+#     df["predicted"] = df.apply(lambda row: predict_label(row, dec_tree), axis=1)
+#     return df
+
+# def predict_label(row, current_node):
+#     if current_node.attribute == "":
+#         return current_node.label
+
+#     attribute = current_node.attribute
+
+#     if attribute in categorical:
+#         attr_val = row[attribute]
+#         for child in current_node.child_list:
+#             if child.parent_attribute == attribute and child.parent_val == attr_val:
+#                 return predict_label(row, child)
+
+#     if attribute in continuous:
+#         attr_val = row[attribute]
+#         median = current_node.median
+#         if attr_val <= median:
+#             for child in current_node.child_list:
+#                 if child.parent_val == "left":
+#                     return predict_label(row, child)
+#         else:
+#             for child in current_node.child_list:
+#                 if child.parent_val == "right":
+#                     return predict_label(row, child)
+
+#         return current_node.label
+# df_train = predict(df_train, decision_tree)
+# df_valid = predict(df_valid, decision_tree)
+# df_test = predict(df_test, decision_tree)
+
+def accuracy(df, label_col= label):
+    correct = (df[label_col].astype(str).str.strip().str.lower() == 
+               df["predicted"].astype(str).str.strip().str.lower()).sum()
+    total = len(df)
+    acc = correct / total
+    print(f"Misses: {total - correct}, Accuracy: {acc:.4f}")
+    return acc
+# accuracy(df_train)
+# accuracy(df_valid)
+# accuracy(df_test)
+
+def one_hot_encoding(df, categorical):
+    one_hot_categorical = []
+    for attribute in categorical:
+        attr_val = df[attribute].unique()
+        for val in attr_val:
+            df[attribute + "_" + val] = df[attribute].apply(lambda x: 1 if x == val else 0)
+            str = attribute + "_" + val
+            one_hot_categorical.append(str)
+    return one_hot_categorical
+
+one_hot_categorical = one_hot_encoding(df_train, categorical)
+one_hot_encoding(df_valid, categorical)
+one_hot_encoding(df_test, categorical)
+
+df_train.to_csv("one_hot_train.csv", index=False)
+
+# print(one_hot_categorical)
+
+# for attribute in one_hot_categorical:
+#     df_attr = df_train[attribute]
+#     print(df_attr[df_attr == 1])
+
+def choose_attribute_one_hot(df):
     # H(Y)
     H_y = entropy(df)
     I_gain_max = 0
@@ -52,7 +214,7 @@ def choose_attribute(df):
     median = -sys.maxsize
     count = len(df)
 
-    for attribute in categorical:
+    for attribute in one_hot_categorical:
         attr_val = df[attribute].unique()
         H_y_val = 0
         for val in attr_val:
@@ -85,10 +247,7 @@ def choose_attribute(df):
 
     return split_attr, median
 
-attribute = choose_attribute(df_train)
-
-
-def grow_tree(df, depth, parent_attribute = "", parent_val = -1, current_level = 1):
+def grow_tree_one_hot(df, depth, parent_attribute = "", parent_val = -1, current_level = 1):
 
     df_label_0 = df[df[label] == label_0]
     df_label_1 = df[df[label] == label_1]
@@ -99,11 +258,6 @@ def grow_tree(df, depth, parent_attribute = "", parent_val = -1, current_level =
             elif len(df_label_0) < len(df_label_1):
                 label_val = label_1
             else:
-                # value = random.randint(0, 10)%2
-                # if(value == 0):
-                #     label_val = label_0
-                # else:
-                #     label_val = label_1
                 label_val = label_0
         elif len(df_label_0) == 0:
             label_val = label_1
@@ -111,7 +265,7 @@ def grow_tree(df, depth, parent_attribute = "", parent_val = -1, current_level =
             label_val = label_0
         return tree.Tree(attribute = "", parent_attribute = parent_attribute, parent_val = parent_val, median = -sys.maxsize, cat_val_list = [], child_list = [], label = label_val, level = current_level)
 
-    attribute, median = choose_attribute(df)
+    attribute, median = choose_attribute_one_hot(df)
 
     # Creating Decision Tree node
     node = tree.Tree(attribute = attribute, parent_attribute = parent_attribute, parent_val = parent_val, median = None, cat_val_list = [], child_list = [], label = -1, level = current_level)
@@ -121,109 +275,48 @@ def grow_tree(df, depth, parent_attribute = "", parent_val = -1, current_level =
     elif len(df_label_0) < len(df_label_1):
         label_val = label_1
     else:
-        # value = random.randint(0, 10)%2
-        # if value == 0 :
-        #     label_val = label_0
-        # elif value == 1:
-        #     label_val = label_1
         label_val = label_0
     node.label = label_val
 
-    if attribute in categorical:
+    if attribute in one_hot_categorical:
         cat_val_list = df[attribute].unique()
         node.cat_val_list = cat_val_list
         for val in cat_val_list:
             child_df = df[df[attribute] == val]
-            child_node = grow_tree(child_df, depth, attribute, val, current_level + 1)
+            child_node = grow_tree_one_hot(child_df, depth, attribute, val, current_level + 1)
             if child_node is not None:
                 node.add_child_node(child_node)
     elif attribute in continuous:
         node.median = median
         # Left child has values less or equal to median
         left_child_df = df[df[attribute] <= median]
-        left_child = grow_tree(left_child_df, depth, attribute, "left", current_level + 1)
+        left_child = grow_tree_one_hot(left_child_df, depth, attribute, "left", current_level + 1)
         if left_child is not None:
             node.add_child_node(left_child)
         # Right child has values greater than median
         right_child_df = df[df[attribute] > median]
-        right_child = grow_tree(right_child_df, depth, attribute, "right", current_level + 1)
+        right_child = grow_tree_one_hot(right_child_df, depth, attribute, "right", current_level + 1)
         if right_child is not None:
             node.add_child_node(right_child)
     return node
 
-decision_tree = grow_tree(df_train, depth = 20)
+decision_tree = grow_tree_one_hot(df_train, depth = 10)         
 
-def print_node(node):
-    print(node.level, node.attribute)
-
-def bfs_traversal(root):
-    if not root:
-        return []
-
-    queue = deque([root])
-    result = []
-
-    while queue:
-        current = queue.popleft()
-        result.append(current)
-        print("Attribute: {0}, Parent attribute: {4}, Parent Val: {3}, Level: {1}, Label: {2}".format(current.attribute, current.level, current.label, current.parent_val, current.parent_attribute))
-        for child in current.child_list:
-            queue.append(child)
-
-    return result
-
-# bfs_traversal(decision_tree)
-
-# def predict(df, dec_tree):
-#     df["predicted"] = df.apply(lambda row: predict_label(row, dec_tree), axis = 1)
-#     return df
-
-# def predict_label(df, current_node):
-    
-#     if current_node.attribute == "":
-#         return current_node.label
-    
-#     attribute = current_node.attribute
-#     if attribute in categorical:
-#         attr_val = df.at[0, attribute]
-#         for child in current_node.child_list:
-#             if child.parent_attribute == attribute and child.parent_val == attr_val:
-#                 if child.attribute != "":
-#                     predict_label(df, child)
-#                 else:
-#                     return child.label
-#         # if attr_val is not present in child nodes, return current as leaf
-#         return current_node.label
-#     if attribute in continuous:
-#         attr_val = df.at[0, attribute]
-#         median = current_node.median
-#         for child in current_node.child_list:
-#             if attr_val <= median and child.parent_val == "left":
-#                 if child.attribute != "":
-#                     predict_label(df, child)
-#                 else:
-#                     return child.label
-#             elif attr_val > median and child.parent_val == "right": 
-#                 if child.attribute != "":
-#                     predict_label(df, child)
-#                 else:
-#                     return child.label           
-
-def predict(df, dec_tree):
-    df["predicted"] = df.apply(lambda row: predict_label(row, dec_tree), axis=1)
+def predict_one_hot(df, dec_tree):
+    df["predicted"] = df.apply(lambda row: predict_label_one_hot(row, dec_tree), axis=1)
     return df
 
-def predict_label(row, current_node):
+def predict_label_one_hot(row, current_node):
     if current_node.attribute == "":
         return current_node.label
 
     attribute = current_node.attribute
 
-    if attribute in categorical:
+    if attribute in one_hot_categorical:
         attr_val = row[attribute]
         for child in current_node.child_list:
             if child.parent_attribute == attribute and child.parent_val == attr_val:
-                return predict_label(row, child)
+                return predict_label_one_hot(row, child)
 
     if attribute in continuous:
         attr_val = row[attribute]
@@ -231,31 +324,16 @@ def predict_label(row, current_node):
         if attr_val <= median:
             for child in current_node.child_list:
                 if child.parent_val == "left":
-                    return predict_label(row, child)
+                    return predict_label_one_hot(row, child)
         else:
             for child in current_node.child_list:
                 if child.parent_val == "right":
-                    return predict_label(row, child)
+                    return predict_label_one_hot(row, child)
 
         return current_node.label
-df_train = predict(df_train, decision_tree)
-df_valid = predict(df_valid, decision_tree)
-
-# def accuracy(df):
-#     hits = 0
-#     for i in range(len(df)):
-#         if df.at[i, label] == df.at[i, "predicted"]:
-#             hits += 1
-#     accuracy = float(hits)/len(df)
-#     print("Misses: {0}, Accuracy: {1}".format(len(df) - hits, accuracy))
-#     return accuracy
-
-def accuracy(df, label_col= label):
-    correct = (df[label_col].astype(str).str.strip().str.lower() == 
-               df["predicted"].astype(str).str.strip().str.lower()).sum()
-    total = len(df)
-    acc = correct / total
-    print(f"Misses: {total - correct}, Accuracy: {acc:.4f}")
-    return acc
+df_train = predict_one_hot(df_train, decision_tree)
+df_valid = predict_one_hot(df_valid, decision_tree)
+df_test = predict_one_hot(df_test, decision_tree)
 accuracy(df_train)
 accuracy(df_valid)
+accuracy(df_test)
