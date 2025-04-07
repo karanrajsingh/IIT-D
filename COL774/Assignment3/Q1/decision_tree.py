@@ -33,14 +33,12 @@ def entropy(df):
     count_1 = len(df[df[label] == label_1])
     prob_0 = float(count_0)/(count_0 + count_1)
     prob_1 = float(count_1)/(count_0 + count_1)
-    if(prob_0 == 0):
-        log_0 = 0
-    else:
+    log_0 = 0
+    log_1 = 0
+    if(prob_0 != 0):
         log_0 = prob_0*math.log(prob_0)
-    if(prob_1 == 0):
-        log_1 = 1
-    else:
-        log_1 = prob_1*math.log(prob_1)
+    if(prob_1 != 0):
+        log_1 = prob_1*math.log(prob_1)   
     entropy = -(log_0 + log_1)
     return entropy
 
@@ -49,7 +47,7 @@ def choose_attribute(df):
     H_y = entropy(df)
     I_gain_max = 0
     split_attr = ""
-    median = -sys.maxsize
+    median_max = -sys.maxsize
     count = len(df)
 
     for attribute in categorical:
@@ -82,8 +80,9 @@ def choose_attribute(df):
         if I_gain > I_gain_max:
             split_attr = attribute
             I_gain_max = I_gain
+            median_max = median
 
-    return split_attr, median
+    return split_attr, median_max
 
 def grow_tree(df, depth, parent_attribute = "", parent_val = -1, current_level = 1):
 
@@ -168,7 +167,7 @@ def predict_label(row, current_node):
                 if child.parent_val == "right":
                     return predict_label(row, child)
 
-        return current_node.label
+    return current_node.label
 df_train = predict(df_train, decision_tree)
 df_valid = predict(df_valid, decision_tree)
 df_test = predict(df_test, decision_tree)
@@ -189,9 +188,9 @@ def one_hot_encoding(df, categorical):
     for attribute in categorical:
         attr_val = df[attribute].unique()
         for val in attr_val:
-            df[attribute + "_" + val] = df[attribute].apply(lambda x: 1 if x == val else 0)
-            str = attribute + "_" + val
-            one_hot_categorical.append(str)
+            df[attribute + "_" + str(val)] = df[attribute].apply(lambda x: 1 if x == val else 0)
+            # str = attribute + "_" + val
+            one_hot_categorical.append(attribute + "_" + str(val))
     return one_hot_categorical
 
 one_hot_categorical = one_hot_encoding(df_train, categorical)
@@ -211,7 +210,7 @@ def choose_attribute_one_hot(df):
     H_y = entropy(df)
     I_gain_max = 0
     split_attr = ""
-    median = -sys.maxsize
+    median_max = -sys.maxsize
     count = len(df)
 
     for attribute in one_hot_categorical:
@@ -244,8 +243,9 @@ def choose_attribute_one_hot(df):
         if I_gain > I_gain_max:
             split_attr = attribute
             I_gain_max = I_gain
+            median_max = median
 
-    return split_attr, median
+    return split_attr, median_max
 
 def grow_tree_one_hot(df, depth, parent_attribute = "", parent_val = -1, current_level = 1):
 
