@@ -5,6 +5,7 @@ import math
 import sys
 import random
 from collections import deque
+import time
 
 path_train = "../data/Q1/train.csv"
 path_valid = "../data/Q1/valid.csv"
@@ -137,7 +138,7 @@ def grow_tree(df, depth, parent_attribute = "", parent_val = -1, current_level =
             node.add_child_node(right_child)
     return node
 
-decision_tree = grow_tree(df_train, depth = 5)         
+# decision_tree = grow_tree(df_train, depth = 5)         
 
 def predict(df, dec_tree):
     df["predicted"] = df.apply(lambda row: predict_label(row, dec_tree), axis=1)
@@ -168,9 +169,9 @@ def predict_label(row, current_node):
                     return predict_label(row, child)
 
     return current_node.label
-df_train = predict(df_train, decision_tree)
-df_valid = predict(df_valid, decision_tree)
-df_test = predict(df_test, decision_tree)
+# df_train = predict(df_train, decision_tree)
+# df_valid = predict(df_valid, decision_tree)
+# df_test = predict(df_test, decision_tree)
 
 def accuracy(df, label_col= label):
     correct = (df[label_col].astype(str).str.strip().str.lower() == 
@@ -179,9 +180,9 @@ def accuracy(df, label_col= label):
     acc = correct / total
     print(f"Misses: {total - correct}, Accuracy: {acc:.4f}")
     return acc
-accuracy(df_train)
-accuracy(df_valid)
-accuracy(df_test)
+# accuracy(df_train)
+# accuracy(df_valid)
+# accuracy(df_test)
 
 def one_hot_encoding(df, categorical):
     one_hot_categorical = []
@@ -300,7 +301,7 @@ def grow_tree_one_hot(df, depth, parent_attribute = "", parent_val = -1, current
             node.add_child_node(right_child)
     return node
 
-decision_tree = grow_tree_one_hot(df_train, depth = 25)         
+# decision_tree = grow_tree_one_hot(df_train, depth = 25)         
 
 def predict_one_hot(df, dec_tree):
     df["predicted"] = df.apply(lambda row: predict_label_one_hot(row, dec_tree), axis=1)
@@ -331,9 +332,61 @@ def predict_label_one_hot(row, current_node):
                     return predict_label_one_hot(row, child)
 
         return current_node.label
+# df_train = predict_one_hot(df_train, decision_tree)
+# df_valid = predict_one_hot(df_valid, decision_tree)
+# df_test = predict_one_hot(df_test, decision_tree)
+# accuracy(df_train)
+# accuracy(df_valid)
+# accuracy(df_test)
+
+def grow_tree_one_hot_fully(df, parent_attribute="", parent_val=-1, current_level=1):
+    df_label_0 = df[df[label] == label_0]
+    df_label_1 = df[df[label] == label_1]
+    if len(df_label_0) == 0 or len(df_label_1) == 0:
+        if len(df_label_0) == 0:
+            label_val = label_1
+        else:
+            label_val = label_0
+        return tree.Tree(attribute="", parent_attribute=parent_attribute, parent_val=parent_val,
+                         median=-sys.maxsize, cat_val_list=[], child_list=[], label=label_val, level=current_level)
+
+    attribute, median = choose_attribute_one_hot(df)
+
+    node = tree.Tree(attribute=attribute, parent_attribute=parent_attribute, parent_val=parent_val,
+                     median=None, cat_val_list=[], child_list=[], label=-1, level=current_level)
+    node.label = label_0 if len(df_label_0) >= len(df_label_1) else label_1
+
+    if attribute in one_hot_categorical:
+        cat_val_list = df[attribute].unique()
+        node.cat_val_list = cat_val_list
+        for val in cat_val_list:
+            child_df = df[df[attribute] == val]
+            child_node = grow_tree_one_hot_fully(child_df, attribute, val, current_level + 1)
+            if child_node is not None:
+                node.add_child_node(child_node)
+    elif attribute in continuous:
+        node.median = median
+        left_child_df = df[df[attribute] <= median]
+        right_child_df = df[df[attribute] > median]
+        left_child = grow_tree_one_hot_fully(left_child_df, attribute, "left", current_level + 1)
+        right_child = grow_tree_one_hot_fully(right_child_df, attribute, "right", current_level + 1)
+        if left_child is not None:
+            node.add_child_node(left_child)
+        if right_child is not None:
+            node.add_child_node(right_child)
+    return node
+
+print("Training full decision tree...")
+t1 = time.time()
+decision_tree = grow_tree_one_hot_fully(df_train)         
+t2 = time.time()
+print("Training time: ", t2 - t1)
+
+print("Predicting...")
 df_train = predict_one_hot(df_train, decision_tree)
 df_valid = predict_one_hot(df_valid, decision_tree)
 df_test = predict_one_hot(df_test, decision_tree)
+
 accuracy(df_train)
 accuracy(df_valid)
 accuracy(df_test)

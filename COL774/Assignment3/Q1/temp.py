@@ -119,7 +119,7 @@ def grow_tree(df, depth, parent_attribute="", parent_val=-1, current_level=1):
     return node
 
 # Build decision tree using the original attributes
-decision_tree = grow_tree(df_train, depth=5)         
+# decision_tree = grow_tree(df_train, depth=5)         
 
 def predict(df, dec_tree):
     df["predicted"] = df.apply(lambda row: predict_label(row, dec_tree), axis=1)
@@ -148,9 +148,9 @@ def predict_label(row, current_node):
                     return predict_label(row, child)
     return current_node.label
 
-df_train = predict(df_train, decision_tree)
-df_valid = predict(df_valid, decision_tree)
-df_test = predict(df_test, decision_tree)
+# df_train = predict(df_train, decision_tree)
+# df_valid = predict(df_valid, decision_tree)
+# df_test = predict(df_test, decision_tree)
 
 def accuracy(df, label_col=label):
     correct = (df[label_col].astype(str).str.strip().str.lower() ==
@@ -160,9 +160,9 @@ def accuracy(df, label_col=label):
     print(f"Misses: {total - correct}, Accuracy: {acc:.4f}")
     return acc
 
-accuracy(df_train)
-accuracy(df_valid)
-accuracy(df_test)
+# accuracy(df_train)
+# accuracy(df_valid)
+# accuracy(df_test)
 
 # One-hot encoding for categorical features
 def one_hot_encoding(df, categorical):
@@ -255,7 +255,7 @@ def grow_tree_one_hot(df, depth, parent_attribute="", parent_val=-1, current_lev
             node.add_child_node(right_child)
     return node
 
-decision_tree = grow_tree_one_hot(df_train, depth=25)         
+# decision_tree = grow_tree_one_hot(df_train, depth=25)         
 
 def predict_one_hot(df, dec_tree):
     df["predicted"] = df.apply(lambda row: predict_label_one_hot(row, dec_tree), axis=1)
@@ -284,10 +284,10 @@ def predict_label_one_hot(row, current_node):
                     return predict_label_one_hot(row, child)
     return current_node.label
 
-df_train = predict_one_hot(df_train, decision_tree)
-df_valid = predict_one_hot(df_valid, decision_tree)
-df_test = predict_one_hot(df_test, decision_tree)
+# df_train = predict_one_hot(df_train, decision_tree)
+# df_valid = predict_one_hot(df_valid, decision_tree)
+# df_test = predict_one_hot(df_test, decision_tree)
 
-accuracy(df_train)
-accuracy(df_valid)
-accuracy(df_test)
+# accuracy(df_train)
+# accuracy(df_valid)
+# accuracy(df_test)
