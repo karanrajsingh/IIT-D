@@ -300,14 +300,14 @@ def grow_tree_one_hot(df, depth, parent_attribute = "", parent_val = -1, current
             node.add_child_node(right_child)
     return node
 
-decision_tree = grow_tree_one_hot(df_train, depth = 10)         
+decision_tree = grow_tree_one_hot(df_train, depth = 25)         
 
 def predict_one_hot(df, dec_tree):
     df["predicted"] = df.apply(lambda row: predict_label_one_hot(row, dec_tree), axis=1)
     return df
 
 def predict_label_one_hot(row, current_node):
-    if current_node.attribute == "":
+    if current_node.attribute == "" or current_node.attribute not in row.index:
         return current_node.label
 
     attribute = current_node.attribute
