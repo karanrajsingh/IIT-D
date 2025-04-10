@@ -1,0 +1,5 @@
+Best Parameters (by OOB Accuracy): {'max_features': 0.3, 'min_samples_split': 10, 'n_estimators': 350}
+Training Accuracy: 0.9536242695511625
+Validation Accuracy: 0.8581137079396651
+Test Accuracy: 0.8561752988047808
+OOB Accuracy: 0.8602511500683825
