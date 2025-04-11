@@ -9,42 +9,60 @@ def read_images_test(path):
     array_list_test_corrupted = []
     path_test_image = os.path.join(path, "test")
     path_test_label = os.path.join(path, "test_labels.csv")
-    X_test, X_test_corrupted = read_images_class_test(path_test_image, path_test_label)
-    array_list_test.append(X_test)
-    array_list_test_corrupted.append(X_test_corrupted)
-    return array_list_test
+    X_test, y_test = read_images_class_test(path_test_image, path_test_label)
+    # array_list_test.append(X_test)
+    # array_list_test_corrupted.append(X_test_corrupted)
+    return X_test, y_test
 
 def read_images_class_test(path, path_label):
     df_test = pd.read_csv(path_label)
     array_list = []
     array_list_corrupted = []
+    label_list = []
     images = [image for image in os.listdir(path)]
     for image in images:
         match = df_test.index[df_test["image"] == image]
         index = df_test.index.get_loc(match[0])
         label = df_test.at[index, "label"]
-        print(image, label)
+        # print(image, label)
         image_path = os.path.join(path, image)
         image_read = cv2.imread(image_path)
         if image_read is not None:
             x = pre_process_image(image_read)
-            array_list.append((x, label))
+            array_list.append(x)
+            label_list.append(label)
         else:
             array_list_corrupted.append(image_path)
-    # X = np.array(array_list)
-    return array_list, array_list_corrupted
+    X = np.array(array_list)
+    y = np.array(label_list)
+    return X, y
 
 def read_images_train(path):
     array_list_train = []
     array_list_train_corrupted = []
     path_train = os.path.join(path, "train")
     label_train = [label for label in os.listdir(path_train)]
+    X_train = []
+    X_train = np.array(X_train)
+    y_train = []
+    y_train = np.array(y_train)
     for label in label_train:
         path_train_label = os.path.join(path_train, label)
-        X_train, X_train_corrupted = read_images_class(path_train_label)
-        array_list_train.append(X_train)
+        X_train_label, X_train_corrupted = read_images_class(path_train_label)
+        y_train_label = int(label)*np.ones(X_train_label.shape[0])
+        # array_list_train.append(X_train)
+        if X_train.shape[0] == 0:
+            X_train = X_train_label
+        else:
+            X_train = np.concatenate((X_train, X_train_label), axis = 0)
+        if y_train.shape[0] == 0:
+            y_train = y_train_label
+        else:
+            y_train = np.concatenate((y_train, y_train_label), axis = 0)
+        # print(X_train.shape)
+        # print(y_train.shape)
         array_list_train_corrupted.append(X_train_corrupted)
-    return array_list_train
+    return X_train, y_train
 
 def read_images_class(path):
     array_list = []
