@@ -178,7 +178,7 @@ def accuracy(df, label_col= label):
                df["predicted"].astype(str).str.strip().str.lower()).sum()
     total = len(df)
     acc = correct / total
-    print(f"Misses: {total - correct}, Accuracy: {acc:.4f}")
+    # print(f"Misses: {total - correct}, Accuracy: {acc:.4f}")
     return acc
 # accuracy(df_train)
 # accuracy(df_valid)
@@ -392,52 +392,73 @@ accuracy(df_train)
 accuracy(df_valid)
 accuracy(df_test)
 
-def prune_tree_nodes(df_valid, dec_tree, node, accuracy_max):
+def prune_tree_nodes(df_valid, dec_tree, node, accuracy_max, depth_nodes):
     
-    # base condition
-    if node.attribute == "":
-        return accuracy_max, dec_tree
+    # # base condition
+    # if node.attribute == "":
+    #     return accuracy_max, dec_tree
 
-    # performing post order traversal and prune
-    # pruning child nodes first
-    # checking iteratively for increase without loosing information
-    # if we prune node directly, we may see an accuracy increase, but with vital information loss
-    # if accuracy increases due to a child node and not the current node,
-    # pruning away the current directly will show acc inc, but the prune would be incorrect
-    for child in node.child_list:
-        accuracy_max, dec_tree_pruned = prune_tree_nodes(
-            df_valid, dec_tree, child, accuracy_max)
-        # if post_pruned_accuracy > pre_pruned_accuracy:
-        #     dec_tree = dec_tree_pruned
+    # # performing post order traversal and prune
+    # # pruning child nodes first
+    # # checking iteratively for increase without loosing information
+    # # if we prune node directly, we may see an accuracy increase, but with vital information loss
+    # # if accuracy increases due to a child node and not the current node,
+    # # pruning away the current directly will show acc inc, but the prune would be incorrect
+    # for child in node.child_list:
+    #     accuracy_max, dec_tree_pruned = prune_tree_nodes(
+    #         df_valid, dec_tree, child, accuracy_max)
+    #     # if post_pruned_accuracy > pre_pruned_accuracy:
+    #     #     dec_tree = dec_tree_pruned
     
-    # pruning dec_tree_node by converting it to leaf node
-    attribute_copy = node.attribute
-    node.attribute = ""
-    df_valid = predict_one_hot(df_valid, dec_tree)
-    prune_accuracy = accuracy(df_valid)
-    if prune_accuracy >= accuracy_max:
-        accuracy_max = prune_accuracy
-    else:
-        # restoring changes if accuracy decreases
-        node.attribute = attribute_copy
-    return accuracy_max, dec_tree
+    # # pruning dec_tree_node by converting it to leaf node
+    # attribute_copy = node.attribute
+    # node.attribute = ""
+    # df_valid = predict_one_hot(df_valid, dec_tree)
+    # prune_accuracy = accuracy(df_valid)
+    # if prune_accuracy >= accuracy_max:
+    #     accuracy_max = prune_accuracy
+    # else:
+    #     # restoring changes if accuracy decreases
+    #     node.attribute = attribute_copy
+    # return accuracy_max, dec_tree
+    
+    for depth in range(len(depth_nodes), 1, -1):
+        nodes = depth_nodes[depth]
+        # print(depth, len(nodes))
+        for node in nodes:
+            attr_org = node.attribute
+            node.attribute = "" # make the child node a leaf, i.e, being pruned
+            df_valid = predict_one_hot(df_valid, dec_tree)
+            new_accuracy = accuracy(df_valid)
+            # print(depth, new_accuracy, accuracy_max)
+            if new_accuracy >= accuracy_max:
+                accuracy_max = new_accuracy
+                nodes.remove(node)
+            else:
+                node.attribute = attr_org
+    return accuracy_max, dec_tree, df_valid
 
 
 
 # Greedy because as soon as we see a decrease in accuracy we break out completely
-def prune_tree(df_valid, dec_tree):
+def prune_tree(df_valid, dec_tree, depth_nodes):
     
     passes = 0
-
+    accuracy_max_by_pass = []
     while True:
         passes = passes + 1
         print("Pass: ", passes)
-        accuracy_max = accuracy(df_valid)
-        prune_accuracy, dec_tree_pruned = prune_tree_nodes(df_valid, dec_tree, dec_tree, accuracy_max)
+        accuracy_max =  accuracy(df_valid) # before pruning decision tree
+        prune_accuracy, dec_tree, df_valid = prune_tree_nodes(df_valid, dec_tree, dec_tree, accuracy_max, depth_nodes) # after pruning tree
+        print(prune_accuracy, accuracy_max)
         if prune_accuracy > accuracy_max:
-            dec_tree = dec_tree_pruned
+            accuracy_max = prune_accuracy
         else:
             break
+        if passes > 1 and abs(accuracy_max_by_pass[-1] - accuracy_max) < 5e-3:
+            break
+        else:
+            accuracy_max_by_pass.append(accuracy_max)
     return dec_tree
 
 def dfs(node, depth, depth_nodes):
@@ -452,16 +473,19 @@ depth_nodes = dfs(decision_tree, 1, depth_nodes={})
 
 print(len(depth_nodes))
 
-# print("Pruning tree...")
-# accuracy_max = accuracy(df_valid)
-# t1 = time.time()
-# decision_tree = prune_tree(df_valid, decision_tree)
-# t2 = time.time()
-# print("Tree pruned in {}".format(t2 - t1))
-# train_accuracy = accuracy(df_train)
-# valid_accuracy = accuracy(df_valid)
-# test_accuracy = accuracy(df_test)
-# print("Train accuracy: ", train_accuracy)
-# print("Valid acuuracy: ", valid_accuracy)
-# print("Test accuracy: ", test_accuracy)
+print("Pruning tree...")
+accuracy_max = accuracy(df_valid)
+t1 = time.time()
+decision_tree = prune_tree(df_valid, decision_tree, depth_nodes)
+t2 = time.time()
+print("Tree pruned in {}".format(t2 - t1))
+df_train = predict_one_hot(df_train, decision_tree)
+df_valid = predict_one_hot(df_valid, decision_tree)
+df_test = predict_one_hot(df_test, decision_tree)
+train_accuracy = accuracy(df_train)
+valid_accuracy = accuracy(df_valid)
+test_accuracy = accuracy(df_test)
+print("Train accuracy: ", train_accuracy)
+print("Valid acuracy: ", valid_accuracy)
+print("Test accuracy: ", test_accuracy)
 
