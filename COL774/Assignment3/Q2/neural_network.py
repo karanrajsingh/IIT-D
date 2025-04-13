@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 
 # path = "../data/Q2"
 # X_train, y_train = helper.read_images_train(path)
@@ -10,7 +11,7 @@ import numpy as np
 # # # print(array_list_test)
 
 class NeuralNetwork:
-    def __init__(self, hidden_layers, activation, mini_batch, features, classes, learning_rate, threshold = 1e-6, epochs = 1200, isAdaptive = False):
+    def __init__(self, hidden_layers, activation, mini_batch, features, classes, learning_rate, threshold = 1e-3, epochs = 70, isAdaptive = False, leaky_relu_slope = 0.01):
         print("Initializing...")
         hidden_layers.insert(0, features)
         hidden_layers.append(classes)
@@ -24,6 +25,7 @@ class NeuralNetwork:
         self.threshold = threshold
         self.epochs = epochs
         self.isAdaptive = isAdaptive
+        self.leaky_relu_slope = leaky_relu_slope
 
 
     def sigmoid(self, X):
@@ -31,10 +33,26 @@ class NeuralNetwork:
         derivative = output * (1 - output)
         return (output, derivative)
     
+    def relu(self,x):
+        output = np.maximum(x, 0)
+        derivative = np.where(x>0, 1, 0)
+        return (output, derivative)
+
+    def leaky_relu(self, X):
+        output = np.maximum(X, X*self.leaky_relu_slope)
+        derivative = np.where(X>0, 1, self.leakyRelu_slope)
+        return (output, derivative)
+    
     def softmax(self, X):
         output = np.exp(X)/np.exp(X).sum(axis = 0)
         # print("Softmax: ", output.shape)
         return output
+    
+    def learning_rate_function(self, epoch):
+        if self.isAdaptive:
+            return self.learning_rate/np.sqrt(epoch)
+        else:
+            return self.learning_rate
 
     def cross_entropy(self, y, y_predicted):
         # print("Cross entropy: ")
@@ -54,6 +72,10 @@ class NeuralNetwork:
     def activation_function(self, X):
         if self.activation == "sigmoid":
             return self.sigmoid(X)
+        elif self.activation == "relu":
+            return self.relu(X)
+        elif self.activation == "leaky_relu":
+            return self.leaky_relu(X)
 
     def forward_prop(self, X):
         net = {}
@@ -163,8 +185,8 @@ class NeuralNetwork:
                 epoch_loss += batch_loss
                 self.derivatives = self.back_prop(xb.T, yb.T, net, output)
                 for i in range(1, len(self.layers), 1):
-                    self.W["W_" + str(i)] -= self.learning_rate * self.derivatives["dW_" + str(i)] 
-                    self.b["b_" + str(i)] -= self.learning_rate * self.derivatives["db_" + str(i)] 
+                    self.W["W_" + str(i)] -= self.learning_rate_function(epoch+1) * self.derivatives["dW_" + str(i)] 
+                    self.b["b_" + str(i)] -= self.learning_rate_function(epoch+1) * self.derivatives["db_" + str(i)] 
             epoch += 1
             epoch_loss = epoch_loss/examples
             loss_str = loss_end
@@ -172,3 +194,15 @@ class NeuralNetwork:
             print("Epoch: {0}, Loss: {1}".format(epoch, epoch_loss))
         
         return self.W, self.b
+    
+    def predict(self, X):
+        '''
+        Predicts the output for given input X
+        Args : X : Input of shape (num_examples, n_features)
+        Returns : pred : Predicted output of shape (num_examples, 1)
+        '''
+        prediction_array = self.forward_prop(X)
+        prediction = prediction_array.argmax(axis = 0)
+        output_df = pd.DataFrame({'Prediction': prediction })
+        output_df.to_csv("prediction")
+        return prediction

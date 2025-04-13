@@ -393,7 +393,7 @@ accuracy(df_train)
 accuracy(df_valid)
 accuracy(df_test)
 
-def prune_tree_nodes(df_valid, dec_tree, node, accuracy_max, depth_nodes, node_set):
+def prune_tree_nodes(df_valid, dec_tree, node, accuracy_max, depth_nodes, node_set, train_accuracy, test_accuracy, valid_accuracy, nodes_num):
     
     # # base condition
     # if node.attribute == "":
@@ -436,9 +436,15 @@ def prune_tree_nodes(df_valid, dec_tree, node, accuracy_max, depth_nodes, node_s
                 accuracy_max = new_accuracy
                 nodes.remove(node)
                 node_set.remove(node)
+                nodes_num.append(len(node_set))
+                valid_accuracy.append(accuracy_max)
+                df_train = predict_one_hot(df_train, decision_tree)
+                df_test = predict_one_hot(df_test, decision_tree)
+                train_accuracy.append(accuracy(df_train))
+                test_accuracy.append(accuracy(df_test))
             else:
                 node.attribute = attr_org
-    return accuracy_max, dec_tree, df_valid
+    return accuracy_max, dec_tree, df_valid, train_accuracy, test_accuracy, valid_accuracy, nodes_num
 
 
 
@@ -455,7 +461,7 @@ def prune_tree(df_valid, dec_tree, depth_nodes, node_set, df_train, df_test):
         passes = passes + 1
         print("Pass: ", passes)
         accuracy_max =  accuracy(df_valid) # before pruning decision tree
-        prune_accuracy, dec_tree, df_valid = prune_tree_nodes(df_valid, dec_tree, dec_tree, accuracy_max, depth_nodes, node_set) # after pruning tree
+        prune_accuracy, dec_tree, df_valid, train_accuracy, test_accuracy, valid_accuracy, nodes_num = prune_tree_nodes(df_valid, dec_tree, dec_tree, accuracy_max, depth_nodes, node_set, train_accuracy, test_accuracy, valid_accuracy, nodes_num) # after pruning tree
         print(prune_accuracy, accuracy_max)
         if prune_accuracy > accuracy_max:
             accuracy_max = prune_accuracy
