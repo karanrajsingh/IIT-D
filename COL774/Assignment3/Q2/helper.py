@@ -2,6 +2,7 @@ import cv2
 import os
 import numpy as np
 import pandas as pd
+from sklearn.preprocessing import OneHotEncoder
 
 def read_images_test(path):
     
@@ -35,6 +36,10 @@ def read_images_class_test(path, path_label):
             array_list_corrupted.append(image_path)
     X = np.array(array_list)
     y = np.array(label_list)
+    en = OneHotEncoder(sparse_output=False)
+    en.fit(np.expand_dims(y, axis = -1))
+    y = en.transform(np.expand_dims(y, axis = -1))
+    # print("Test labels: ", y.shape)
     return X, y
 
 def read_images_train(path):
@@ -62,7 +67,12 @@ def read_images_train(path):
         # print(X_train.shape)
         # print(y_train.shape)
         array_list_train_corrupted.append(X_train_corrupted)
-    return X_train, y_train
+        en = OneHotEncoder(sparse_output=False)
+        en.fit(np.expand_dims(y_train, axis = -1))
+        y = en.transform(np.expand_dims(y_train, axis = -1))
+        # print("Train labels: ", y.shape)
+
+    return X_train, y
 
 def read_images_class(path):
     array_list = []
@@ -81,4 +91,5 @@ def read_images_class(path):
 
 def pre_process_image(image):
     # See if normalisation improves performance, though it would be reflected in weights
-    return image.flatten()
+    normalized = np.multiply(image.flatten(), 1/255)
+    return normalized

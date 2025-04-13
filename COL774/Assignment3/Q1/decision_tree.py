@@ -6,6 +6,7 @@ import sys
 import random
 from collections import deque
 import time
+import matplotlib.pyplot as plt
 
 path_train = "../data/Q1/train.csv"
 path_valid = "../data/Q1/valid.csv"
@@ -392,7 +393,7 @@ accuracy(df_train)
 accuracy(df_valid)
 accuracy(df_test)
 
-def prune_tree_nodes(df_valid, dec_tree, node, accuracy_max, depth_nodes):
+def prune_tree_nodes(df_valid, dec_tree, node, accuracy_max, depth_nodes, node_set):
     
     # # base condition
     # if node.attribute == "":
@@ -434,6 +435,7 @@ def prune_tree_nodes(df_valid, dec_tree, node, accuracy_max, depth_nodes):
             if new_accuracy >= accuracy_max:
                 accuracy_max = new_accuracy
                 nodes.remove(node)
+                node_set.remove(node)
             else:
                 node.attribute = attr_org
     return accuracy_max, dec_tree, df_valid
@@ -441,42 +443,53 @@ def prune_tree_nodes(df_valid, dec_tree, node, accuracy_max, depth_nodes):
 
 
 # Greedy because as soon as we see a decrease in accuracy we break out completely
-def prune_tree(df_valid, dec_tree, depth_nodes):
+def prune_tree(df_valid, dec_tree, depth_nodes, node_set, df_train, df_test):
     
     passes = 0
     accuracy_max_by_pass = []
+    train_accuracy = []
+    test_accuracy = []
+    valid_accuracy = []
+    nodes_num = []
     while True:
         passes = passes + 1
         print("Pass: ", passes)
         accuracy_max =  accuracy(df_valid) # before pruning decision tree
-        prune_accuracy, dec_tree, df_valid = prune_tree_nodes(df_valid, dec_tree, dec_tree, accuracy_max, depth_nodes) # after pruning tree
+        prune_accuracy, dec_tree, df_valid = prune_tree_nodes(df_valid, dec_tree, dec_tree, accuracy_max, depth_nodes, node_set) # after pruning tree
         print(prune_accuracy, accuracy_max)
         if prune_accuracy > accuracy_max:
             accuracy_max = prune_accuracy
+            nodes_num.append(len(node_set))
+            valid_accuracy.append(accuracy_max)
+            df_train = predict_one_hot(df_train, decision_tree)
+            df_test = predict_one_hot(df_test, decision_tree)
+            train_accuracy.append(accuracy(df_train))
+            test_accuracy.append(accuracy(df_test))
         else:
             break
         if passes > 1 and abs(accuracy_max_by_pass[-1] - accuracy_max) < 5e-3:
             break
         else:
             accuracy_max_by_pass.append(accuracy_max)
-    return dec_tree
+    return dec_tree, train_accuracy, valid_accuracy, test_accuracy, nodes_num
 
-def dfs(node, depth, depth_nodes):
+def dfs(node, depth, depth_nodes, node_set):
     if depth not in depth_nodes:
         depth_nodes[depth] = []
     depth_nodes[depth].append(node)
+    node_set.add(node)
     for child in node.child_list:
-        dfs(child, depth + 1, depth_nodes)
-    return depth_nodes
+        dfs(child, depth + 1, depth_nodes, node_set)
+    return depth_nodes, node_set
 
-depth_nodes = dfs(decision_tree, 1, depth_nodes={})
+depth_nodes, node_set = dfs(decision_tree, 1, depth_nodes={}, node_set=set())
 
 print(len(depth_nodes))
 
 print("Pruning tree...")
 accuracy_max = accuracy(df_valid)
 t1 = time.time()
-decision_tree = prune_tree(df_valid, decision_tree, depth_nodes)
+decision_tree, train_accuracy_list, valid_accuracy_list, test_accuracy_list, nodes_num = prune_tree(df_valid, decision_tree, depth_nodes, node_set, df_train, df_test)
 t2 = time.time()
 print("Tree pruned in {}".format(t2 - t1))
 df_train = predict_one_hot(df_train, decision_tree)
@@ -489,3 +502,14 @@ print("Train accuracy: ", train_accuracy)
 print("Valid acuracy: ", valid_accuracy)
 print("Test accuracy: ", test_accuracy)
 
+# Accuracy v/s Nodes in decision tree
+plt.figure()
+plt.plot(nodes_num, train_accuracy_list, label="Train Accuracy", marker='o')
+plt.plot(nodes_num, valid_accuracy_list, label="Validation Accuracy", marker='o')
+plt.plot(nodes_num, test_accuracy_list, label="Test Accuracy", marker='o')
+plt.xlabel("Nodes")
+plt.ylabel("Accuracy")
+plt.title("Decision Tree Accuracy vs Nodes")
+plt.legend()
+plt.grid(True)
+plt.show()
