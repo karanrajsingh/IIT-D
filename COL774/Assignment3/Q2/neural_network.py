@@ -318,7 +318,6 @@ def main():
         f1_avg_train = []
         f1_avg_test = []
         l = [1, 2, 3, 4]
-        time = []
         for hidden_layer in hidden_layers:
             flag = False
             if hidden_layer == [512, 256, 128, 64]:
@@ -332,7 +331,7 @@ def main():
             model = NeuralNetwork(hidden_layers=hidden_layer, activation="sigmoid", mini_batch=32, features=X_train.shape[1], classes= 43, learning_rate=0.01)
             model.fit(X_train, y_train)
             t2 = time.time()
-            time.append((t2-t1))
+
             print("Training time: ", (t2-t1))
 
             print ("Hidden layer: ", hidden_layer)
@@ -370,7 +369,7 @@ def main():
         f1_avg_train = []
         f1_avg_test = []
         l = [1, 2, 3, 4]
-        time = []
+
         for hidden_layer in hidden_layers:
             flag = False
             if hidden_layer == [512, 256, 128, 64]:
@@ -381,9 +380,10 @@ def main():
             y_test = y_tst.copy()
             t1 = time.time()
             model = NeuralNetwork(hidden_layers=hidden_layer, activation="sigmoid", mini_batch=32, features=X_train.shape[1], classes= 43, learning_rate=0.01, isAdaptive=True)
+            # model = NeuralNetwork(threshold=1e-4, hidden_layers=hidden_layer, activation="sigmoid", mini_batch=32, features=X_train.shape[1], classes= 43, learning_rate=0.01, isAdaptive=True)
             model.fit(X_train, y_train)
             t2 = time.time()
-            time.append((t2-t1))
+
             print("Training time: ", (t2-t1))
             
             print ("Hidden layer: ", hidden_layer)
