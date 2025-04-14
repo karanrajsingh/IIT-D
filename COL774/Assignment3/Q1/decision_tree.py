@@ -632,7 +632,7 @@ def part_e(df_trn, df_val, df_tst, output_folder):
     print("Test Accuracy:", accuracy_score(y_test, y_test_predicted))
 
     df_predicted = pd.DataFrame(y_test_predicted, columns=['Predicted'])
-    df_predicted.to_csv(f"{output_folder}/predicted_d.csv", index=False)
+    df_predicted.to_csv(f"{output_folder}/predicted_e.csv", index=False)
 
 
 def main():
@@ -668,7 +668,8 @@ def main():
             train_accuracy_list.append(train_accuracy)
             test_accuracy_list.append(test_accuracy)
             print("Depth: {0}, train accuracy: {1}, test accuracy: {2}".format(depth, train_accuracy, test_accuracy))
-
+            if flag:
+                df_test["Predicted"].to_csv(f"{output_folder}/predicted_a.csv", index=False)
 
         # Accuracy v/s Max Depth
         plt.figure()

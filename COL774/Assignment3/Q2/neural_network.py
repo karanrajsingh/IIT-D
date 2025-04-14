@@ -21,7 +21,6 @@ def read_images_test(path):
     X_test, y_test = read_images_class_test(path_test_image, path_test_label)
     return X_test, y_test
 
-# Helper for test images: match images with labels and apply preprocessing
 def read_images_class_test(image_path, label_path):
     df_test = pd.read_csv(label_path)
     array_list = []
@@ -34,11 +33,8 @@ def read_images_class_test(image_path, label_path):
         if img is not None:
             x = pre_process_image(img)
             array_list.append(x)
-            try:
-                label = df_test.loc[df_test["image"] == image, "label"].values[0]
-                label_list.append(label)
-            except IndexError:
-                print(f"Warning: No label found for image {image}")
+            label = df_test.loc[df_test["image"] == image, "label"].values[0]
+            label_list.append(label)
         else:
             corrupted_images.append(image)
 
@@ -46,9 +42,9 @@ def read_images_class_test(image_path, label_path):
     y = np.array(label_list).reshape(-1, 1)
 
     encoder = OneHotEncoder(sparse_output=False)
-    y_encoded = encoder.fit_transform(y)
+    y_one_hot = encoder.fit_transform(y)
 
-    return X, y_encoded
+    return X, y_one_hot
 
 # Read and preprocess training images
 def read_images_train(path):
@@ -71,11 +67,10 @@ def read_images_train(path):
     y_train = np.concatenate(y_train, axis=0).reshape(-1, 1)
 
     encoder = OneHotEncoder(sparse_output=False)
-    y_encoded = encoder.fit_transform(y_train)
+    y_one_hot = encoder.fit_transform(y_train)
 
-    return X_train, y_encoded
+    return X_train, y_one_hot
 
-# Helper for reading images from a single class
 def read_images_class(path):
     array_list = []
     corrupted_images = []
@@ -92,7 +87,7 @@ def read_images_class(path):
 
 
 class NeuralNetwork:
-    def __init__(self, hidden_layers, activation, mini_batch, features, classes, learning_rate, threshold = 1e-4, epochs = 1e+12, isAdaptive = False, leaky_relu_slope = 0.01):
+    def __init__(self, hidden_layers, activation, mini_batch, features, classes, learning_rate, threshold = 1e-3, epochs = 300, isAdaptive = False, leaky_relu_slope = 0.01):
         print("Initializing...")
         hidden_layers.insert(0, features)
         hidden_layers.append(classes)
@@ -470,16 +465,16 @@ def main():
             
             # Convert y_train and y_test to integer labels if they are one-hot encoded.
             if y_train.ndim > 1 and y_train.shape[1] > 1:
-                y_train_int = np.argmax(y_train, axis=1)
+                y_train_simple = np.argmax(y_train, axis=1)
             else:
-                y_train_int = y_train.ravel()
+                y_train_simple = y_train.ravel()
             if y_test.ndim > 1 and y_test.shape[1] > 1:
-                y_test_int = np.argmax(y_test, axis=1)
+                y_test_simple = np.argmax(y_test, axis=1)
             else:
-                y_test_int = y_test.ravel()
+                y_test_simple = y_test.ravel()
             
             clf = MLPClassifier(hidden_layer_sizes=hidden_layer, activation='relu', solver='sgd', alpha=0, batch_size=32, learning_rate='invscaling', verbose = True)
-            clf.fit(X_train, y_train_int)
+            clf.fit(X_train, y_train_simple)
 
             print ("Hidden layer: ", hidden_layer)
             print("Training report: ")
@@ -493,9 +488,9 @@ def main():
             print("Testing report: ")
             y_test = y_test.argmax(axis = 1)
             y_test_predicted = clf.predict(X_test)
-            report = classification_report(y_test_int, y_test_predicted, output_dict=True)
+            report = classification_report(y_test_simple, y_test_predicted, output_dict=True)
             f1_avg_test.append(report['macro avg']['f1-score'])
-            result = classification_report(y_train, y_train_predicted)
+            result = classification_report(y_test_simple, y_test_predicted)
             print(result)
             if flag:
                 df_predicted = pd.DataFrame(y_test_predicted, columns=['Predicted'])
