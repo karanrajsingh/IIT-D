@@ -4,92 +4,82 @@ import numpy as np
 import pandas as pd
 from sklearn.preprocessing import OneHotEncoder
 
+# Preprocessing function: normalize and flatten
+def pre_process_image(image):
+    return (image.flatten() / 255.0)
+
+# Read and preprocess test data
 def read_images_test(path):
-    
-    array_list_test = []
-    array_list_test_corrupted = []
     path_test_image = os.path.join(path, "test")
     path_test_label = os.path.join(path, "test_labels.csv")
     X_test, y_test = read_images_class_test(path_test_image, path_test_label)
-    # array_list_test.append(X_test)
-    # array_list_test_corrupted.append(X_test_corrupted)
     return X_test, y_test
 
-def read_images_class_test(path, path_label):
-    df_test = pd.read_csv(path_label)
+# Helper for test images: match images with labels and apply preprocessing
+def read_images_class_test(image_path, label_path):
+    df_test = pd.read_csv(label_path)
     array_list = []
-    array_list_corrupted = []
     label_list = []
-    images = [image for image in os.listdir(path)]
-    for image in images:
-        match = df_test.index[df_test["image"] == image]
-        index = df_test.index.get_loc(match[0])
-        label = df_test.at[index, "label"]
-        # print(image, label)
-        image_path = os.path.join(path, image)
-        image_read = cv2.imread(image_path)
-        if image_read is not None:
-            x = pre_process_image(image_read)
+    corrupted_images = []
+
+    for image in os.listdir(image_path):
+        image_full_path = os.path.join(image_path, image)
+        img = cv2.imread(image_full_path)
+        if img is not None:
+            x = pre_process_image(img)
             array_list.append(x)
-            label_list.append(label)
+            try:
+                label = df_test.loc[df_test["image"] == image, "label"].values[0]
+                label_list.append(label)
+            except IndexError:
+                print(f"Warning: No label found for image {image}")
         else:
-            array_list_corrupted.append(image_path)
+            corrupted_images.append(image)
+
     X = np.array(array_list)
-    y = np.array(label_list)
-    en = OneHotEncoder(sparse_output=False)
-    en.fit(np.expand_dims(y, axis = -1))
-    y = en.transform(np.expand_dims(y, axis = -1))
-    # print("Test labels: ", y.shape)
-    return X, y
+    y = np.array(label_list).reshape(-1, 1)
 
+    encoder = OneHotEncoder(sparse_output=False)
+    y_encoded = encoder.fit_transform(y)
+
+    return X, y_encoded
+
+# Read and preprocess training images
 def read_images_train(path):
-    array_list_train = []
-    array_list_train_corrupted = []
-    path_train = os.path.join(path, "train")
-    label_train = [label for label in os.listdir(path_train)]
     X_train = []
-    X_train = np.array(X_train)
     y_train = []
-    y_train = np.array(y_train)
-    for label in label_train:
-        path_train_label = os.path.join(path_train, label)
-        X_train_label, X_train_corrupted = read_images_class(path_train_label)
-        y_train_label = int(label)*np.ones(X_train_label.shape[0])
-        # array_list_train.append(X_train)
-        if X_train.shape[0] == 0:
-            X_train = X_train_label
-        else:
-            X_train = np.concatenate((X_train, X_train_label), axis = 0)
-        if y_train.shape[0] == 0:
-            y_train = y_train_label
-        else:
-            y_train = np.concatenate((y_train, y_train_label), axis = 0)
-        # print(X_train.shape)
-        # print(y_train.shape)
-        array_list_train_corrupted.append(X_train_corrupted)
-        en = OneHotEncoder(sparse_output=False)
-        en.fit(np.expand_dims(y_train, axis = -1))
-        y = en.transform(np.expand_dims(y_train, axis = -1))
-        # print("Train labels: ", y.shape)
+    corrupted_images_all = []
 
-    return X_train, y
+    path_train = os.path.join(path, "train")
+    labels = sorted(os.listdir(path_train), key=lambda x: int(x))  # ensure label order is consistent
 
+    for label in labels:
+        label_path = os.path.join(path_train, label)
+        X_label, corrupted = read_images_class(label_path)
+        y_label = int(label) * np.ones(X_label.shape[0])
+        X_train.append(X_label)
+        y_train.append(y_label)
+        corrupted_images_all.extend(corrupted)
+
+    X_train = np.concatenate(X_train, axis=0)
+    y_train = np.concatenate(y_train, axis=0).reshape(-1, 1)
+
+    encoder = OneHotEncoder(sparse_output=False)
+    y_encoded = encoder.fit_transform(y_train)
+
+    return X_train, y_encoded
+
+# Helper for reading images from a single class
 def read_images_class(path):
     array_list = []
-    array_list_corrupted = []
-    images = [image for image in os.listdir(path)]
-    for image in images:
-        image_path = os.path.join(path, image)
-        image_read = cv2.imread(image_path)
-        if image_read is not None:
-            x = pre_process_image(image_read)
-            array_list.append(x)
-        else:
-            array_list_corrupted.append(image_path)
-    X = np.array(array_list)
-    return X, array_list_corrupted
+    corrupted_images = []
 
-def pre_process_image(image):
-    # See if normalisation improves performance, though it would be reflected in weights
-    normalized = np.multiply(image.flatten(), 1/255)
-    return normalized
+    for image in os.listdir(path):
+        image_path = os.path.join(path, image)
+        img = cv2.imread(image_path)
+        if img is not None:
+            array_list.append(pre_process_image(img))
+        else:
+            corrupted_images.append(image_path)
+
+    return np.array(array_list), corrupted_images

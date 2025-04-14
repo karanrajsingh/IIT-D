@@ -1,0 +1,8 @@
+Depth: 5, train accuracy: 0.8305358697003605, test accuracy: 0.8313413014608234
+Depth: 10, train accuracy: 0.8573500766712255, test accuracy: 0.8451527224435591
+Depth: 15, train accuracy: 0.8873140204732894, test accuracy: 0.8332005312084994
+Depth: 20, train accuracy: 0.9258568527498031, test accuracy: 0.8258300132802124
+Depth: 25, train accuracy: 0.9581830991752662, test accuracy: 0.8118193891102258
+Depth: 35, train accuracy: 0.9903850138837084, test accuracy: 0.8049136786188579
+Depth: 45, train accuracy: 0.9944465166397282, test accuracy: 0.8045816733067729
+Depth: 55, train accuracy: 0.9944465166397282, test accuracy: 0.8045816733067729
