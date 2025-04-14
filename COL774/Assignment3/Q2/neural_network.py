@@ -92,7 +92,7 @@ def read_images_class(path):
 
 
 class NeuralNetwork:
-    def __init__(self, hidden_layers, activation, mini_batch, features, classes, learning_rate, threshold = 1e-3, epochs = 300, isAdaptive = False, leaky_relu_slope = 0.01):
+    def __init__(self, hidden_layers, activation, mini_batch, features, classes, learning_rate, threshold = 1e-4, epochs = 1e+12, isAdaptive = False, leaky_relu_slope = 0.01):
         print("Initializing...")
         hidden_layers.insert(0, features)
         hidden_layers.append(classes)
@@ -298,7 +298,7 @@ def main():
             y_test_predicted = model.predict(X_test)
             report = classification_report(y_test, y_test_predicted, output_dict=True)
             f1_avg_test.append(report['macro avg']['f1-score'])
-            result = classification_report(y_train, y_train_predicted)
+            result = classification_report(y_test, y_test_predicted)
             print(result)
             prediction_list.append(y_test_predicted)
 
@@ -348,7 +348,7 @@ def main():
             y_test_predicted = model.predict(X_test)
             report = classification_report(y_test, y_test_predicted, output_dict=True)
             f1_avg_test.append(report['macro avg']['f1-score'])
-            result = classification_report(y_train, y_train_predicted)
+            result = classification_report(y_test, y_test_predicted)
             print(result)
             if flag:
                 df_predicted = pd.DataFrame(y_test_predicted, columns=['Predicted'])
@@ -394,7 +394,7 @@ def main():
             y_test_predicted = model.predict(X_test)
             report = classification_report(y_test, y_test_predicted, output_dict=True)
             f1_avg_test.append(report['macro avg']['f1-score'])
-            result = classification_report(y_train, y_train_predicted)
+            result = classification_report(y_test, y_test_predicted)
             print(result)
             if flag:
                 df_predicted = pd.DataFrame(y_test_predicted, columns=['Predicted'])
@@ -439,7 +439,7 @@ def main():
             y_test_predicted = model.predict(X_test)
             report = classification_report(y_test, y_test_predicted, output_dict=True)
             f1_avg_test.append(report['macro avg']['f1-score'])
-            result = classification_report(y_train, y_train_predicted)
+            result = classification_report(y_test, y_test_predicted)
             print(result)
             if flag:
                 df_predicted = pd.DataFrame(y_test_predicted, columns=['Predicted'])
@@ -478,7 +478,7 @@ def main():
             else:
                 y_test_int = y_test.ravel()
             
-            clf = MLPClassifier(hidden_layer_sizes=hidden_layer, activation='relu', solver='sgd', alpha=0, batch_size=32, learning_rate='invscaling', max_iter=300, verbose = True)
+            clf = MLPClassifier(hidden_layer_sizes=hidden_layer, activation='relu', solver='sgd', alpha=0, batch_size=32, learning_rate='invscaling', verbose = True)
             clf.fit(X_train, y_train_int)
 
             print ("Hidden layer: ", hidden_layer)
