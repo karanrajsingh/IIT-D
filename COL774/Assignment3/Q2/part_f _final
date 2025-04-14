@@ -1,0 +1,773 @@
+PS C:\Users\singh\IIT-D\COL774\Assignment3\Q2> python .\neural_network.py ..\data\Q2\ ..\data\Q2\ .\ f          
+Iteration 1, loss = 2.59889587
+Iteration 2, loss = 1.95231012
+Iteration 3, loss = 1.92304284
+Iteration 4, loss = 1.91546903
+Iteration 5, loss = 1.91101676
+Iteration 6, loss = 1.90767792
+Iteration 7, loss = 1.90491248
+Iteration 8, loss = 1.90250039
+Iteration 9, loss = 1.90032854
+Iteration 10, loss = 1.89834150
+Iteration 11, loss = 1.89649408
+Iteration 12, loss = 1.89477067
+Iteration 13, loss = 1.89314264
+Iteration 14, loss = 1.89159664
+Iteration 15, loss = 1.89012500
+Iteration 16, loss = 1.88871081
+Iteration 17, loss = 1.88735967
+Iteration 18, loss = 1.88605843
+Iteration 19, loss = 1.88479944
+Iteration 20, loss = 1.88358009
+Iteration 21, loss = 1.88239337
+Iteration 22, loss = 1.88124761
+Iteration 23, loss = 1.88013789
+Iteration 24, loss = 1.87904568
+Iteration 25, loss = 1.87798692
+Iteration 26, loss = 1.87695581
+Iteration 27, loss = 1.87594464
+Iteration 28, loss = 1.87495636
+Iteration 29, loss = 1.87398794
+Iteration 30, loss = 1.87304240
+Iteration 31, loss = 1.87211054
+Iteration 32, loss = 1.87120099
+Iteration 33, loss = 1.87030391
+Iteration 34, loss = 1.86942905
+Iteration 35, loss = 1.86856672
+Iteration 36, loss = 1.86771558
+Iteration 37, loss = 1.86687910
+Iteration 38, loss = 1.86605790
+Training loss did not improve more than tol=0.001000 for 10 consecutive epochs. Stopping.
+Hidden layer:  [512]
+Training report:
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+              precision    recall  f1-score   support
+
+           0       0.00      0.00      0.00       150
+           1       0.60      0.77      0.67      1500
+           2       0.51      0.68      0.58      1500
+           3       0.29      0.22      0.25       960
+           4       0.41      0.78      0.54      1320
+           5       0.32      0.23      0.26      1260
+           6       1.00      0.08      0.15       300
+           7       0.70      0.41      0.52       960
+           8       0.70      0.09      0.16       960
+           9       0.84      0.85      0.85       990
+          10       0.62      0.89      0.73      1350
+          11       0.58      0.86      0.70       900
+          12       0.54      0.95      0.69      1410
+          13       0.86      0.96      0.91      1440
+          14       0.94      0.93      0.93       540
+          15       0.98      0.12      0.22       420
+          16       0.98      0.38      0.55       300
+          17       0.93      0.97      0.95       750
+          18       0.52      0.85      0.65       810
+          19       0.00      0.00      0.00       150
+          20       0.00      0.00      0.00       240
+          21       0.89      0.07      0.13       240
+          22       0.88      0.03      0.05       270
+          23       0.45      0.40      0.42       360
+          24       0.00      0.00      0.00       180
+          25       0.53      0.88      0.66      1020
+          26       0.48      0.08      0.14       420
+          27       0.00      0.00      0.00       180
+          28       0.97      0.10      0.18       360
+          29       0.00      0.00      0.00       180
+          30       0.62      0.11      0.19       300
+          31       0.57      0.63      0.60       540
+          32       0.00      0.00      0.00       180
+          33       0.76      0.90      0.83       480
+          34       0.93      0.46      0.61       300
+          35       0.89      0.95      0.92       810
+          36       0.92      0.04      0.08       270
+          37       1.00      0.11      0.20       150
+          38       0.64      0.99      0.78      1380
+          39       1.00      0.40      0.57       210
+          40       0.99      0.37      0.53       240
+          41       1.00      0.03      0.06       180
+          42       0.00      0.00      0.00       180
+
+    accuracy                           0.61     26640
+   macro avg       0.60      0.41      0.40     26640
+weighted avg       0.62      0.61      0.55     26640
+
+Testing report:
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+              precision    recall  f1-score   support
+
+           0       0.00      0.00      0.00        60
+           1       0.61      0.76      0.68       720
+           2       0.45      0.71      0.55       750
+           3       0.16      0.14      0.15       450
+           4       0.38      0.66      0.48       660
+           5       0.12      0.09      0.10       630
+           6       1.00      0.05      0.10       150
+           7       0.80      0.36      0.49       450
+           8       0.37      0.04      0.06       450
+           9       0.72      0.73      0.73       480
+          10       0.56      0.84      0.67       660
+          11       0.61      0.81      0.70       420
+          12       0.56      0.91      0.69       690
+          13       0.86      0.97      0.91       720
+          14       0.96      0.81      0.88       270
+          15       0.94      0.08      0.14       210
+          16       1.00      0.46      0.63       150
+          17       0.91      0.89      0.90       360
+          18       0.42      0.65      0.51       390
+          19       0.00      0.00      0.00        60
+          20       0.00      0.00      0.00        90
+          21       1.00      0.10      0.18        90
+          22       1.00      0.01      0.02       120
+          23       0.07      0.04      0.05       150
+          24       0.00      0.00      0.00        90
+          25       0.55      0.87      0.68       480
+          26       0.18      0.03      0.06       180
+          27       0.00      0.00      0.00        60
+          28       0.83      0.03      0.06       150
+          29       0.00      0.00      0.00        90
+          30       0.00      0.00      0.00       150
+          31       0.58      0.55      0.56       270
+          32       0.00      0.00      0.00        60
+          33       0.69      0.87      0.77       210
+          34       0.89      0.63      0.74       120
+          35       0.89      0.86      0.87       390
+          36       1.00      0.11      0.20       120
+          37       1.00      0.08      0.15        60
+          38       0.60      0.98      0.75       690
+          39       1.00      0.31      0.47        90
+          40       1.00      0.08      0.14        90
+          41       0.00      0.00      0.00        60
+          42       0.00      0.00      0.00        90
+
+    accuracy                           0.57     12630
+   macro avg       0.53      0.36      0.35     12630
+weighted avg       0.56      0.57      0.51     12630
+
+Iteration 1, loss = 2.57083608
+Iteration 2, loss = 1.83040379
+Iteration 3, loss = 1.76011689
+Iteration 4, loss = 1.75094377
+Iteration 5, loss = 1.74568726
+Iteration 6, loss = 1.74161486
+Iteration 7, loss = 1.73817483
+Iteration 8, loss = 1.73513906
+Iteration 9, loss = 1.73239973
+Iteration 10, loss = 1.72989052
+Iteration 11, loss = 1.72756387
+Iteration 12, loss = 1.72536737
+Iteration 13, loss = 1.72329488
+Iteration 14, loss = 1.72132382
+Iteration 15, loss = 1.71944762
+Iteration 16, loss = 1.71764556
+Iteration 17, loss = 1.71591202
+Iteration 18, loss = 1.71424508
+Iteration 19, loss = 1.71262651
+Iteration 20, loss = 1.71105884
+Iteration 21, loss = 1.70953818
+Iteration 22, loss = 1.70806765
+Iteration 23, loss = 1.70662539
+Iteration 24, loss = 1.70523090
+Iteration 25, loss = 1.70386562
+Iteration 26, loss = 1.70253171
+Iteration 27, loss = 1.70122447
+Iteration 28, loss = 1.69995961
+Iteration 29, loss = 1.69871129
+Iteration 30, loss = 1.69748172
+Iteration 31, loss = 1.69628435
+Iteration 32, loss = 1.69510764
+Iteration 33, loss = 1.69395325
+Iteration 34, loss = 1.69281445
+Iteration 35, loss = 1.69170149
+Iteration 36, loss = 1.69059890
+Iteration 37, loss = 1.68952633
+Iteration 38, loss = 1.68846127
+Iteration 39, loss = 1.68741597
+Iteration 40, loss = 1.68638043
+Iteration 41, loss = 1.68536028
+Iteration 42, loss = 1.68436047
+Iteration 43, loss = 1.68337069
+Iteration 44, loss = 1.68239272
+Iteration 45, loss = 1.68142622
+Iteration 46, loss = 1.68047884
+Iteration 47, loss = 1.67953273
+Iteration 48, loss = 1.67860384
+Iteration 49, loss = 1.67768716
+Iteration 50, loss = 1.67678133
+Iteration 51, loss = 1.67587961
+Iteration 52, loss = 1.67498877
+Training loss did not improve more than tol=0.001000 for 10 consecutive epochs. Stopping.
+Hidden layer:  [512, 256]
+Training report:
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+              precision    recall  f1-score   support
+
+           0       0.00      0.00      0.00       150
+           1       0.62      0.81      0.70      1500
+           2       0.57      0.68      0.62      1500
+           3       0.39      0.20      0.27       960
+           4       0.47      0.77      0.58      1320
+           5       0.35      0.30      0.32      1260
+           6       0.82      0.14      0.24       300
+           7       0.71      0.43      0.53       960
+           8       0.73      0.14      0.24       960
+           9       0.87      0.82      0.84       990
+          10       0.44      0.91      0.60      1350
+          11       0.66      0.84      0.74       900
+          12       0.57      0.93      0.71      1410
+          13       0.87      0.97      0.92      1440
+          14       0.94      0.94      0.94       540
+          15       0.95      0.17      0.28       420
+          16       0.94      0.50      0.65       300
+          17       0.94      0.97      0.95       750
+          18       0.54      0.84      0.66       810
+          19       0.00      0.00      0.00       150
+          20       0.00      0.00      0.00       240
+          21       0.94      0.14      0.24       240
+          22       1.00      0.01      0.02       270
+          23       0.71      0.50      0.59       360
+          24       0.00      0.00      0.00       180
+          25       0.52      0.86      0.65      1020
+          26       0.20      0.03      0.06       420
+          27       0.00      0.00      0.00       180
+          28       0.92      0.42      0.58       360
+          29       0.00      0.00      0.00       180
+          30       0.58      0.18      0.27       300
+          31       0.47      0.58      0.52       540
+          32       0.00      0.00      0.00       180
+          33       0.83      0.88      0.85       480
+          34       0.88      0.70      0.78       300
+          35       0.92      0.93      0.93       810
+          36       0.98      0.15      0.26       270
+          37       1.00      0.29      0.45       150
+          38       0.71      0.99      0.83      1380
+          39       1.00      0.18      0.31       210
+          40       0.96      0.41      0.58       240
+          41       0.76      0.23      0.35       180
+          42       0.00      0.00      0.00       180
+
+    accuracy                           0.63     26640
+   macro avg       0.60      0.44      0.44     26640
+weighted avg       0.63      0.63      0.58     26640
+
+Testing report:
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+              precision    recall  f1-score   support
+
+           0       0.00      0.00      0.00        60
+           1       0.64      0.77      0.70       720
+           2       0.50      0.70      0.59       750
+           3       0.24      0.17      0.20       450
+           4       0.43      0.66      0.52       660
+           5       0.25      0.24      0.25       630
+           6       0.71      0.03      0.06       150
+           7       0.72      0.42      0.53       450
+           8       0.42      0.06      0.11       450
+           9       0.72      0.63      0.67       480
+          10       0.42      0.86      0.56       660
+          11       0.64      0.81      0.72       420
+          12       0.57      0.93      0.71       690
+          13       0.87      0.97      0.92       720
+          14       0.94      0.82      0.88       270
+          15       0.96      0.11      0.20       210
+          16       0.86      0.55      0.67       150
+          17       0.93      0.90      0.92       360
+          18       0.43      0.65      0.52       390
+          19       0.00      0.00      0.00        60
+          20       0.00      0.00      0.00        90
+          21       1.00      0.08      0.14        90
+          22       0.00      0.00      0.00       120
+          23       0.22      0.11      0.14       150
+          24       0.00      0.00      0.00        90
+          25       0.55      0.81      0.65       480
+          26       0.04      0.01      0.01       180
+          27       0.00      0.00      0.00        60
+          28       0.67      0.16      0.26       150
+          29       0.00      0.00      0.00        90
+          30       0.00      0.00      0.00       150
+          31       0.62      0.50      0.55       270
+          32       0.00      0.00      0.00        60
+          33       0.74      0.92      0.82       210
+          34       0.87      0.78      0.82       120
+          35       0.90      0.83      0.86       390
+          36       1.00      0.31      0.47       120
+          37       1.00      0.20      0.33        60
+          38       0.70      0.98      0.82       690
+          39       1.00      0.20      0.33        90
+          40       0.95      0.20      0.33        90
+          41       0.75      0.05      0.09        60
+          42       0.00      0.00      0.00        90
+
+    accuracy                           0.58     12630
+   macro avg       0.52      0.38      0.38     12630
+weighted avg       0.57      0.58      0.53     12630
+
+Iteration 1, loss = 2.69938868
+Iteration 2, loss = 1.83561766
+Iteration 3, loss = 1.76735463
+Iteration 4, loss = 1.75849965
+Iteration 5, loss = 1.75224619
+Iteration 6, loss = 1.74725888
+Iteration 7, loss = 1.74297421
+Iteration 8, loss = 1.73916298
+Iteration 9, loss = 1.73570997
+Iteration 10, loss = 1.73253151
+Iteration 11, loss = 1.72959942
+Iteration 12, loss = 1.72684069
+Iteration 13, loss = 1.72423009
+Iteration 14, loss = 1.72172244
+Iteration 15, loss = 1.71935746
+Iteration 16, loss = 1.71708096
+Iteration 17, loss = 1.71488250
+Iteration 18, loss = 1.71278137
+Iteration 19, loss = 1.71074589
+Iteration 20, loss = 1.70873528
+Iteration 21, loss = 1.70685025
+Iteration 22, loss = 1.70498671
+Iteration 23, loss = 1.70318093
+Iteration 24, loss = 1.70140111
+Iteration 25, loss = 1.69968264
+Iteration 26, loss = 1.69801448
+Iteration 27, loss = 1.69637202
+Iteration 28, loss = 1.69475821
+Iteration 29, loss = 1.69318842
+Iteration 30, loss = 1.69164780
+Iteration 31, loss = 1.69013757
+Iteration 32, loss = 1.68866205
+Iteration 33, loss = 1.68720488
+Iteration 34, loss = 1.68575758
+Iteration 35, loss = 1.68435186
+Iteration 36, loss = 1.68298042
+Iteration 37, loss = 1.68161145
+Iteration 38, loss = 1.68026811
+Iteration 39, loss = 1.67895879
+Iteration 40, loss = 1.67765059
+Iteration 41, loss = 1.67638035
+Iteration 42, loss = 1.67510291
+Iteration 43, loss = 1.67385816
+Iteration 44, loss = 1.67263002
+Iteration 45, loss = 1.67141419
+Iteration 46, loss = 1.67021894
+Iteration 47, loss = 1.66903375
+Iteration 48, loss = 1.66786028
+Iteration 49, loss = 1.66671189
+Iteration 50, loss = 1.66556989
+Iteration 51, loss = 1.66444178
+Iteration 52, loss = 1.66332120
+Iteration 53, loss = 1.66221272
+Iteration 54, loss = 1.66111253
+Iteration 55, loss = 1.66002976
+Iteration 56, loss = 1.65896574
+Iteration 57, loss = 1.65791059
+Iteration 58, loss = 1.65685181
+Iteration 59, loss = 1.65581624
+Iteration 60, loss = 1.65479120
+Iteration 61, loss = 1.65376849
+Iteration 62, loss = 1.65276238
+Iteration 63, loss = 1.65176225
+Iteration 64, loss = 1.65076895
+Iteration 65, loss = 1.64978816
+Iteration 66, loss = 1.64881308
+Iteration 67, loss = 1.64784967
+Iteration 68, loss = 1.64689026
+Iteration 69, loss = 1.64594534
+Iteration 70, loss = 1.64500443
+Iteration 71, loss = 1.64407056
+Iteration 72, loss = 1.64315190
+Iteration 73, loss = 1.64222973
+Iteration 74, loss = 1.64131515
+Training loss did not improve more than tol=0.001000 for 10 consecutive epochs. Stopping.
+Hidden layer:  [512, 256, 128]
+Training report:
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+              precision    recall  f1-score   support
+
+           0       0.00      0.00      0.00       150
+           1       0.57      0.73      0.64      1500
+           2       0.54      0.67      0.60      1500
+           3       0.36      0.22      0.27       960
+           4       0.51      0.70      0.59      1320
+           5       0.36      0.25      0.29      1260
+           6       0.88      0.12      0.21       300
+           7       0.73      0.43      0.54       960
+           8       0.49      0.13      0.21       960
+           9       0.86      0.75      0.80       990
+          10       0.38      0.88      0.53      1350
+          11       0.70      0.83      0.76       900
+          12       0.57      0.95      0.71      1410
+          13       0.88      0.96      0.92      1440
+          14       0.93      0.96      0.95       540
+          15       0.77      0.07      0.13       420
+          16       0.87      0.46      0.60       300
+          17       0.96      0.96      0.96       750
+          18       0.57      0.85      0.68       810
+          19       0.00      0.00      0.00       150
+          20       0.00      0.00      0.00       240
+          21       0.81      0.10      0.18       240
+          22       0.98      0.63      0.77       270
+          23       0.50      0.60      0.54       360
+          24       0.00      0.00      0.00       180
+          25       0.52      0.76      0.61      1020
+          26       0.44      0.05      0.09       420
+          27       0.00      0.00      0.00       180
+          28       0.79      0.28      0.41       360
+          29       0.00      0.00      0.00       180
+          30       0.52      0.23      0.32       300
+          31       0.47      0.62      0.53       540
+          32       0.00      0.00      0.00       180
+          33       0.75      0.85      0.80       480
+          34       0.87      0.55      0.67       300
+          35       0.87      0.93      0.90       810
+          36       0.38      0.05      0.09       270
+          37       1.00      0.24      0.39       150
+          38       0.65      0.99      0.79      1380
+          39       1.00      0.21      0.35       210
+          40       1.00      0.34      0.51       240
+          41       0.97      0.21      0.34       180
+          42       1.00      0.06      0.12       180
+
+    accuracy                           0.61     26640
+   macro avg       0.59      0.43      0.44     26640
+weighted avg       0.61      0.61      0.56     26640
+
+Testing report:
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+              precision    recall  f1-score   support
+
+           0       0.00      0.00      0.00        60
+           1       0.54      0.72      0.61       720
+           2       0.47      0.69      0.56       750
+           3       0.23      0.18      0.20       450
+           4       0.43      0.55      0.48       660
+           5       0.23      0.18      0.20       630
+           6       1.00      0.01      0.01       150
+           7       0.70      0.43      0.53       450
+           8       0.14      0.03      0.04       450
+           9       0.79      0.53      0.63       480
+          10       0.38      0.83      0.52       660
+          11       0.68      0.81      0.74       420
+          12       0.60      0.93      0.73       690
+          13       0.90      0.98      0.94       720
+          14       0.98      0.90      0.94       270
+          15       0.75      0.14      0.24       210
+          16       0.78      0.48      0.60       150
+          17       0.93      0.90      0.92       360
+          18       0.41      0.59      0.49       390
+          19       0.00      0.00      0.00        60
+          20       0.00      0.00      0.00        90
+          21       0.25      0.01      0.02        90
+          22       0.98      0.74      0.84       120
+          23       0.16      0.16      0.16       150
+          24       0.00      0.00      0.00        90
+          25       0.61      0.76      0.68       480
+          26       0.58      0.08      0.14       180
+          27       0.00      0.00      0.00        60
+          28       0.59      0.25      0.35       150
+          29       0.00      0.00      0.00        90
+          30       0.33      0.10      0.15       150
+          31       0.55      0.52      0.54       270
+          32       0.00      0.00      0.00        60
+          33       0.70      0.92      0.79       210
+          34       0.84      0.77      0.80       120
+          35       0.88      0.82      0.85       390
+          36       0.54      0.06      0.11       120
+          37       1.00      0.12      0.21        60
+          38       0.61      0.99      0.75       690
+          39       1.00      0.13      0.24        90
+          40       1.00      0.10      0.18        90
+          41       1.00      0.07      0.12        60
+          42       0.00      0.00      0.00        90
+
+    accuracy                           0.57     12630
+   macro avg       0.53      0.38      0.38     12630
+weighted avg       0.56      0.57      0.52     12630
+
+
+Iteration 1, loss = 2.72868073
+Iteration 2, loss = 1.76014620
+Iteration 3, loss = 1.70555690
+Iteration 4, loss = 1.69404635
+Iteration 5, loss = 1.68635128
+Iteration 6, loss = 1.68016902
+Iteration 7, loss = 1.67486559
+Iteration 8, loss = 1.67022472
+Iteration 9, loss = 1.66600415
+Iteration 10, loss = 1.66208198
+Iteration 11, loss = 1.65846434
+Iteration 12, loss = 1.65512461
+Iteration 13, loss = 1.65195264
+Iteration 14, loss = 1.64891509
+Iteration 15, loss = 1.64601040
+Iteration 16, loss = 1.64327974
+Iteration 17, loss = 1.64058447
+Iteration 18, loss = 1.63809078
+Iteration 19, loss = 1.63563480
+Iteration 20, loss = 1.63322571
+Iteration 21, loss = 1.63094254
+Iteration 22, loss = 1.62870190
+Iteration 23, loss = 1.62650601
+Iteration 24, loss = 1.62440864
+Iteration 25, loss = 1.62233456
+Iteration 26, loss = 1.62034254
+Iteration 27, loss = 1.61836672
+Iteration 28, loss = 1.61641546
+Iteration 29, loss = 1.61455960
+Iteration 30, loss = 1.61272107
+Iteration 31, loss = 1.61087717
+Iteration 32, loss = 1.60912457
+Iteration 33, loss = 1.60737436
+Iteration 34, loss = 1.60567250
+Iteration 35, loss = 1.60399044
+Iteration 36, loss = 1.60235112
+Iteration 37, loss = 1.60072813
+Iteration 38, loss = 1.59911142
+Iteration 39, loss = 1.59753561
+Iteration 40, loss = 1.59599363
+Iteration 41, loss = 1.59445525
+Iteration 42, loss = 1.59295287
+Iteration 43, loss = 1.59146300
+Iteration 44, loss = 1.59000971
+Iteration 45, loss = 1.58856323
+Iteration 46, loss = 1.58714578
+Iteration 47, loss = 1.58573877
+Iteration 48, loss = 1.58435052
+Iteration 49, loss = 1.58298916
+Iteration 50, loss = 1.58161732
+Iteration 51, loss = 1.58027849
+Iteration 52, loss = 1.57894952
+Iteration 53, loss = 1.57763995
+Iteration 54, loss = 1.57635011
+Iteration 55, loss = 1.57507541
+Iteration 56, loss = 1.57381168
+Iteration 57, loss = 1.57255911
+Iteration 58, loss = 1.57132835
+Iteration 59, loss = 1.57008983
+Iteration 60, loss = 1.56887672
+Iteration 61, loss = 1.56767354
+Iteration 62, loss = 1.56648352
+Iteration 63, loss = 1.56528825
+Iteration 64, loss = 1.56412963
+Iteration 65, loss = 1.56296902
+Iteration 66, loss = 1.56182893
+Iteration 67, loss = 1.56068832
+Iteration 68, loss = 1.55954724
+Iteration 69, loss = 1.55843732
+Iteration 70, loss = 1.55732572
+Iteration 71, loss = 1.55623846
+Iteration 72, loss = 1.55513917
+Iteration 73, loss = 1.55405968
+Iteration 74, loss = 1.55297369
+Iteration 75, loss = 1.55191299
+Iteration 76, loss = 1.55086373
+Iteration 77, loss = 1.54980764
+Iteration 78, loss = 1.54877498
+Iteration 79, loss = 1.54773395
+Iteration 80, loss = 1.54671102
+Iteration 81, loss = 1.54570098
+Iteration 82, loss = 1.54468854
+Iteration 83, loss = 1.54367897
+Iteration 84, loss = 1.54269572
+Iteration 85, loss = 1.54169351
+Iteration 86, loss = 1.54072000
+Iteration 87, loss = 1.53975157
+Iteration 88, loss = 1.53877703
+Iteration 89, loss = 1.53782129
+Iteration 90, loss = 1.53685932
+Iteration 91, loss = 1.53592390
+Iteration 92, loss = 1.53497593
+Iteration 93, loss = 1.53403238
+Iteration 94, loss = 1.53310715
+Iteration 95, loss = 1.53218083
+Iteration 96, loss = 1.53125933
+Training loss did not improve more than tol=0.001000 for 10 consecutive epochs. Stopping.
+Hidden layer:  [512, 256, 128, 64]
+Training report:
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+              precision    recall  f1-score   support
+
+           0       0.00      0.00      0.00       150
+           1       0.56      0.72      0.63      1500
+           2       0.63      0.56      0.59      1500
+           3       0.53      0.35      0.43       960
+           4       0.58      0.61      0.59      1320
+           5       0.42      0.33      0.37      1260
+           6       0.00      0.00      0.00       300
+           7       0.62      0.55      0.58       960
+           8       0.50      0.19      0.28       960
+           9       0.86      0.68      0.76       990
+          10       0.34      0.86      0.49      1350
+          11       0.65      0.86      0.74       900
+          12       0.66      0.93      0.77      1410
+          13       0.79      0.95      0.86      1440
+          14       0.98      0.94      0.96       540
+          15       0.70      0.38      0.49       420
+          16       0.96      0.56      0.71       300
+          17       0.89      0.96      0.93       750
+          18       0.53      0.90      0.67       810
+          19       0.00      0.00      0.00       150
+          20       0.70      0.03      0.06       240
+          21       0.00      0.00      0.00       240
+          22       0.70      0.57      0.63       270
+          23       0.50      0.41      0.45       360
+          24       0.00      0.00      0.00       180
+          25       0.51      0.83      0.63      1020
+          26       0.25      0.04      0.07       420
+          27       0.00      0.00      0.00       180
+          28       0.66      0.22      0.33       360
+          29       0.00      0.00      0.00       180
+          30       0.74      0.19      0.30       300
+          31       0.50      0.60      0.54       540
+          32       0.00      0.00      0.00       180
+          33       0.73      0.71      0.72       480
+          34       0.73      0.35      0.47       300
+          35       0.87      0.93      0.90       810
+          36       0.44      0.11      0.18       270
+          37       0.91      0.07      0.12       150
+          38       0.71      0.98      0.82      1380
+          39       0.76      0.30      0.42       210
+          40       0.88      0.60      0.71       240
+          41       0.47      0.38      0.42       180
+          42       1.00      0.01      0.02       180
+
+    accuracy                           0.61     26640
+   macro avg       0.54      0.43      0.43     26640
+weighted avg       0.60      0.61      0.57     26640
+
+Testing report:
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+C:\Users\singh\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\metrics\_classification.py:1565: UndefinedMetricWarning: Precision is ill-defined and being set to 0.0 in labels with no predicted samples. Use `zero_division` parameter to control this behavior.
+  _warn_prf(average, modifier, f"{metric.capitalize()} is", len(result))
+              precision    recall  f1-score   support
+
+           0       0.00      0.00      0.00        60
+           1       0.58      0.74      0.65       720
+           2       0.57      0.66      0.61       750
+           3       0.32      0.25      0.28       450
+           4       0.49      0.48      0.49       660
+           5       0.38      0.34      0.36       630
+           6       0.00      0.00      0.00       150
+           7       0.59      0.51      0.55       450
+           8       0.17      0.06      0.08       450
+           9       0.84      0.46      0.60       480
+          10       0.34      0.83      0.48       660
+          11       0.62      0.79      0.70       420
+          12       0.71      0.91      0.80       690
+          13       0.74      0.97      0.84       720
+          14       0.84      0.87      0.86       270
+          15       0.75      0.40      0.52       210
+          16       0.97      0.51      0.67       150
+          17       0.89      0.86      0.87       360
+          18       0.41      0.66      0.51       390
+          19       0.00      0.00      0.00        60
+          20       0.04      0.01      0.02        90
+          21       0.00      0.00      0.00        90
+          22       0.78      0.63      0.70       120
+          23       0.04      0.02      0.03       150
+          24       0.00      0.00      0.00        90
+          25       0.54      0.72      0.62       480
+          26       0.64      0.05      0.09       180
+          27       0.00      0.00      0.00        60
+          28       0.51      0.18      0.27       150
+          29       0.00      0.00      0.00        90
+          30       0.05      0.01      0.01       150
+          31       0.49      0.53      0.51       270
+          32       0.00      0.00      0.00        60
+          33       0.64      0.79      0.71       210
+          34       0.34      0.21      0.26       120
+          35       0.94      0.85      0.90       390
+          36       0.81      0.14      0.24       120
+          37       0.43      0.05      0.09        60
+          38       0.65      0.91      0.76       690
+          39       0.32      0.13      0.19        90
+          40       0.64      0.28      0.39        90
+          41       0.06      0.03      0.04        60
+          42       0.38      0.03      0.06        90
+
+    accuracy                           0.57     12630
+   macro avg       0.43      0.37      0.37     12630
+weighted avg       0.53      0.57      0.52     12630
