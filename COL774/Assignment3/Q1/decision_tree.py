@@ -1,5 +1,4 @@
 import pandas as pd
-import tree
 import math
 import sys
 import matplotlib.pyplot as plt
@@ -15,6 +14,23 @@ label_1 = " >50K"
 categorical = None
 continuous = None
 one_hot_categorical = None
+
+class Tree:
+    def __init__(self, attribute, parent_attribute, parent_val, median, cat_val_list, child_list, label, level):
+        self.attribute = attribute
+        self.parent_attribute = parent_attribute
+        self.parent_val = parent_val
+        self.median = median
+        self.cat_val_list = cat_val_list
+        self.child_list = child_list
+        self.label = label
+        self.level = level
+
+    
+    def add_child_node(self, child):
+        self.child_list.append(child)
+
+
 
 # returns a list of continuous and categorical attributes separately
 def separate_attributes(df):
@@ -97,12 +113,12 @@ def grow_tree(df, depth, parent_attribute = "", parent_val = -1, current_level =
             label_val = label_1
         elif len(df_label_1) == 0:
             label_val = label_0
-        return tree.Tree(attribute = "", parent_attribute = parent_attribute, parent_val = parent_val, median = -sys.maxsize, cat_val_list = [], child_list = [], label = label_val, level = current_level)
+        return Tree(attribute = "", parent_attribute = parent_attribute, parent_val = parent_val, median = -sys.maxsize, cat_val_list = [], child_list = [], label = label_val, level = current_level)
 
     attribute, median = choose_attribute(df)
 
     # Creating Decision Tree node
-    node = tree.Tree(attribute = attribute, parent_attribute = parent_attribute, parent_val = parent_val, median = None, cat_val_list = [], child_list = [], label = -1, level = current_level)
+    node = Tree(attribute = attribute, parent_attribute = parent_attribute, parent_val = parent_val, median = None, cat_val_list = [], child_list = [], label = -1, level = current_level)
     # Store majority label at each node
     if len(df_label_0) > len(df_label_1):
         label_val = label_0
@@ -236,12 +252,12 @@ def grow_tree_one_hot(df, depth, parent_attribute = "", parent_val = -1, current
             label_val = label_1
         elif len(df_label_1) == 0:
             label_val = label_0
-        return tree.Tree(attribute = "", parent_attribute = parent_attribute, parent_val = parent_val, median = -sys.maxsize, cat_val_list = [], child_list = [], label = label_val, level = current_level)
+        return Tree(attribute = "", parent_attribute = parent_attribute, parent_val = parent_val, median = -sys.maxsize, cat_val_list = [], child_list = [], label = label_val, level = current_level)
 
     attribute, median = choose_attribute_one_hot(df)
 
     # Creating Decision Tree node
-    node = tree.Tree(attribute = attribute, parent_attribute = parent_attribute, parent_val = parent_val, median = None, cat_val_list = [], child_list = [], label = -1, level = current_level)
+    node = Tree(attribute = attribute, parent_attribute = parent_attribute, parent_val = parent_val, median = None, cat_val_list = [], child_list = [], label = -1, level = current_level)
     # Store majority label at each node
     if len(df_label_0) > len(df_label_1):
         label_val = label_0
@@ -311,12 +327,12 @@ def grow_tree_one_hot_fully(df, parent_attribute="", parent_val=-1, current_leve
             label_val = label_1
         else:
             label_val = label_0
-        return tree.Tree(attribute="", parent_attribute=parent_attribute, parent_val=parent_val,
+        return Tree(attribute="", parent_attribute=parent_attribute, parent_val=parent_val,
                          median=-sys.maxsize, cat_val_list=[], child_list=[], label=label_val, level=current_level)
 
     attribute, median = choose_attribute_one_hot(df)
 
-    node = tree.Tree(attribute=attribute, parent_attribute=parent_attribute, parent_val=parent_val,
+    node = Tree(attribute=attribute, parent_attribute=parent_attribute, parent_val=parent_val,
                      median=None, cat_val_list=[], child_list=[], label=-1, level=current_level)
     node.label = label_0 if len(df_label_0) >= len(df_label_1) else label_1
 
@@ -533,7 +549,7 @@ def part_d(df_trn, df_val, df_tst, output_folder):
     print("Validation accuracy for best params: ", accuracy_score(y_valid, y_valid_predicted))
     print("Test accuracy for best params: ",accuracy_score(y_test, y_test_predicted))
     
-    df_predicted = pd.DataFrame(y_test_predicted, columns=['Predicted'])
+    df_predicted = pd.DataFrame(y_test_predicted, columns=['predicted'])
     df_predicted.to_csv(f"{output_folder}/predicted_d.csv", index=False)
 
 def part_e(df_trn, df_val, df_tst, output_folder):
@@ -621,7 +637,7 @@ def part_e(df_trn, df_val, df_tst, output_folder):
     print("Validation Accuracy:", accuracy_score(y_valid, y_valid_predicted))
     print("Test Accuracy:", accuracy_score(y_test, y_test_predicted))
 
-    df_predicted = pd.DataFrame(y_test_predicted, columns=['Predicted'])
+    df_predicted = pd.DataFrame(y_test_predicted, columns=['predicted'])
     df_predicted.to_csv(f"{output_folder}/predicted_e.csv", index=False)
 
 
@@ -659,7 +675,7 @@ def main():
             test_accuracy_list.append(test_accuracy)
             print("Depth: {0}, train accuracy: {1}, test accuracy: {2}".format(depth, train_accuracy, test_accuracy))
             if flag:
-                df_test["Predicted"].to_csv(f"{output_folder}/predicted_a.csv", index=False)
+                df_test["predicted"].to_csv(f"{output_folder}/predicted_a.csv", index=False)
 
         # Accuracy v/s Max Depth
         plt.figure()
@@ -695,7 +711,7 @@ def main():
             test_accuracy_list.append(test_accuracy)
             print("Depth: {0}, train accuracy: {1}, test accuracy: {2}".format(depth, train_accuracy, test_accuracy))
             if flag:
-                df_test["Predicted"].to_csv(f"{output_folder}/predicted_b.csv", index=False)
+                df_test["predicted"].to_csv(f"{output_folder}/predicted_b.csv", index=False)
 
         # Accuracy v/s Max Depth
         plt.figure()
@@ -744,7 +760,7 @@ def main():
             plt.grid(True)
             plt.show()
             if flag:
-                df_test["Predicted"].to_csv(f"{output_folder}/predicted_c.csv", index=False)
+                df_test["predicted"].to_csv(f"{output_folder}/predicted_c.csv", index=False)
     elif q_part == "d":
         part_d(df_trn=df_train, df_val=df_valid, df_tst=df_test, output_folder = output_folder)
     elif q_part == "e":
