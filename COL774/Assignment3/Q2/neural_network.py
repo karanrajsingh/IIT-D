@@ -9,6 +9,7 @@ from sklearn.preprocessing import OneHotEncoder
 from sklearn.metrics import classification_report
 import matplotlib.pyplot as plt
 from sklearn.neural_network import MLPClassifier
+import time
 
 # Preprocessing function: normalize and flatten
 def pre_process_image(image):
@@ -317,6 +318,7 @@ def main():
         f1_avg_train = []
         f1_avg_test = []
         l = [1, 2, 3, 4]
+        time = []
         for hidden_layer in hidden_layers:
             flag = False
             if hidden_layer == [512, 256, 128, 64]:
@@ -326,8 +328,12 @@ def main():
             X_test = X_tst.copy()
             y_test = y_tst.copy()
 
+            t1 = time.time()
             model = NeuralNetwork(hidden_layers=hidden_layer, activation="sigmoid", mini_batch=32, features=X_train.shape[1], classes= 43, learning_rate=0.01)
             model.fit(X_train, y_train)
+            t2 = time.time()
+            time.append((t2-t1))
+            print("Training time: ", (t2-t1))
 
             print ("Hidden layer: ", hidden_layer)
             print("Training report: ")
@@ -364,6 +370,7 @@ def main():
         f1_avg_train = []
         f1_avg_test = []
         l = [1, 2, 3, 4]
+        time = []
         for hidden_layer in hidden_layers:
             flag = False
             if hidden_layer == [512, 256, 128, 64]:
@@ -372,9 +379,13 @@ def main():
             y_train = y_trn.copy()
             X_test = X_tst.copy()
             y_test = y_tst.copy()
+            t1 = time.time()
             model = NeuralNetwork(hidden_layers=hidden_layer, activation="sigmoid", mini_batch=32, features=X_train.shape[1], classes= 43, learning_rate=0.01, isAdaptive=True)
             model.fit(X_train, y_train)
-
+            t2 = time.time()
+            time.append((t2-t1))
+            print("Training time: ", (t2-t1))
+            
             print ("Hidden layer: ", hidden_layer)
             print("Training report: ")
             y_train = y_train.argmax(axis = 1)
@@ -418,6 +429,7 @@ def main():
             X_test = X_tst.copy()
             y_test = y_tst.copy()
             model = NeuralNetwork(hidden_layers=hidden_layer, activation="relu", mini_batch=32, features=X_train.shape[1], classes= 43, learning_rate=0.01, isAdaptive=True)
+            # model = NeuralNetwork(threshold=1e-4, hidden_layers=hidden_layer, activation="relu", mini_batch=32, features=X_train.shape[1], classes= 43, learning_rate=0.01, isAdaptive=True)
             model.fit(X_train, y_train)
 
             print ("Hidden layer: ", hidden_layer)
@@ -473,7 +485,7 @@ def main():
             else:
                 y_test_simple = y_test.ravel()
             
-            clf = MLPClassifier(hidden_layer_sizes=hidden_layer, activation='relu', solver='sgd', alpha=0, batch_size=32, learning_rate='invscaling', verbose = True)
+            clf = MLPClassifier(hidden_layer_sizes=hidden_layer, activation='relu', solver='sgd', alpha=0, batch_size=32, learning_rate='invscaling', verbose = True, tol = 1e-3, max_iter=300)
             clf.fit(X_train, y_train_simple)
 
             print ("Hidden layer: ", hidden_layer)
