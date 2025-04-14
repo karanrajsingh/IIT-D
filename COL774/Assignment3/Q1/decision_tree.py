@@ -340,7 +340,7 @@ def grow_tree_one_hot_fully(df, parent_attribute="", parent_val=-1, current_leve
             node.add_child_node(right_child)
     return node
 
-def prune_tree_nodes(df_valid, dec_tree, node, accuracy_max, depth_nodes, node_set, df_train, df_test, train_accuracy_list, valid_accuracy_list, test_accuracy_list, nodes_num):
+def prune_tree_nodes(df_valid, dec_tree, node, accuracy_max, depth_nodes, node_set):
     
     for depth in range(len(depth_nodes), 1, -1):
         nodes = depth_nodes[depth]
@@ -355,19 +355,9 @@ def prune_tree_nodes(df_valid, dec_tree, node, accuracy_max, depth_nodes, node_s
                 accuracy_max = new_accuracy
                 nodes.remove(node)
                 node_set.remove(node)
-                df_train = predict_one_hot(df_train, dec_tree)
-                df_valid = predict_one_hot(df_valid, dec_tree)
-                df_test = predict_one_hot(df_test, dec_tree)
-                train_accuracy = accuracy(df_train)
-                train_accuracy_list.append(train_accuracy)
-                valid_accuracy = accuracy(df_valid)
-                valid_accuracy_list.append(valid_accuracy)
-                test_accuracy = accuracy(df_test)
-                test_accuracy_list.append(test_accuracy)
-                nodes_num.append(len(node_set))
             else:
                 node.attribute = attr_org
-    return accuracy_max, dec_tree, df_valid, node_set, train_accuracy_list, valid_accuracy, test_accuracy, nodes_num
+    return accuracy_max, dec_tree, df_valid, node_set
 
 
 
@@ -396,20 +386,20 @@ def prune_tree(df_valid, dec_tree, depth_nodes, node_set, df_train, df_test):
         passes = passes + 1
         print("Pass: ", passes)
         accuracy_max =  accuracy(df_valid) # before pruning decision tree
-        prune_accuracy, dec_tree, df_valid, node_set, train_accuracy_list, valid_accuracy, test_accuracy, nodes_num = prune_tree_nodes(df_valid, dec_tree, dec_tree, accuracy_max, depth_nodes, node_set, df_train, df_test, train_accuracy_list, valid_accuracy_list, test_accuracy_list, nodes_num) # after pruning tree
+        prune_accuracy, dec_tree, df_valid, node_set= prune_tree_nodes(df_valid, dec_tree, dec_tree, accuracy_max, depth_nodes, node_set) # after pruning tree
         print(prune_accuracy, accuracy_max)
         if prune_accuracy > accuracy_max:
             accuracy_max = prune_accuracy
-            # df_train = predict_one_hot(df_train, dec_tree)
-            # df_valid = predict_one_hot(df_valid, dec_tree)
-            # df_test = predict_one_hot(df_test, dec_tree)
-            # train_accuracy = accuracy(df_train)
-            # train_accuracy_list.append(train_accuracy)
-            # valid_accuracy = accuracy(df_valid)
-            # valid_accuracy_list.append(valid_accuracy)
-            # test_accuracy = accuracy(df_test)
-            # test_accuracy_list.append(test_accuracy)
-            # nodes_num.append(len(node_set))
+            df_train = predict_one_hot(df_train, dec_tree)
+            df_valid = predict_one_hot(df_valid, dec_tree)
+            df_test = predict_one_hot(df_test, dec_tree)
+            train_accuracy = accuracy(df_train)
+            train_accuracy_list.append(train_accuracy)
+            valid_accuracy = accuracy(df_valid)
+            valid_accuracy_list.append(valid_accuracy)
+            test_accuracy = accuracy(df_test)
+            test_accuracy_list.append(test_accuracy)
+            nodes_num.append(len(node_set))
         else:
             break
         if passes > 1 and abs(accuracy_max_by_pass[-1] - accuracy_max) < 5e-3:
@@ -735,7 +725,7 @@ def main():
             decision_tree, train_accuracy_list, valid_accuracy_list, test_accuracy_list,  node_num = prune_tree(df_valid, decision_tree, depth_nodes, node_set, df_train, df_test)       
             df_train = predict_one_hot(df_train, decision_tree)
             df_valid = predict_one_hot(df_valid, decision_tree)
-            df_test = predict_one_hot(df_train, decision_tree)
+            df_test = predict_one_hot(df_test, decision_tree)
             train_accuracy = accuracy(df_train)
             valid_accuracy = accuracy(df_valid)
             test_accuracy = accuracy(df_test)

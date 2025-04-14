@@ -473,7 +473,7 @@ def main():
             else:
                 y_test_simple = y_test.ravel()
             
-            clf = MLPClassifier(hidden_layer_sizes=hidden_layer, activation='relu', solver='sgd', alpha=0, batch_size=32, learning_rate='invscaling', verbose = True)
+            clf = MLPClassifier(hidden_layer_sizes=hidden_layer, activation='relu', solver='sgd', alpha=0, batch_size=32, learning_rate='invscaling', verbose = True, tol=1e-3, max_iter=300)
             clf.fit(X_train, y_train_simple)
 
             print ("Hidden layer: ", hidden_layer)
