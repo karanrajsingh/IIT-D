@@ -1,15 +1,13 @@
 import numpy as np
 from or_gym.envs.finance.discrete_portfolio_opt import DiscretePortfolioOptEnv
 import time
-from collections import defaultdict
-from typing import Dict, Tuple, List, Set
 import math
 
 
 # BFS based state expansion, significantly reduces the state space to explore.
 
 class SolveIteration:
-    def __init__(self, env, gamma=1.0, threshold=1e-2):
+    def __init__(self, env, gamma=1.0, threshold=1e-2, num_samples=50):
         
         self.env = env
         self.gamma = gamma
@@ -19,11 +17,13 @@ class SolveIteration:
         self.initial_cash = env.initial_cash
         self.prices_mu = np.array(env.asset_price_means).flatten()
         self.horizon = env.step_limit
+        self.sigma = np.sqrt(np.array(env.asset_price_var).flatten()[0])
+        self.num_samples = num_samples
         
         self.hold_limit = env.holding_limit[0]
         self.lot_limit = env.lot_size
-        self.buy_cost = env.buy_cost
-        self.sell_cost = env.sell_cost
+        self.buy_cost = env.buy_cost.item()
+        self.sell_cost = env.sell_cost.item()
 
         self.value_function_V = {}
         self.policy_function_V = {}
@@ -36,18 +36,19 @@ class SolveIteration:
     def get_next_state(self, time_step, curr_cash, curr_holdings, action):
         curr_price = self.prices_mu[time_step]
         # Buy action
-        if action > 0:
+        if action < 0:
+            num_sale = min(-action, curr_holdings)
+            next_cash = curr_cash + (curr_price - self.sell_cost)*num_sale
+            next_holdings = curr_holdings - num_sale
+        # Sell action
+        elif action > 0:
             cost = (curr_price + self.buy_cost)*action
             if cost <= curr_cash:
                 next_cash = curr_cash - cost
                 next_holdings = curr_holdings + action
-        elif action < 0:
-            num_sale = min(-action, curr_holdings)
-            next_cash = curr_cash + (curr_price - self.sell_cost)*num_sale
-            next_holdings = curr_holdings - num_sale
         else:
             next_cash, next_holdings = curr_cash, curr_holdings
-        return int(next_cash), int(next_holdings)
+        return next_cash, next_holdings
 
     # Returns a list of valid buy/sale action as per constraints for the current state
     def valid_actions(self, time_step, curr_cash, curr_holdings):
@@ -76,14 +77,24 @@ class SolveIteration:
                 for action in actions:
                     next_cash, next_holdings = self.get_next_state(time_step=time_step, curr_cash=curr_cash, curr_holdings=curr_holdings, action=action)
                     transitions[(time_step, curr_cash, curr_holdings, action)] = (time_step+1, next_cash, next_holdings)
+                    # breakpoint()
                     bfs_states.setdefault(time_step+1, set()).add((next_cash, next_holdings))
         return bfs_states, transitions
 
     def vi_solve(self, max_iters=1000):
         # Initializing value functions for terminal states
-        goal_price = self.prices_mu[-1]
-        for curr_cash, curr_holdings in self.bfs_states[self.horizon]:
-            self.value_function_V[(self.horizon, curr_cash, curr_holdings)] = curr_cash + curr_holdings*goal_price
+        if self.sigma == 0:
+            goal_price = self.prices_mu[-1]
+            for curr_cash, curr_holdings in self.bfs_states[self.horizon]:
+                self.value_function_V[(self.horizon, curr_cash, curr_holdings)] = curr_cash + curr_holdings*goal_price
+        else:
+            for curr_cash, curr_holdings in self.bfs_states[self.horizon]:
+                samples = []
+                for _ in range(self.num_samples):
+                    sampled_price = max(0, int(np.random.normal(self.prices_mu[-1], self.sigma)))
+                    samples.append(curr_cash + curr_holdings*sampled_price)
+                self.value_function_V[(self.horizon, curr_cash, curr_holdings)] = np.mean(samples)
+            
         for iteration in range(self.max_iterations):
             delta = 0.0
             for time_step in reversed(range(self.horizon)):
@@ -93,7 +104,17 @@ class SolveIteration:
                     state_action_to_val = {}
                     for action in actions:
                         _, next_cash, next_holdings = self.transitions[(time_step, curr_cash, curr_holdings, action)]
-                        q_val = self.gamma*self.value_function_V[(time_step+1, next_cash, next_holdings)]
+                        if self.sigma == 0:
+                            q_val = self.gamma*self.value_function_V[(time_step+1, next_cash, next_holdings)]
+                        else:
+                            samples = []
+                            for _ in range(self.num_samples):
+                                if time_step < self.horizon-1:
+                                    sampled_price = max(0, int(np.random.normal(self.prices_mu[time_step+1], self.sigma)))
+                                else:
+                                    sampled_price = max(0, int(np.random.normal(self.prices_mu[-1], self.sigma)))
+                                samples.append(next_cash + next_holdings*sampled_price)
+                            q_val = self.gamma*np.mean(samples)    
                         state_action_to_val[action] = q_val
                     max_action = max(state_action_to_val, key=state_action_to_val.get)
                     self.policy_function_V[(time_step, curr_cash, curr_holdings)] = max_action
@@ -106,16 +127,35 @@ class SolveIteration:
         return self.value_function_V, self.policy_function_V
 
     def policy_evaluation(self):
-        goal_price = self.prices_mu[-1]
-        for curr_cash, curr_holdings in self.bfs_states[self.horizon]:
-            self.value_function_P[(self.horizon, curr_cash, curr_holdings)] = curr_cash + curr_holdings*goal_price
+        if self.sigma == 0:
+            goal_price = self.prices_mu[-1]
+            for curr_cash, curr_holdings in self.bfs_states[self.horizon]:
+                self.value_function_P[(self.horizon, curr_cash, curr_holdings)] = curr_cash + curr_holdings*goal_price
+        else:
+            for curr_cash, curr_holdings in self.bfs_states[self.horizon]:
+                samples = []
+                for _ in range(self.num_samples):
+                    sampled_price = max(0, int(np.random.normal(self.prices_mu[-1], self.sigma)))
+                    samples.append(curr_cash + curr_holdings*sampled_price)
+                self.value_function_P[(self.horizon, curr_cash, curr_holdings)] = np.mean(samples)
+    
         delta = 0.0
         for time_step in reversed(range(self.horizon)):
             for curr_cash, curr_holdings in self.bfs_states[time_step]:
                 v_old = self.value_function_P.get((time_step, curr_cash, curr_holdings), 0)
                 action = self.policy_function_P.get((time_step, curr_cash, curr_holdings), 0)
                 _, next_cash, next_holdings = self.transitions[(time_step, curr_cash, curr_holdings, action)]
-                self.value_function_P[(time_step, curr_cash, curr_holdings)] = self.gamma*self.value_function_P[(time_step+1, next_cash, next_holdings)]
+                if self.sigma == 0:
+                    self.value_function_P[(time_step, curr_cash, curr_holdings)] = self.gamma*self.value_function_P[(time_step+1, next_cash, next_holdings)]
+                else:
+                    samples = []
+                    for _ in range(self.num_samples):
+                        if time_step < self.horizon-1:
+                            sampled_price = max(0, int(np.random.normal(self.prices_mu[time_step+1], self.sigma)))
+                        else:
+                            sampled_price = max(0, int(np.random.normal(self.prices_mu[-1], self.sigma)))
+                        samples.append(next_cash + next_holdings*sampled_price)
+                    self.value_function_P[(time_step, curr_cash, curr_holdings)] = self.gamma*np.mean(samples)
                 delta = max(delta, abs(v_old - self.value_function_P[(time_step, curr_cash, curr_holdings)]))
         return delta
 
@@ -127,7 +167,17 @@ class SolveIteration:
                 state_action_to_val = {}
                 for action in self.valid_actions(time_step=time_step, curr_cash=curr_cash, curr_holdings=curr_holdings):
                     _, next_cash, next_holdings = self.transitions[(time_step, curr_cash, curr_holdings, action)]
-                    q_val = self.gamma*self.value_function_P[(time_step+1, next_cash, next_holdings)]
+                    if self.sigma == 0:
+                        q_val = self.gamma*self.value_function_P[(time_step+1, next_cash, next_holdings)]
+                    else:
+                        samples = []
+                        for _ in range(self.num_samples):
+                            if time_step < self.horizon-1:
+                                sampled_price = max(0, int(np.random.normal(self.prices_mu[time_step+1], self.sigma)))
+                            else:
+                                sampled_price = max(0, int(np.random.normal(self.prices_mu[-1], self.sigma)))
+                            samples.append(next_cash + next_holdings*sampled_price)
+                        q_val = self.gamma*np.mean(samples)                   
                     state_action_to_val[action] = q_val
                 max_action = max(state_action_to_val, key=state_action_to_val.get)
                 self.policy_function_P[(time_step, curr_cash, curr_holdings)] = max_action
@@ -136,17 +186,21 @@ class SolveIteration:
                     stable = False
         return stable
 
-    def pi_solve(self, max_iters=1000):
+    def pi_solve(self):
         for time_step in range(self.horizon):
             for curr_cash, curr_holdings in self.bfs_states[time_step]:
-                self.policy_function_P[(time_step, curr_cash, curr_holdings)] = 0          
+                self.policy_function_P[(time_step, curr_cash, curr_holdings)] = 0 
+        iter = 0         
         for iteration in range(self.max_iterations):
+            iter += 1
             delta = self.policy_evaluation()
             stable = self.policy_improvement()
             if stable and delta < self.threshold:
                 print(f"Policy Iteration converged in {iteration+1} iterations.")
                 break
+            print(f"Policy iteration: ", iteration, "Delta: ", delta)
         return self.value_function_P, self.policy_function_P
+    
 
     def simulate(self, solver = 'VI'):
         state = self.env.reset()
@@ -213,3 +267,10 @@ if __name__=="__main__":
 
     ###Part 3. (Portfolio Optimizaton)
     env = DiscretePortfolioOptEnv(variance=1)
+    solve_iteration = SolveIteration(env)
+    solve_iteration.vi_solve()
+    solve_iteration.pi_solve()
+    trajectory, final_wealth = solve_iteration.simulate(solver="VI")
+    print("Val Iteration: Prices: ", prices, "Final Wealth: ", final_wealth)
+    trajectory, final_wealth = solve_iteration.simulate(solver="PI")
+    print("Pol Iteration: Prices: ", prices, "Final Wealth: ", final_wealth)
