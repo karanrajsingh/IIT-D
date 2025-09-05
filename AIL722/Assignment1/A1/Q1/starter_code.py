@@ -1,6 +1,7 @@
 from env import FootballSkillsEnv
 import numpy as np
 import math
+import heapq
 
 
 def policy_iteration(envr=FootballSkillsEnv):
@@ -277,10 +278,6 @@ def value_iteration_nonstationary(envr=FootballSkillsEnv):
 
     return policy_function, value_function, num_iterations
 
-import heapq
-from env import FootballSkillsEnv
-import numpy as np
-
 
 def compute_bellman_residual(state_index, envr, value_function, gamma):
     """Compute Bellman residual for a given state."""
@@ -314,11 +311,6 @@ def compute_bellman_residual(state_index, envr, value_function, gamma):
 
 
 def value_iteration_prioritized(envr=FootballSkillsEnv):
-    """
-    Prioritized Sweeping Value Iteration.
-    Instead of updating all states in every sweep, this version maintains a priority
-    queue of states whose values are likely to change. Only those states are backed up.
-    """
 
     convergence = 1e-6
     gamma = 0.95
@@ -329,7 +321,7 @@ def value_iteration_prioritized(envr=FootballSkillsEnv):
     value_function = np.zeros(total_states)
     policy_function = np.random.randint(0, total_actions, size=total_states)
 
-    # Initialize policy with valid actions (like your original code)
+    # Initialize policy with valid actions
     for state_index in range(total_states):
         state = envr.index_to_state(state_index)
         if envr._is_terminal(state):
@@ -340,61 +332,62 @@ def value_iteration_prioritized(envr=FootballSkillsEnv):
                 policy_function[state_index] = action
                 break
 
-    # Priority queue for states, max-heap (store as -priority for heapq)
-    priority_queue = []
-
-    # Initialize priorities for all states
-    for s in range(total_states):
-        res = compute_bellman_residual(s, envr, value_function, gamma)
-        if res > convergence:
-            heapq.heappush(priority_queue, (-res, s))  # max-heap via negative residual
-
     num_iterations = 0
 
-    while priority_queue:
-        num_iterations += 1
-        # Get state with largest residual
-        _, state_index = heapq.heappop(priority_queue)
-        state_tuple = envr.index_to_state(state_index)
-        if envr._is_terminal(state_tuple):
-            continue
+    while True:
+        # Build priority queue from current Bellman residuals
+        priority_queue = []
+        for s in range(total_states):
+            res = compute_bellman_residual(s, envr, value_function, gamma)
+            if res > convergence:
+                heapq.heappush(priority_queue, (-res, s))  # max-heap
 
-        # Bellman backup
-        state_action_to_value = {}
-        for action in range(total_actions):
-            transitions = envr.get_transitions_at_time(state_tuple, action)
-            if transitions:
-                q_val = 0.0
-                for prob, next_state_tuple in transitions:
-                    next_state_index = envr.state_to_index(next_state_tuple)
-                    v_next = value_function[next_state_index]
-                    ball_pos = (next_state_tuple[0], next_state_tuple[1])
-                    player_pos = (state_tuple[0], state_tuple[1])
-                    reward = envr._get_reward(ball_pos, action, player_pos)
-                    q_val += prob * (reward + gamma * v_next)
-                state_action_to_value[action] = q_val
+        # Stop if no state has significant residuals
+        if not priority_queue:
+            break
 
-        if not state_action_to_value:
-            continue
+        # Process until queue empty
+        while priority_queue:
+            num_iterations += 1
+            _, state_index = heapq.heappop(priority_queue)
+            state_tuple = envr.index_to_state(state_index)
+            if envr._is_terminal(state_tuple):
+                continue
 
-        max_action = max(state_action_to_value, key=state_action_to_value.get)
-        max_q_val = state_action_to_value[max_action]
+            # Bellman backup
+            state_action_to_value = {}
+            for action in range(total_actions):
+                transitions = envr.get_transitions_at_time(state_tuple, action)
+                if transitions:
+                    q_val = 0.0
+                    for prob, next_state_tuple in transitions:
+                        next_state_index = envr.state_to_index(next_state_tuple)
+                        v_next = value_function[next_state_index]
+                        ball_pos = (next_state_tuple[0], next_state_tuple[1])
+                        player_pos = (state_tuple[0], state_tuple[1])
+                        reward = envr._get_reward(ball_pos, action, player_pos)
+                        q_val += prob * (reward + gamma * v_next)
+                    state_action_to_value[action] = q_val
 
-        # Update value + policy
-        v_old = value_function[state_index]
-        value_function[state_index] = max_q_val
-        policy_function[state_index] = max_action
+            if not state_action_to_value:
+                continue
 
-        # If value changed, recompute priorities
-        delta = abs(max_q_val - v_old)
-        if delta > convergence:
-            for pred_index in range(total_states):
-                res = compute_bellman_residual(pred_index, envr, value_function, gamma)
+            max_action = max(state_action_to_value, key=state_action_to_value.get)
+            max_q_val = state_action_to_value[max_action]
+
+            # Update value + policy
+            v_old = value_function[state_index]
+            value_function[state_index] = max_q_val
+            policy_function[state_index] = max_action
+
+            # If value changed significantly, recompute priority
+            delta = abs(max_q_val - v_old)
+            if delta > convergence:
+                res = compute_bellman_residual(state_index, envr, value_function, gamma)
                 if res > convergence:
-                    heapq.heappush(priority_queue, (-res, pred_index))
+                    heapq.heappush(priority_queue, (-res, state_index))
 
     return dict(enumerate(policy_function)), value_function, num_iterations
-
 
 
 if __name__ == "__main__":

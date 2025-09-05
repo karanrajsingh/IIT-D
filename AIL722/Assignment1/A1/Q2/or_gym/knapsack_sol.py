@@ -8,7 +8,11 @@ import numpy as np
 
 class ValueIterationOnlineKnapsack:
     def __init__(self, env, gamma=0.95, epsilon=1e-4):
-        pass
+        self.env = env
+        self.gamma = gamma
+        self.epsilon = epsilon
+
+        
 
 
     def get_reward_and_done(self, current_weight, item_idx, action):
@@ -49,6 +53,9 @@ if __name__=="__main__":
     env=OnlineKnapsackEnv()
     state=env._RESET()
     print(f"State for OnlineKnapsackEnv {state}")
+
+    value_iteration = ValueIterationOnlineKnapsack(env)
+
 
     total_reward = 0
     done = False

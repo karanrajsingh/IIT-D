@@ -446,7 +446,7 @@ class OnlineKnapsackEnv(BoundedKnapsackEnv):
             self.observation_space = obs_space
 
         self.step_counter = 0
-        self.step_limit = 50
+        self.step_limit = 500
         
         self.state = self.reset()
         self._max_reward = 600
