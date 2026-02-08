@@ -190,9 +190,19 @@ def task_1(path_file_in, word_to_index, embeddings, path_file_out):
     print("Task 1 output written!")
     return out_list
 
-def task_2(path_file_in, word_to_index, embeddings, path_file_out):
+def load_data_task_2(path_file_in):
     with open(path_file_in, "r", encoding="utf-8", errors="ignore") as f:
         data_list = json.load(f)
+    return data_list
+
+def fine_tune_tokens(data_list):
+    chunk_tokens_list = []
+    for chunk in data_list['chunks']:
+        chunk_tokens_list.append(clean_text(chunk))
+    return chunk_tokens_list
+
+
+def task_2(data_list, word_to_index, embeddings, path_file_out):
     k = data_list['num_authors']
     m = data_list['min_chunks_per_author']
     chunk_embeddings_list = []

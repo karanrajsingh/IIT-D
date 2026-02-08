@@ -6,12 +6,12 @@ import torch
 import torch.nn.functional as F
 
 path_dir = "./data/train_data/"
-split_ratio = 0.8
+split_ratio = 1.0
 window = 5
 K = 10
 d = 150
 batch_size = 256
-epochs = 200
+epochs = 30
 
 # From raw data to training and validation examples
 tokens_list = u.load_tokens(path_dir)
