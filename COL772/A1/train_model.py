@@ -4,7 +4,15 @@ from torch.utils.data import Dataset, DataLoader
 import torch.nn.functional as F
 import numpy as np
 from datetime import datetime
+import os
 
+
+# Best: bigrams
+# sentence length, word frequency, document embedding (adapted CBOW)
+# Aggregation: weighted average, TFIDF weighting,
+# fine-tuning embeddings for task 2
+# cosine similarity, K-Means, K-NN
+# Dropout: Alag se no, we are not including rare words.
 
 class CustomDataset(Dataset):
     def __init__(self, contexts_target_pairs):
@@ -35,6 +43,8 @@ class CBOW(nn.Module):
             self.context_embeddings.weight.data.uniform_(-0.5/np.sqrt(d), 0.5/np.sqrt(d)) 
             self.target_embeddings.weight.zero_()
 
+
+
     def forward(self, target_word, context_words, negative_samples):
         # Setup embeddings for a batch of input words
         context_embeddings = self.context_embeddings(context_words)
@@ -52,10 +62,21 @@ class CBOW(nn.Module):
 
         return positive_scores, negative_scores
 
-def sample_negatives(distribution, batch_size=256, K=10):
-    # print("Sampling negatives...")
-    negative_samples = torch.multinomial(distribution, num_samples=batch_size*K, replacement=True)
-    return negative_samples.reshape(batch_size, K)
+# def sample_negatives(distribution, batch_size=256, K=10):
+#     # print("Sampling negatives...")
+#     negative_samples = torch.multinomial(distribution, num_samples=batch_size*K, replacement=True)
+#     return negative_samples.reshape(batch_size, K)
+def sample_negatives(distribution, target_word, batch_size, K):
+    negative_samples = []
+    for i in range(batch_size):
+        target_idx = target_word[i].item()
+        samples = []
+        while len(samples) < K:
+            neg = torch.multinomial(distribution, num_samples=1).item()
+            if neg != target_idx:  # Ensure target is not a negative
+                samples.append(neg)
+        negative_samples.append(samples)
+    return torch.tensor(negative_samples, dtype=torch.long)
 
 def compute_loss(positive_scores, negative_scores):
     # print("Computing loss...")
@@ -63,6 +84,7 @@ def compute_loss(positive_scores, negative_scores):
     negative_loss = F.logsigmoid(-negative_scores).sum(dim=1)
     loss = -(positive_loss+negative_loss).mean()
     return loss
+
 
 def train(epochs, model, train_dataloader, val_dataloader, distribution, optimizer, K=10, patience=3):
     print("TRAINING STARTS:", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
@@ -75,8 +97,8 @@ def train(epochs, model, train_dataloader, val_dataloader, distribution, optimiz
         model.train()
         train_loss = 0.0
         for batch_idx, (context_words, target_word) in enumerate(train_dataloader):
-            # print(f"Train::epoch: {epoch+1}/{epochs}, batch: {batch_idx}/{len(train_dataloader)}")
-            negative_samples = sample_negatives(distribution, batch_size=target_word.size(0), K=K)
+            print(f"Train::epoch: {epoch+1}/{epochs}, batch: {batch_idx}/{len(train_dataloader)}")
+            negative_samples = sample_negatives(distribution, target_word, batch_size=target_word.size(0), K=K)
             optimizer.zero_grad()
             positive_scores, negative_scores = model(target_word, context_words, negative_samples)
             loss = compute_loss(positive_scores, negative_scores)
@@ -84,8 +106,8 @@ def train(epochs, model, train_dataloader, val_dataloader, distribution, optimiz
             optimizer.step()
 
             train_loss += loss.item()
-        avg_train_loss = train_loss / len(train_dataloader)
-        # avg_train_loss = train_loss 
+        # avg_train_loss = train_loss / len(train_dataloader)
+        avg_train_loss = train_loss 
 
         # Validation phase    
         print(f"Validation epoch:{epoch+1}")
@@ -93,13 +115,13 @@ def train(epochs, model, train_dataloader, val_dataloader, distribution, optimiz
         val_loss = 0.0
         with torch.no_grad():
             for batch_idx, (context_words, target_word) in enumerate(val_dataloader):
-                # print(f"Validation::epoch: {epoch+1}/{epochs}, batch: {batch_idx}/{len(val_dataloader)}")
-                negative_sample = sample_negatives(distribution, batch_size=target_word.size(0), K=K)
+                print(f"Validation::epoch: {epoch+1}/{epochs}, batch: {batch_idx}/{len(val_dataloader)}")
+                negative_sample = sample_negatives(distribution, target_word, batch_size=target_word.size(0), K=K)
                 positive_scores, negative_scores = model(target_word, context_words, negative_sample)
                 loss = compute_loss(positive_scores, negative_scores)
                 val_loss += loss.item()
-        avg_val_loss = val_loss / len(val_dataloader)
-        # avg_val_loss = val_loss
+        # avg_val_loss = val_loss / len(val_dataloader)
+        avg_val_loss = val_loss
 
 
         # Early stopping check
@@ -117,3 +139,35 @@ def train(epochs, model, train_dataloader, val_dataloader, distribution, optimiz
             break
     
     print("TRAINING ENDS:", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+
+def save_embeddings(model, word_to_index, path = ".", file_name = "task_1.pt"):
+    model.eval()
+    embeddings = model.context_embeddings.weight
+    file_path = os.path.join(path, file_name)
+    torch.save({"embeddings" : embeddings, "word_to_index" : word_to_index}, file_path)
+
+def load_embeddings(file_path = "./task_1.pt"):
+    embed_dict = torch.load(file_path)
+    return embed_dict["word_to_index"], embed_dict["embeddings"]
+
+
+def cosine_similarity(word1, word2, word_to_index, embeddings):
+    i1 = word_to_index[word1]
+    e1 = embeddings[i1].unsqueeze(0)
+    i2 = word_to_index[word2]
+    e2 = embeddings[i2].unsqueeze(0)
+
+    return F.cosine_similarity(e1, e2).item()
+
+def build_embedding(tokens, word_to_index, embeddings):
+    indices = [word_to_index[token] for token in tokens]
+    text_embedding = embeddings[indices].sum(dim=0).unsqueeze(0)
+    return text_embedding
+
+def inference_task_1(token_dict, word_to_index, embeddings):
+    for key in token_dict.keys():
+        token_list = token_dict[key]
+        query = token_list[0]
+        query_embedding = build_embedding(query, word_to_index, embeddings)
+        for i in range(1,len(token_list)):
+            pass

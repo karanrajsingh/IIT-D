@@ -4,8 +4,12 @@ from collections import Counter
 import torch
 import numpy as np
 import random
+import json
+import torch.nn.functional as F
+from k_means_constrained import KMeansConstrained
 
-stopwords = ['the', 'a', '.']
+stopwords = ['the', 'a', 'an' ,'.', 'of', 'and', 'at', 'on', 'by', 'with', 'for', 'from', 'up', 'or', 'but',
+             'him', 'her', 'his', 'do', 'did']
 
 # Decide on whether to keep punctuations and function words (Are they relevant to stylometry)
 def clean_text(text):
@@ -17,7 +21,7 @@ def clean_text(text):
     # text = re.sub(r'[^a-z\s]', ' ', text)
     tokens = text.split()
 
-    tokens = [word for word in tokens if word not in stopwords]
+    # tokens = [word for word in tokens if word not in stopwords]
     
     # counter = Counter(tokens)
     # print("Most common tokens:", counter.most_common(30))
@@ -134,13 +138,77 @@ def apply_unk_dropout(token_indices, word_to_index, p_drop=0.1):
     
     return new_token_indices
 
-    if isinstance(token_indices, torch.Tensor):
-        mask = torch.rand(token_indices.shape) < p_drop
-        token_indices = token_indices.clone()
-        token_indices[mask] = unk_idx
-        return token_indices
+def bigrams(tokens_list):
+    bigrams_token_list = []
+    for tokens in tokens_list:
+        bigrams_tokens = []
+        len_tokens = len(tokens)
+        for i in range(len_tokens-1):
+            bigrams_tokens.append(f"{tokens[i]} {tokens[i+1]}")
+        bigrams_token_list.append(bigrams_tokens)
+    return bigrams_token_list
 
-    return [
-        unk_idx if random.random() < p_drop else t
-        for t in token_indices
-    ]
+def trigrams(tokens_list):
+    bigrams_token_list = []
+    for tokens in tokens_list:
+        bigrams_tokens = []
+        len_tokens = len(tokens)
+        for i in range(len_tokens-2):
+            bigrams_tokens.append(f"{tokens[i]} {tokens[i+1]} {tokens[i+2]}")
+        bigrams_token_list.append(bigrams_tokens)
+    return bigrams_token_list
+
+def task_1(path_file_in, word_to_index, embeddings, path_file_out):
+    with open(path_file_in, "r", encoding="utf-8", errors="ignore") as f:
+        data_list = json.load(f)
+    out_list = []
+    for data in data_list: 
+        temp_dict = {}
+        temp_dict["query_id"] = data["query_id"]
+        query_tokens = clean_text(data["query_text"])
+        query_indices = [word_to_index[token] for token in query_tokens if token in word_to_index]
+        if len(query_indices) == 0:
+            temp_dict["ranked_candidates"] = list(data["candidates"].keys())
+            out_list.append(temp_dict)
+            continue
+        query_embedding = embeddings[query_indices].sum(dim=0).unsqueeze(0)
+        rank_cand = {}
+        for key in data["candidates"].keys():
+            cand_tokens = clean_text(data["candidates"][key])
+            cand_indices = [word_to_index[token] for token in cand_tokens if token in word_to_index]
+            if len(cand_indices) == 0:
+                rank_cand[key] = 0.0
+                continue
+            cand_embedding = embeddings[cand_indices].sum(dim=0).unsqueeze(0)
+            rank_cand[key] = F.cosine_similarity(query_embedding, cand_embedding).item()
+        temp_dict["ranked_candidates"] = [item[0] for item in sorted(rank_cand.items(), key=lambda item: item[1], reverse=True)]
+        out_list.append(temp_dict)
+
+    with open(path_file_out, "w", encoding="utf-8") as f:
+        for item in out_list:
+            f.write(json.dumps(item)+"\n")
+    print("Task 1 output written!")
+    return out_list
+
+def task_2(path_file_in, word_to_index, embeddings, path_file_out):
+    with open(path_file_in, "r", encoding="utf-8", errors="ignore") as f:
+        data_list = json.load(f)
+    k = data_list['num_authors']
+    m = data_list['min_chunks_per_author']
+    chunk_embeddings_list = []
+    for chunk in data_list['chunks']:
+        chunk_tokens = clean_text(chunk)
+        chunk_indices = [word_to_index[token] for token in chunk_tokens if token in word_to_index]        
+        if len(chunk_indices) == 0:
+            empty_emb = torch.zeros(embeddings.size(1)).unsqueeze(0)
+            chunk_embeddings_list.append(empty_emb)
+            continue          
+        chunk_embedding = embeddings[chunk_indices].sum(dim=0).unsqueeze(0)
+        chunk_embeddings_list.append(chunk_embedding)
+    chunk_embeddings = torch.cat(chunk_embeddings_list, dim=0).detach().numpy()
+    kmeans = KMeansConstrained(n_clusters=k, size_min=m, random_state=0)
+    cluster_labels = kmeans.fit_predict(chunk_embeddings)
+    with open(path_file_out, "w", encoding="utf-8") as f:
+        json.dump(cluster_labels.tolist(), f)
+    print("Task 2 output written!")
+    return cluster_labels.tolist()

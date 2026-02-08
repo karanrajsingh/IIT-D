@@ -2,6 +2,8 @@ import numpy as np
 from or_gym.envs.finance.discrete_portfolio_opt import DiscretePortfolioOptEnv
 import time
 import math
+import matplotlib.pyplot as plt
+
 
 
 # BFS based state expansion, significantly reduces the state space to explore.
@@ -32,6 +34,9 @@ class SolveIteration:
         self.policy_function_P = {}
         
         self.bfs_states, self.transitions = self.bfs_expansion()
+
+        self.wealth_over_sweeps = []
+        self.deltas_pi = []
 
     def get_next_state(self, time_step, curr_cash, curr_holdings, action):
         curr_price = self.prices_mu[time_step]
@@ -83,6 +88,8 @@ class SolveIteration:
 
     def vi_solve(self, max_iters=1000):
         # Initializing value functions for terminal states
+        self.wealth_over_sweeps = []
+        self.wealth_over_sweeps.append(self.env.initial_cash)
         if self.sigma == 0:
             goal_price = self.prices_mu[-1]
             for curr_cash, curr_holdings in self.bfs_states[self.horizon]:
@@ -121,6 +128,8 @@ class SolveIteration:
                     self.value_function_V[(time_step, curr_cash, curr_holdings)] = state_action_to_val[max_action]
                     # breakpoint()
                     delta = max(delta, abs(v_old - self.value_function_V[(time_step, curr_cash, curr_holdings)]))
+            _, wealth = self.simulate('VI')
+            self.wealth_over_sweeps.append(wealth)
             if delta < self.threshold:
                 print(f"Value Iteration converged in {iteration+1} iterations.")
                 break
@@ -187,6 +196,10 @@ class SolveIteration:
         return stable
 
     def pi_solve(self):
+        self.wealth_over_sweeps = []
+        self.wealth_over_sweeps.append(self.env.initial_cash)
+        self.deltas_pi = []
+        self.deltas_pi.append(0.0)
         for time_step in range(self.horizon):
             for curr_cash, curr_holdings in self.bfs_states[time_step]:
                 self.policy_function_P[(time_step, curr_cash, curr_holdings)] = 0 
@@ -195,6 +208,10 @@ class SolveIteration:
             iter += 1
             delta = self.policy_evaluation()
             stable = self.policy_improvement()
+            self.deltas_pi.append(delta)
+            if self.sigma == 0:
+                _, wealth = self.simulate('PI')
+                self.wealth_over_sweeps.append(wealth)
             if stable and delta < self.threshold:
                 print(f"Policy Iteration converged in {iteration+1} iterations.")
                 break
@@ -207,6 +224,9 @@ class SolveIteration:
         cash, current_price, current_holdings = state[0], state[1], state[2]
 
         trajectory = []
+
+        # breakpoint()
+
         done = False
         while not done:
             if solver == 'VI':
@@ -214,12 +234,71 @@ class SolveIteration:
             elif solver == 'PI':
                 action = self.policy_function_P.get((env.step_count, cash, current_holdings), 0)
             next_state, reward, done, _ = env.step([action])
+            # breakpoint()
             trajectory.append((env.step_count-1, current_price, cash, current_holdings, action, next_state[0], next_state[2]))
             cash, current_price, current_holdings = next_state[0], next_state[1], next_state[2]
             if done:
                 wealth = reward
 
         return trajectory, wealth
+    
+def plot(env, solver = 'VI', str = '1'):
+    for gamma in [0.999, 1.0]:
+        print(f"Running Solve Iteration with gamma={gamma}")
+
+        start_time = time.time()
+        solve_iteration = SolveIteration(env, gamma=gamma)
+        if solver == 'VI':
+            solve_iteration.vi_solve()
+        elif solver == 'PI':
+            solve_iteration.pi_solve()
+        trajectory, final_wealth = solve_iteration.simulate(solver)
+        wealth_over_sweeps = solve_iteration.wealth_over_sweeps
+        exec_time = time.time() - start_time
+        print(f"Execution time (gamma={gamma}): {exec_time:.2f} sec")
+
+        # Plot wealth progression over sweeps
+        plt.figure()
+        plt.plot(wealth_over_sweeps, marker='o')
+        plt.xlabel("Sweeps")
+        plt.ylabel("Final Portfolio Wealth")
+        plt.title(f"Total Portfolio Wealth vs Sweeps (gamma={gamma})")
+        plt.grid(True)
+        plt.savefig(f"{solver}_{str}_wealth_vs_sweeps_gamma_{gamma}.png")
+
+        # After training, simulate one episode
+        trajectory, _ = solve_iteration.simulate(solver=solver)
+        timesteps = [x[0] for x in trajectory]
+        cash_vals = [x[2] for x in trajectory]
+        holdings = [x[3] for x in trajectory]
+        wealth_vals = [c + h*p for (_, p, c, h, _, _, _) in trajectory]
+
+        # Plot evolution of wealth, cash, holdings
+        plt.figure()
+        plt.plot(timesteps, wealth_vals, label="Total Wealth")
+        plt.plot(timesteps, cash_vals, label="Cash")
+        plt.plot(timesteps, holdings, label="Holdings")
+        plt.xlabel("Time step")
+        plt.ylabel("Value")
+        plt.title(f"Evolution of Wealth, Cash, Holdings (gamma={gamma})")
+        plt.legend()
+        plt.grid(True)
+        plt.savefig(f"{solver}_{str}_evolution_gamma_{gamma}.png")
+
+def plot_3():
+    # Part 3: variance = 1.0
+    env = DiscretePortfolioOptEnv(variance=1.0)
+    solve_iteration = SolveIteration(env, gamma=1.0)
+    solve_iteration.pi_solve()
+    deltas = solve_iteration.deltas_pi
+
+    plt.figure()
+    plt.plot(range(len(deltas)), deltas, marker='o')
+    plt.xlabel("Iteration")
+    plt.ylabel("Maximum Value Difference: delta")
+    plt.title("Policy Iteration Convergence (variance=1.0)")
+    plt.grid(True)
+    plt.savefig("pi_convergence_variance1.png")
 
 if __name__=="__main__":
     start_time=time.time()
@@ -237,6 +316,8 @@ if __name__=="__main__":
     print("Val Iteration: Prices: ", prices, "Final Wealth: ", final_wealth)
     trajectory, final_wealth = solve_iteration.simulate(solver="PI")
     print("Pol Iteration: Prices: ", prices, "Final Wealth: ", final_wealth)
+    plot(env, str='1')
+    plot(env, solver='PI', str='1')
 
     ####Config2
     prices = [2, 2, 2, 4 ,2, 2, 4, 2, 2, 2]
@@ -248,6 +329,8 @@ if __name__=="__main__":
     print("Val Iteration: Prices: ", prices, "Final Wealth: ", final_wealth)
     trajectory, final_wealth = solve_iteration.simulate(solver="PI")
     print("Pol Iteration: Prices: ", prices, "Final Wealth: ", final_wealth)
+    plot(env, str='2')
+    plot(env, solver='PI', str='2')
 
     ####Config3
     prices = [4, 1, 4, 1 ,4, 4, 4, 1, 1, 4]
@@ -259,6 +342,8 @@ if __name__=="__main__":
     print("Val Iteration: Prices: ", prices, "Final Wealth: ", final_wealth)
     trajectory, final_wealth = solve_iteration.simulate(solver="PI")
     print("Pol Iteration: Prices: ", prices, "Final Wealth: ", final_wealth)
+    plot(env, str='3')
+    plot(env, solver='PI', str='3')
 
 
     ####Run the evaluation on the following prices and save the plots.
@@ -274,3 +359,10 @@ if __name__=="__main__":
     print("Val Iteration: Prices: ", prices, "Final Wealth: ", final_wealth)
     trajectory, final_wealth = solve_iteration.simulate(solver="PI")
     print("Pol Iteration: Prices: ", prices, "Final Wealth: ", final_wealth)
+    plot(env)
+    plot(env, solver='PI')
+
+
+    prices = [4, 1, 4, 1 ,4, 4, 4, 1, 1, 4]   # example sequence
+    env = DiscretePortfolioOptEnv(prices=prices, variance=0)
+    plot_3()

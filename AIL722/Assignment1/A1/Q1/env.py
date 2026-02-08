@@ -558,3 +558,37 @@ class FootballSkillsEnv(gym.Env):
             return [(prob, state) for state, prob in consolidated.items()]
 
         return []
+
+    # Added by Karan
+    def get_gif_stationary_degraded(self, policy, seed = 20, filename = "output.gif"):
+        obs, _ = self.reset(seed = seed)
+        done = False
+        steps = 0
+        max_steps = 100
+        total_reward = 0
+        
+        print(f"Starting rollout from position: {obs}")
+        
+        while not done and steps < max_steps:
+            self.render()
+            
+
+            s_index = self.state_to_index(obs)
+            action = policy[s_index]
+            
+            if action == -1:
+                print("No valid action found!")
+                break
+                
+            obs, reward, done, _, _ = self.step(action)
+            total_reward += reward
+            steps += 1
+            
+            if done:
+                print()
+                print("Reached terminal state.")
+                self.render()
+                break
+        
+        self.generate_gif(filename = filename)
+        return steps, total_reward
