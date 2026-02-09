@@ -263,7 +263,7 @@ def compute_loss(positive_scores, negative_scores):
     return loss
 
 def train(epochs, model, train_dataloader, distribution, optimizer, K=10, timeout = 1500):
-    
+    best_train_loss = float('inf')
     print(f"timeout:{timeout}")
 
     start = time.time()
@@ -285,15 +285,20 @@ def train(epochs, model, train_dataloader, distribution, optimizer, K=10, timeou
             optimizer.step()
 
             train_loss += loss.item()
-        avg_train_loss = train_loss/len(train_dataloader) 
+        avg_train_loss = train_loss/len(train_dataloader)
 
         print(f"Epoch {epoch+1}/{epochs}, Train Loss: {avg_train_loss:.2f}")
-    
-    print("Saving model...")
-    torch.save(model.state_dict(), "best_model_sim.pt")
+
+        if avg_train_loss <= best_train_loss:
+            best_train_loss = avg_train_loss
+            torch.save(model.state_dict(), "best_model_sim.pt")
+        else:
+            break
+
+
 
 def fine_tune(epochs, model, train_dataloader, distribution, optimizer, K=10, timeout = 1500):
-    
+    best_train_loss = float('inf')
     print(f"timeout:{timeout}")
 
     start = time.time()
@@ -319,8 +324,12 @@ def fine_tune(epochs, model, train_dataloader, distribution, optimizer, K=10, ti
 
         print(f"Epoch {epoch+1}/{epochs}, Train Loss: {avg_train_loss:.2f}")
     
-    print("Saving model...")
-    torch.save(model.state_dict(), "ft_model_sim.pt")
+        if avg_train_loss <= best_train_loss:
+            best_train_loss = avg_train_loss
+            torch.save(model.state_dict(), "ft_model_sim.pt")
+        else:
+            break
+    
 
 def save_embeddings(model, word_to_index, path = ".", file_name = "task_1.pt"):
     model.eval()
@@ -355,7 +364,7 @@ def train_val(epochs, model, train_dataloader, val_dataloader, distribution, opt
         print(f"Training epoch:{epoch+1}")
         model.train()
         train_loss = 0.0
-        for (context_words, target_word) in enumerate(train_dataloader):
+        for (context_words, target_word) in train_dataloader:
             negative_samples = sample_negatives(distribution, batch_size=target_word.size(0), K=K)
             optimizer.zero_grad()
             positive_scores, negative_scores = model(target_word, context_words, negative_samples)
@@ -390,6 +399,59 @@ def train_val(epochs, model, train_dataloader, val_dataloader, distribution, opt
         if patience_counter >= patience:
             print(f"Early stopping at epoch {epoch+1}")
             break
+
+def finetune_val(epochs, model, train_dataloader, val_dataloader, distribution, optimizer, K=10, patience=3, timeout=1500):
+    best_val_loss = float('inf')
+    patience_counter = 0
+    
+    start = time.time()
+
+    # Training phase
+    for epoch in range(epochs):
+        print(time.time() - start)
+        if (time.time() - start > timeout):
+            print("Training timed out...")
+            break
+        print(f"Training epoch:{epoch+1}")
+        model.train()
+        train_loss = 0.0
+        for (context_words, target_word) in train_dataloader:
+            negative_samples = sample_negatives(distribution, batch_size=target_word.size(0), K=K)
+            optimizer.zero_grad()
+            positive_scores, negative_scores = model(target_word, context_words, negative_samples)
+            loss = compute_loss(positive_scores, negative_scores)
+            loss.backward()
+            optimizer.step()
+
+            train_loss += loss.item()
+        avg_train_loss = train_loss / len(train_dataloader)
+
+        # Validation phase    
+        print(f"Validation epoch:{epoch+1}")
+        model.eval()
+        val_loss = 0.0
+        with torch.no_grad():
+            for (context_words, target_word) in val_dataloader:
+                negative_sample = sample_negatives(distribution, batch_size=target_word.size(0), K=K)
+                positive_scores, negative_scores = model(target_word, context_words, negative_sample)
+                loss = compute_loss(positive_scores, negative_scores)
+                val_loss += loss.item()
+        avg_val_loss = val_loss / len(val_dataloader)
+
+        if avg_val_loss < best_val_loss:
+            best_val_loss = avg_val_loss
+            patience_counter = 0
+            torch.save(model.state_dict(), "ft_model_val.pt")
+        else:
+            patience_counter += 1
+
+        print(f"Epoch {epoch+1}/{epochs}, Train Loss: {avg_train_loss:.2f}, Val Loss: {avg_val_loss:.2f}, patience Counter: {patience_counter}/{patience}")
+
+        if patience_counter >= patience:
+            print(f"Early stopping at epoch {epoch+1}")
+            break
+
+
 
 def test_cosine_similarity(word_to_index, embeddings):
     print(cosine_similarity("king", "queen", word_to_index, embeddings))
