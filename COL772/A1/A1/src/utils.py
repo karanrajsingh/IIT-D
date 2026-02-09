@@ -161,7 +161,7 @@ def task_1(path_file_in, word_to_index, embeddings, path_file_out):
             temp_dict["ranked_candidates"] = list(data["candidates"].keys())
             out_list.append(temp_dict)
             continue
-        query_embedding = embeddings[query_indices].sum(dim=0).unsqueeze(0)
+        query_embedding = embeddings[query_indices].mean(dim=0).unsqueeze(0)
         rank_cand = {}
         for key in data["candidates"].keys():
             cand_tokens = clean_text(data["candidates"][key])
@@ -169,7 +169,7 @@ def task_1(path_file_in, word_to_index, embeddings, path_file_out):
             if len(cand_indices) == 0:
                 rank_cand[key] = 0.0
                 continue
-            cand_embedding = embeddings[cand_indices].sum(dim=0).unsqueeze(0)
+            cand_embedding = embeddings[cand_indices].mean(dim=0).unsqueeze(0)
             rank_cand[key] = F.cosine_similarity(query_embedding, cand_embedding).item()
         temp_dict["ranked_candidates"] = [item[0] for item in sorted(rank_cand.items(), key=lambda item: item[1], reverse=True)]
         out_list.append(temp_dict)
@@ -203,7 +203,7 @@ def task_2(data_list, word_to_index, embeddings, path_file_out):
             empty_emb = torch.zeros(embeddings.size(1)).unsqueeze(0)
             chunk_embeddings_list.append(empty_emb)
             continue          
-        chunk_embedding = embeddings[chunk_indices].sum(dim=0).unsqueeze(0)
+        chunk_embedding = embeddings[chunk_indices].mean(dim=0).unsqueeze(0)
         chunk_embeddings_list.append(chunk_embedding)
     chunk_embeddings = torch.cat(chunk_embeddings_list, dim=0).detach().numpy()
     kmeans = KMeansConstrained(n_clusters=k, size_min=m, random_state=0)
@@ -212,6 +212,62 @@ def task_2(data_list, word_to_index, embeddings, path_file_out):
         json.dump(cluster_labels.tolist(), f)
     print("Task 2 output written!")
     return cluster_labels.tolist()
+
+
+def bigram_task_1(path_file_in, word_to_index, embeddings, path_file_out):
+    with open(path_file_in, "r", encoding="utf-8", errors="ignore") as f:
+        data_list = json.load(f)
+    out_list = []
+    for data in data_list: 
+        temp_dict = {}
+        temp_dict["query_id"] = data["query_id"]
+        query_tokens = bigrams(clean_text(data["query_text"]))
+        query_indices = [word_to_index[token] for token in query_tokens if token in word_to_index]
+        if len(query_indices) == 0:
+            temp_dict["ranked_candidates"] = list(data["candidates"].keys())
+            out_list.append(temp_dict)
+            continue
+        query_embedding = embeddings[query_indices].mean(dim=0).unsqueeze(0)
+        rank_cand = {}
+        for key in data["candidates"].keys():
+            cand_tokens = bigrams(clean_text(data["candidates"][key]))
+            cand_indices = [word_to_index[token] for token in cand_tokens if token in word_to_index]
+            if len(cand_indices) == 0:
+                rank_cand[key] = 0.0
+                continue
+            cand_embedding = embeddings[cand_indices].mean(dim=0).unsqueeze(0)
+            rank_cand[key] = F.cosine_similarity(query_embedding, cand_embedding).item()
+        temp_dict["ranked_candidates"] = [item[0] for item in sorted(rank_cand.items(), key=lambda item: item[1], reverse=True)]
+        out_list.append(temp_dict)
+
+    with open(path_file_out, "w", encoding="utf-8") as f:
+        for item in out_list:
+            f.write(json.dumps(item)+"\n")
+    print("Task 1 output written!")
+    return out_list
+
+def bigram_task_2(data_list, word_to_index, embeddings, path_file_out):
+    k = data_list['num_authors']
+    m = data_list['min_chunks_per_author']
+    chunk_embeddings_list = []
+    for chunk in data_list['chunks']:
+        chunk_tokens = bigrams(clean_text(chunk))
+        chunk_indices = [word_to_index[token] for token in chunk_tokens if token in word_to_index]        
+        if len(chunk_indices) == 0:
+            empty_emb = torch.zeros(embeddings.size(1)).unsqueeze(0)
+            chunk_embeddings_list.append(empty_emb)
+            continue          
+        chunk_embedding = embeddings[chunk_indices].mean(dim=0).unsqueeze(0)
+        chunk_embeddings_list.append(chunk_embedding)
+    chunk_embeddings = torch.cat(chunk_embeddings_list, dim=0).detach().numpy()
+    kmeans = KMeansConstrained(n_clusters=k, size_min=m, random_state=0)
+    cluster_labels = kmeans.fit_predict(chunk_embeddings)
+    with open(path_file_out, "w", encoding="utf-8") as f:
+        json.dump(cluster_labels.tolist(), f)
+    print("Task 2 output written!")
+    return cluster_labels.tolist()
+
+
 
 class CustomDataset(Dataset):
     def __init__(self, contexts_target_pairs):

@@ -19,6 +19,7 @@ patience = PATIENCE
 
 tokens_list = u.load_tokens(abs_path_dataset)
 bigram_tokens_list = u.bigrams(tokens_list)
+tokens_list = bigram_tokens_list
 
 train_tokens_list, val_tokens_list = u.train_val_split(tokens_list, split_ratio=split_ratio)
 word_to_index, index_to_word, counter = u.build_vocabulary_indices(train_tokens_list, min_freq=2)

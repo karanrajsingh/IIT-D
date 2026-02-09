@@ -32,7 +32,11 @@ file_path_weights = root / "best_model_val.pt"
 weights = torch.load(file_path_weights, weights_only=True)
 model = u.CBOW(V=weights['context_embeddings.weight'].shape[0], d=weights['context_embeddings.weight'].shape[1])
 model.load_state_dict(weights)
+
 chunk_token_list = u.fine_tune_tokens(data_list)
+bigram_tokens_list = u.bigrams(chunk_token_list)
+chunk_token_list = bigram_tokens_list
+
 train_tokens_list, val_tokens_list = u.train_val_split(chunk_token_list, split_ratio=split_ratio)
 train_token_indices = u.build_author_token_indices(train_tokens_list, word_to_index_loaded)
 val_token_indices = u.build_author_token_indices(train_tokens_list, word_to_index_loaded)
@@ -48,4 +52,5 @@ u.finetune_val(ft_epochs, model, batched_train_ct_pairs, batched_val_ct_pairs, n
 
 file_path_embed = root / "ft_embedding_val_dict.pt"
 word_to_index_loaded, embeddings_loaded = u.load_embeddings(file_path=file_path_embed)
-u.task_2(data_list, word_to_index_loaded, embeddings_loaded, file_path_out)
+# u.task_2(data_list, word_to_index_loaded, embeddings_loaded, file_path_out)
+u.bigram_task_2(data_list, word_to_index_loaded, embeddings_loaded, file_path_out)
