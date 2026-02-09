@@ -8,7 +8,7 @@ window = WINDOW_SIZE
 d = DIMENSION
 batch_size = BATCH_SIZE
 epochs = EPOCHS
-timeout = TIMEOUT
+timeout = T2_TIMEOUT
 ft_epochs = FT_EPOCHS
 K = K
 split_ratio = SPLIT_RATIO
@@ -20,7 +20,7 @@ file_path_in = abs_test_path
 dir_path = sys.argv[2]
 abs_dir_path = Path(dir_path).resolve()
 abs_dir_path.mkdir(parents=True, exist_ok=True)
-file_path_out = abs_dir_path / "val_task2_predictions.json"
+file_path_out = abs_dir_path / "task2_predictions.json"
 script_path = Path(__file__).resolve()
 root = script_path.parent.parent
 file_path_embed = root / "embedding_val_dict.pt"
@@ -44,9 +44,8 @@ counter = u.build_finetune_counter(chunk_token_list)
 negative_sampling_distribution = u.build_distribution(word_to_index_loaded, counter)
 optimzer = torch.optim.Adam(model.parameters(), lr = 0.002)
 
-u.finetune_val(epochs, model, batched_train_ct_pairs, batched_val_ct_pairs, negative_sampling_distribution, optimzer, K=K, patience=patience, timeout=timeout)
+u.finetune_val(epochs, model, batched_train_ct_pairs, batched_val_ct_pairs, negative_sampling_distribution, optimzer, word_to_index_loaded, K=K, patience=patience, timeout=timeout)
 
-u.save_embeddings(model, word_to_index_loaded, file_name="ft_embedding_val_dict.pt")
 file_path_embed = root / "ft_embedding_val_dict.pt"
 word_to_index_loaded, embeddings_loaded = u.load_embeddings(file_path=file_path_embed)
 u.task_2(data_list, word_to_index_loaded, embeddings_loaded, file_path_out)

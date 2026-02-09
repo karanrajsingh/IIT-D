@@ -24,5 +24,4 @@ batched_ct_pairs = u.get_dataloader(contexts_target_pairs, batch_size=batch_size
 negative_sampling_distribution = u.build_distribution(word_to_index, counter)
 model = u.CBOW(V=len(word_to_index), d=d)
 optimzer = torch.optim.Adam(model.parameters(), lr = 0.002)
-u.train(epochs, model, batched_ct_pairs, negative_sampling_distribution, optimzer, K=K, timeout=timeout)
-u.save_embeddings(model, word_to_index, file_name="embedding_dict.pt")
+u.train(epochs, model, batched_ct_pairs, negative_sampling_distribution, optimzer, word_to_index, K=K, timeout=timeout)

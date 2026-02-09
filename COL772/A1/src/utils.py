@@ -262,7 +262,13 @@ def compute_loss(positive_scores, negative_scores):
     loss = -(positive_loss+negative_loss).mean()
     return loss
 
-def train(epochs, model, train_dataloader, distribution, optimizer, K=10, timeout = 1500):
+def save_embeddings(model, word_to_index, path = ".", file_name = "task_1.pt"):
+    model.eval()
+    embeddings = model.context_embeddings.weight
+    file_path = os.path.join(path, file_name)
+    torch.save({"embeddings" : embeddings, "word_to_index" : word_to_index}, file_path)
+
+def train(epochs, model, train_dataloader, distribution, optimizer, word_to_index, K=10, timeout = 1500):
     best_train_loss = float('inf')
     print(f"timeout:{timeout}")
 
@@ -292,12 +298,13 @@ def train(epochs, model, train_dataloader, distribution, optimizer, K=10, timeou
         if avg_train_loss <= best_train_loss:
             best_train_loss = avg_train_loss
             torch.save(model.state_dict(), "best_model_sim.pt")
+            save_embeddings(model, word_to_index, file_name="embedding_dict.pt")
         else:
             break
 
 
 
-def fine_tune(epochs, model, train_dataloader, distribution, optimizer, K=10, timeout = 1500):
+def fine_tune(epochs, model, train_dataloader, distribution, optimizer, word_to_index, K=10, timeout = 1500):
     best_train_loss = float('inf')
     print(f"timeout:{timeout}")
 
@@ -327,15 +334,10 @@ def fine_tune(epochs, model, train_dataloader, distribution, optimizer, K=10, ti
         if avg_train_loss <= best_train_loss:
             best_train_loss = avg_train_loss
             torch.save(model.state_dict(), "ft_model_sim.pt")
+            save_embeddings(model, word_to_index, file_name="ft_embedding_dict.pt")
         else:
             break
     
-
-def save_embeddings(model, word_to_index, path = ".", file_name = "task_1.pt"):
-    model.eval()
-    embeddings = model.context_embeddings.weight
-    file_path = os.path.join(path, file_name)
-    torch.save({"embeddings" : embeddings, "word_to_index" : word_to_index}, file_path)
 
 def load_embeddings(file_path = "./task_1.pt"):
     embed_dict = torch.load(file_path)
@@ -349,7 +351,7 @@ def cosine_similarity(word1, word2, word_to_index, embeddings):
 
     return F.cosine_similarity(e1, e2).item()
 
-def train_val(epochs, model, train_dataloader, val_dataloader, distribution, optimizer, K=10, patience=3, timeout=1500):
+def train_val(epochs, model, train_dataloader, val_dataloader, distribution, optimizer, word_to_index, K=10, patience=3, timeout=1500):
     best_val_loss = float('inf')
     patience_counter = 0
     
@@ -391,6 +393,7 @@ def train_val(epochs, model, train_dataloader, val_dataloader, distribution, opt
             best_val_loss = avg_val_loss
             patience_counter = 0
             torch.save(model.state_dict(), "best_model_val.pt")
+            save_embeddings(model, word_to_index, file_name="embedding_val_dict.pt")
         else:
             patience_counter += 1
 
@@ -400,7 +403,7 @@ def train_val(epochs, model, train_dataloader, val_dataloader, distribution, opt
             print(f"Early stopping at epoch {epoch+1}")
             break
 
-def finetune_val(epochs, model, train_dataloader, val_dataloader, distribution, optimizer, K=10, patience=3, timeout=1500):
+def finetune_val(epochs, model, train_dataloader, val_dataloader, distribution, optimizer, word_to_index, K=10, patience=3, timeout=1500):
     best_val_loss = float('inf')
     patience_counter = 0
     
@@ -442,6 +445,7 @@ def finetune_val(epochs, model, train_dataloader, val_dataloader, distribution, 
             best_val_loss = avg_val_loss
             patience_counter = 0
             torch.save(model.state_dict(), "ft_model_val.pt")
+            save_embeddings(model, word_to_index, file_name="ft_embedding_val_dict.pt")
         else:
             patience_counter += 1
 

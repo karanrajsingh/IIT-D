@@ -8,7 +8,7 @@ window = WINDOW_SIZE
 d = DIMENSION
 batch_size = BATCH_SIZE
 epochs = EPOCHS
-timeout = TIMEOUT
+timeout = T2_TIMEOUT
 ft_epochs = FT_EPOCHS
 K = K
 
@@ -37,8 +37,7 @@ batched_train_ct_pairs = u.get_dataloader(contexts_target_pairs, batch_size=batc
 counter = u.build_finetune_counter(chunk_token_list)
 negative_sampling_distribution = u.build_distribution(word_to_index_loaded, counter)
 optimzer = torch.optim.Adam(model.parameters(), lr = 0.002)
-u.fine_tune(ft_epochs, model, batched_train_ct_pairs, negative_sampling_distribution, optimzer, K=10, timeout=timeout)
-u.save_embeddings(model, word_to_index_loaded, file_name="ft_embedding_dict.pt")
+u.fine_tune(ft_epochs, model, batched_train_ct_pairs, negative_sampling_distribution, optimzer, word_to_index_loaded, K=10, timeout=timeout)
 file_path_embed = root / "ft_embedding_dict.pt"
 word_to_index_loaded, embeddings_loaded = u.load_embeddings(file_path=file_path_embed)
 u.task_2(data_list, word_to_index_loaded, embeddings_loaded, file_path_out)

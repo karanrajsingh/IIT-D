@@ -9,7 +9,7 @@ file_path_in = abs_test_path
 dir_path = sys.argv[2]
 abs_dir_path = Path(dir_path).resolve()
 abs_dir_path.mkdir(parents=True, exist_ok=True)
-file_path_out = abs_dir_path / "val_task1_predictions.jsonl"
+file_path_out = abs_dir_path / "task1_predictions.jsonl"
 
 script_path = Path(__file__).resolve()
 root = script_path.parent.parent

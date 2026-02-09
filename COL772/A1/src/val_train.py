@@ -34,5 +34,4 @@ negative_sampling_distribution = u.build_distribution(word_to_index, counter)
 
 model = u.CBOW(V=len(word_to_index), d=d)
 optimzer = torch.optim.Adam(model.parameters(), lr = 0.002)
-u.train_val(epochs, model, batched_train_ct_pairs, batched_val_ct_pairs, negative_sampling_distribution, optimzer, K=K, patience=patience, timeout=timeout)
-u.save_embeddings(model, word_to_index, file_name="embedding_val_dict.pt")
+u.train_val(epochs, model, batched_train_ct_pairs, batched_val_ct_pairs, negative_sampling_distribution, optimzer, word_to_index, K=K, patience=patience, timeout=timeout)

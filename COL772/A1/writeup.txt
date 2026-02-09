@@ -1,0 +1,17 @@
+2
+“Even though I have taken help from the following students and LLMs in terms of discussing ideas and coding practices, all my code is written by me.”
+ChatGPT, Perplexity
+CBOW with negative sampling has been implemented for this task. Simple features such as target word, context and negative samples embeddings have been used. Selected punctuations and function words are retained in tokens for learning stylistic patterns of the authors. For training, each author tokens are split into train and validation tokens. Vocabulary has been built using training data only, for words with minimum frequency of 2. This adds a form of regularization by treating the left out words as unknowns. One extra <UNK> token has also been used, for handling unknown words.  Then context vector is built for each target word and context vector-target pairs are constructed. Then these are merged for all authors and shuffled for building training and validation sets. The model is then trained using early stopping when val_loss stops decreasing or max_epochs are reached or a timeout is invoked. Inference is drawn on task 1. Model is then finetuned for task 2 and inference is drawn on task 2.
+-utils.py file contains all the functions for the tasks.
+-configs.py file contains all the hyperparameter values.
+Hyperparameter values have been optimized empirically. These are as under:
+WINDOW_SIZE = 5     % Context window length for either side of the target word, i.e. context vector size is 2*WINDOW_SIZE
+DIMENSION = 150     % Embedding dimensions
+BATCH_SIZE = 256    % Training batch size 
+EPOCHS = 30         % Training epochs
+TIMEOUT = 1500      % Time out for training       
+FT_EPOCHS = 10      % Fine tuning epochs
+K = 10              % Number of negative samples per target word
+SPLIT_RATIO = 0.8   % Fraction of training examples in train-val split
+PATIENCE = 3        % Triggers Early stopping
+T2_TIMEOUT = 600    % Time out for fine tuning
