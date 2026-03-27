@@ -140,14 +140,10 @@ class Seq2SeqBERTAttention(nn.Module):
         global device
         batch_size = input_tokens.size(0)
         
-        with torch.no_grad():
-             encoder_outputs = self.encoder(input_ids=input_tokens, attention_mask=attention_mask)
-            #  encoder_hidden_states = self.enc_proj(encoder_outputs.last_hidden_state)
-             pooled = encoder_outputs.last_hidden_state[:, 0]
-             pooled = self.init_proj(pooled)
-             encoder_hidden_states = self.enc_proj(encoder_outputs.last_hidden_state)
-            #  pooled = encoder_hidden_states[:, 0]
-            #  pooled = self.init_proj(pooled)
+        encoder_outputs = self.encoder(input_ids=input_tokens, attention_mask=attention_mask)
+        pooled = encoder_outputs.last_hidden_state[:, 0]
+        pooled = self.init_proj(pooled)
+        encoder_hidden_states = self.enc_proj(encoder_outputs.last_hidden_state)
         
         # Initialize decoder layers
         h = pooled.unsqueeze(0).repeat(self.decoder_layers, 1, 1)
@@ -170,7 +166,7 @@ class Seq2SeqBERTAttention(nn.Module):
             Q = split_heads(Q, num_heads=self.num_heads, head_dim=self.hidden_dim//self.num_heads)  
             K = split_heads(K, num_heads=self.num_heads, head_dim=self.hidden_dim//self.num_heads) 
             V = split_heads(V, num_heads=self.num_heads, head_dim=self.hidden_dim//self.num_heads)
-            attn_mask = ~(attention_mask==0).unsqueeze(1).unsqueeze(2)
+            attn_mask = ~attention_mask.unsqueeze(1).unsqueeze(2)
             attn_mask = attn_mask.expand(-1, self.num_heads, -1, -1)
             context = scaled_dot_product_attention(Q, K, V, attn_mask=attn_mask)
             # context = context.squeeze(1)
@@ -205,7 +201,7 @@ def train_epoch(model, train_loader, val_loader, test_loader, optimizer, criteri
     model.train()
     train_loss = 0
     for source, translated in train_loader:
-        attention_mask = (source != pad_id).long()
+        attention_mask = (source != pad_id).bool()
         attention_mask = attention_mask.to(device)
         source = source.to(device)
         translated = translated.to(device)
@@ -229,7 +225,7 @@ def train_epoch(model, train_loader, val_loader, test_loader, optimizer, criteri
     all_references = []
     with torch.no_grad():        
         for source, translated in val_loader:
-            attention_mask = (source != pad_id).long()
+            attention_mask = (source != pad_id).bool()
             attention_mask = attention_mask.to(device)
             source = source.to(device)
             translated = translated.to(device)
@@ -255,7 +251,7 @@ def train_epoch(model, train_loader, val_loader, test_loader, optimizer, criteri
     all_references = []
     with torch.no_grad():        
         for source, translated in test_loader:
-            attention_mask = (source != pad_id).long()
+            attention_mask = (source != pad_id).bool()
             attention_mask = attention_mask.to(device)
             source = source.to(device)
             translated = translated.to(device)

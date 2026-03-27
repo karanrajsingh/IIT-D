@@ -419,7 +419,7 @@ def main():
     savepath = "./checkpoints"
     os.makedirs(savepath, exist_ok=True)
 
-    model_dir = os.path.join(savepath, "model_3")
+    model_dir = os.path.join(savepath, "model_4")
     os.makedirs(model_dir, exist_ok=True)
     tokenizer_H = build_tokenizer(train_H_df, save_dir=os.path.join(model_dir, "tokenizer", "Hindi"))
     bert_tokenizer = BertTokenizer.from_pretrained('bert-base-cased')

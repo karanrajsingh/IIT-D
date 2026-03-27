@@ -396,7 +396,7 @@ def per_epoch_training(model, train_loader, val_loader, optimizer, criterion, de
 def train_model(model, train_loader, val_loader, num_epochs=100, patience=5, save_path="./checkpoints/"):
     
     if torch.cuda.is_available():
-        device = torch.device("cuda")
+        device = torch.device("cuda:1")
     else:
         device = torch.device("cpu")
 

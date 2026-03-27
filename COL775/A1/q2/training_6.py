@@ -25,7 +25,7 @@ device = None
 def set_device():
     global device
     if torch.cuda.is_available():
-        device = "cuda:1"
+        device = "cuda:0"
     else:
         device = "cpu"
 
@@ -141,15 +141,12 @@ class Seq2SeqBERTAttention(nn.Module):
         global device
         batch_size = input_tokens.size(0)
         
-        with torch.no_grad():
-             encoder_outputs = self.encoder(input_ids=input_tokens, attention_mask=attention_mask)
-            #  encoder_hidden_states = self.enc_proj(encoder_outputs.last_hidden_state)
-             pooled = encoder_outputs.last_hidden_state[:, 0]
-             pooled = self.init_proj(pooled)
-             encoder_hidden_states = self.enc_proj(encoder_outputs.last_hidden_state)
-            #  pooled = encoder_hidden_states[:, 0]
-            #  pooled = self.init_proj(pooled)
         
+        encoder_outputs = self.encoder(input_ids=input_tokens, attention_mask=attention_mask)
+        pooled = encoder_outputs.last_hidden_state[:, 0]
+        pooled = self.init_proj(pooled)
+        encoder_hidden_states = self.enc_proj(encoder_outputs.last_hidden_state)
+
         # Initialize decoder layers
         h = pooled.unsqueeze(0).repeat(self.decoder_layers, 1, 1)
         c = torch.zeros_like(h)
@@ -171,7 +168,7 @@ class Seq2SeqBERTAttention(nn.Module):
             Q = split_heads(Q, num_heads=self.num_heads, head_dim=self.hidden_dim//self.num_heads)  
             K = split_heads(K, num_heads=self.num_heads, head_dim=self.hidden_dim//self.num_heads) 
             V = split_heads(V, num_heads=self.num_heads, head_dim=self.hidden_dim//self.num_heads)
-            attn_mask = ~(attention_mask==0).unsqueeze(1).unsqueeze(2)
+            attn_mask = ~attention_mask.unsqueeze(1).unsqueeze(2)
             attn_mask = attn_mask.expand(-1, self.num_heads, -1, -1)
             context = scaled_dot_product_attention(Q, K, V, attn_mask=attn_mask)
             # context = context.squeeze(1)
@@ -206,7 +203,7 @@ def train_epoch(model, train_loader, val_loader, test_loader, optimizer, criteri
     model.train()
     train_loss = 0
     for source, translated in train_loader:
-        attention_mask = (source != pad_id).long()
+        attention_mask = (source != pad_id).bool()
         attention_mask = attention_mask.to(device)
         source = source.to(device)
         translated = translated.to(device)
@@ -230,7 +227,7 @@ def train_epoch(model, train_loader, val_loader, test_loader, optimizer, criteri
     all_references = []
     with torch.no_grad():        
         for source, translated in val_loader:
-            attention_mask = (source != pad_id).long()
+            attention_mask = (source != pad_id).bool()
             attention_mask = attention_mask.to(device)
             source = source.to(device)
             translated = translated.to(device)
@@ -256,7 +253,7 @@ def train_epoch(model, train_loader, val_loader, test_loader, optimizer, criteri
     all_references = []
     with torch.no_grad():        
         for source, translated in test_loader:
-            attention_mask = (source != pad_id).long()
+            attention_mask = (source != pad_id).bool()
             attention_mask = attention_mask.to(device)
             source = source.to(device)
             translated = translated.to(device)
@@ -337,7 +334,7 @@ def train_model(model, train_loader, val_loader, test_loader, num_epochs=50, sav
     return history
 
 def get_teacher_forcing_curve(num_epochs, k=8):
-    return [k/(k + math.exp(epoch/k)) for epoch in range(num_epochs)]
+    return [k/(k + math.exp((epoch+1)/k)) for epoch in range(num_epochs)]
 
 def plot_and_save_all(history, save_dir):
     os.makedirs(save_dir, exist_ok=True)
@@ -349,7 +346,7 @@ def plot_and_save_all(history, save_dir):
         step = max(1, len(epochs)//10)
         return epochs[::step]
 
-    teacher_forcing = get_teacher_forcing_curve(epochs)
+    teacher_forcing = get_teacher_forcing_curve(epochs[-1])
 
     # 1. Training Loss + Teacher Forcing
     fig = plt.figure()
@@ -439,7 +436,7 @@ def main():
     savepath = "./checkpoints"
     os.makedirs(savepath, exist_ok=True)
 
-    model_dir = os.path.join(savepath, "model_3")
+    model_dir = os.path.join(savepath, "model_6")
     os.makedirs(model_dir, exist_ok=True)
     tokenizer_M = build_tokenizer(train_M_df, save_dir=os.path.join(savepath, "tokenizer", "Marathi"))
     bert_tokenizer = BertTokenizer.from_pretrained('bert-base-cased')
