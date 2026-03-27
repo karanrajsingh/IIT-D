@@ -43,7 +43,9 @@ def decode_tokens(token_ids, tokenizer):
             break
         if idx not in [tokenizer.pad_token_id, tokenizer.bos_token_id]:
             tokens.append(idx)
-    return tokenizer.decode(tokens, skip_special_tokens=True).strip()
+    text =  tokenizer.decode(tokens, skip_special_tokens=True).strip()
+    text = re.sub(r"\s+([?.!,;:])", r"\1", text)
+    return text
 
 def get_glove_embeddings(path, embedding_dim=100):
     global word_to_idx, idx_to_word
@@ -588,8 +590,8 @@ def main():
     # test_M_dataset = CustomDataset(test_M_df, tokenizer_M)
     
     batch_size = 64
-    hidden_dim = 256
-    epochs = 60
+    hidden_dim = 128
+    epochs = 100
     lr = 5e-4
 
     train_H_dataloader = DataLoader(dataset=training_H_dataset, batch_size=batch_size, shuffle=True, num_workers=4, collate_fn=get_collate_fn(tokenizer_H))
