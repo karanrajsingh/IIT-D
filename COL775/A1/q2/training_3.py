@@ -314,7 +314,9 @@ def train_epoch(model, train_loader, val_loader, test_loader, optimizer, criteri
 def train_model(model, train_loader, val_loader, test_loader, num_epochs=50, save_path="./checkpoints/", lr=5e-4, pad_id_1=0, pad_id_2=0):
     global device
     model.to(device)
-    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr, betas=(0.9, 0.98),
+    eps=1e-9,
+    weight_decay=0.01)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=num_epochs)
     criterion = nn.CrossEntropyLoss(ignore_index=pad_id_1)
     history = {key: [] for key in ["train_loss","val_loss", "bleu", "chrf", "ter", "test_bleu", "test_chrf", "test_ter"]}
