@@ -25,7 +25,7 @@ device = None
 def set_device():
     global device
     if torch.cuda.is_available():
-        device = "cuda:1"
+        device = "cuda:0"
     else:
         device = "cpu"
 
@@ -174,47 +174,17 @@ class Seq2SeqBERTAttention(nn.Module):
         for t in range(target_len):
             decoder_embedding = self.decoder_embedding(decoder_input)
             # Attention mechanism
-            # query = h[-1].unsqueeze(1)
-            # Q = self.q_proj(query)
-            # K = self.k_proj(encoder_hidden_states)
-            # V = self.v_proj(encoder_hidden_states)
-            # Q = split_heads(Q, num_heads=self.num_heads, head_dim=self.hidden_dim//self.num_heads)  
-            # K = split_heads(K, num_heads=self.num_heads, head_dim=self.hidden_dim//self.num_heads) 
-            # V = split_heads(V, num_heads=self.num_heads, head_dim=self.hidden_dim//self.num_heads)
-            # attn_mask = ~attention_mask.unsqueeze(1).unsqueeze(2)
-            # attn_mask = attn_mask.expand(-1, self.num_heads, -1, -1)
-            # context = scaled_dot_product_attention(Q, K, V, attn_mask=attn_mask)
-            # context = context.squeeze(1)
-            # context = context.transpose(1, 2).contiguous()
-            # context = context.view(batch_size, 1, -1)  # (B,1,2H)
-            # context = self.out_proj(context)
 
-            h_last = h[-1]  # (B,H)
-
-            h_repeat = h_last.unsqueeze(1).repeat(
-                1, encoder_hidden_states.size(1), 1
-            )  # (B,T,H)
-
-            energy = torch.tanh(
-                self.attn(torch.cat((h_repeat, encoder_hidden_states), dim=2))
-            )  # (B,T,H)
-
-            attn_scores = self.v(energy).squeeze(-1)  # (B,T)
-
+            h_last = h[-1]
+            h_repeat = h_last.unsqueeze(1).repeat(1, encoder_hidden_states.size(1), 1) 
+            energy = torch.tanh(self.attn(torch.cat((h_repeat, encoder_hidden_states), dim=2))) 
+            attn_scores = self.v(energy).squeeze(-1)
             # Mask padding
             attn_scores = attn_scores.masked_fill(attention_mask == 0, -1e9)
-
-            attn_weights = torch.softmax(attn_scores, dim=1)  # (B,T)
-
-            context = torch.bmm(
-                attn_weights.unsqueeze(1),
-                encoder_hidden_states
-            )  # (B,1,H)
-
+            attn_weights = torch.softmax(attn_scores, dim=1) 
+            context = torch.bmm(attn_weights.unsqueeze(1),encoder_hidden_states)
             context = self.context_proj(context)
             context = self.context_ln(context)
-
-
             concat_input = torch.cat([decoder_embedding, context], dim=-1)
             o, (h, c) = self.decoder(concat_input, (h, c))
             o = self.decoder_ln(o)
@@ -392,14 +362,14 @@ def plot_and_save_all(history, save_dir):
 
     epochs = list(range(1, len(history["train_loss"]) + 1))
 
-    # helper for clean integer ticks
+   
     def get_ticks(epochs):
         step = max(1, len(epochs)//10)
         return epochs[::step]
 
     teacher_forcing = get_teacher_forcing_curve(epochs[-1])
 
-    # 1. Training Loss + Teacher Forcing
+    
     fig = plt.figure()
     plt.plot(epochs, history["train_loss"], label="Train Loss", color="blue")
     plt.plot(epochs, teacher_forcing, label="Teacher Forcing Prob", color="red", linestyle="--")
@@ -412,7 +382,7 @@ def plot_and_save_all(history, save_dir):
     plt.savefig(os.path.join(save_dir, "train_loss_with_tf.png"))
     plt.close(fig)
 
-    # 2. Validation Loss + Teacher Forcing
+    
     fig = plt.figure()
     plt.plot(epochs, history["val_loss"], label="Validation Loss", color="green")
     plt.plot(epochs, teacher_forcing, label="Teacher Forcing Prob", color="red", linestyle="--")
@@ -425,7 +395,7 @@ def plot_and_save_all(history, save_dir):
     plt.savefig(os.path.join(save_dir, "val_loss_with_tf.png"))
     plt.close(fig)
 
-    # ------------------ 2. Validation Metrics ------------------
+    
     fig = plt.figure()
     plt.plot(epochs, history["bleu"], label="BLEU")
     plt.plot(epochs, history["chrf"], label="chrF")
@@ -440,7 +410,7 @@ def plot_and_save_all(history, save_dir):
     plt.savefig(os.path.join(save_dir, "val_metrics.png"))
     plt.close(fig)
 
-    # ------------------ 3. Test Metrics ------------------
+    
     if "test_bleu" in history:
         fig = plt.figure()
         plt.plot(epochs, history["test_bleu"], label="Test BLEU")
@@ -456,7 +426,6 @@ def plot_and_save_all(history, save_dir):
         plt.savefig(os.path.join(save_dir, "test_metrics.png"))
         plt.close(fig)
 
-    # ------------------ 4. Individual Metric Curves (optional but useful) ------------------
     metrics = ["bleu", "chrf", "ter"]
 
     for metric in metrics:
@@ -487,7 +456,7 @@ def main():
     savepath = "./checkpoints"
     os.makedirs(savepath, exist_ok=True)
 
-    model_dir = os.path.join(savepath, "model_6")
+    model_dir = os.path.join(savepath, "model_7")
     os.makedirs(model_dir, exist_ok=True)
     tokenizer_M = build_tokenizer(train_M_df, save_dir=os.path.join(savepath, "tokenizer", "Marathi"))
     bert_tokenizer = BertTokenizer.from_pretrained('bert-base-cased')
@@ -507,6 +476,13 @@ def main():
     test_M_dataloader = DataLoader(dataset=test_M_dataset, batch_size=batch_size, shuffle=False, num_workers=4, collate_fn=get_collate_fn(tokenizer_M, bert_tokenizer))
 
     model = Seq2SeqBERTAttention(vocab_size_output=5000, embedding_dim=100, hidden_dim=hidden_dim, tokenizer=tokenizer_M, num_heads=1)
+
+    path = "./checkpoints/model_4/trained/last_model.pt"
+    checkpoint = torch.load(path, map_location=device)
+    state_dict = checkpoint["model_state_dict"]
+    del state_dict["unembedding.weight"]
+    del state_dict["unembedding.bias"]
+    model.load_state_dict(state_dict, strict=False)
     history = train_model(model, train_M_dataloader, valid_M_dataloader, test_M_dataloader, pad_id_1=tokenizer_M.pad_token_id, pad_id_2=bert_tokenizer.pad_token_id, num_epochs=epochs, save_path=os.path.join(model_dir, "trained"), lr1=lr1, lr2=lr2)
     plot_and_save_all(history, os.path.join(model_dir, "trained", "plots"))
     

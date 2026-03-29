@@ -25,7 +25,7 @@ device = None
 def set_device():
     global device
     if torch.cuda.is_available():
-        device = "cuda:0"
+        device = "cuda:1"
     else:
         device = "cpu"
 
@@ -120,6 +120,7 @@ class Seq2SeqBERTAttention(nn.Module):
         self.bert_hidden = self.encoder.config.hidden_size
         
         self.enc_proj = nn.Linear(self.bert_hidden, hidden_dim)
+        self.enc_ln = nn.LayerNorm(hidden_dim)
         self.init_proj = nn.Linear(self.bert_hidden, hidden_dim)
 
         self.decoder_embedding = nn.Embedding(vocab_size_output, embedding_dim, padding_idx=tokenizer.pad_token_id)
@@ -128,12 +129,19 @@ class Seq2SeqBERTAttention(nn.Module):
         # LSTM decoder
         self.decoder = nn.LSTM(embedding_dim+hidden_dim, hidden_dim, num_layers=decoder_layers, batch_first=True, dropout=dropout)
         # Attention layer
-        self.q_proj = nn.Linear(hidden_dim, hidden_dim)
-        self.k_proj = nn.Linear(hidden_dim, hidden_dim)
-        self.v_proj = nn.Linear(hidden_dim, hidden_dim)
+        # self.q_proj = nn.Linear(hidden_dim, hidden_dim)
+        # self.k_proj = nn.Linear(hidden_dim, hidden_dim)
+        # self.v_proj = nn.Linear(hidden_dim, hidden_dim)
 
-        self.out_proj = nn.Linear(hidden_dim, hidden_dim)
+        # self.out_proj = nn.Linear(hidden_dim, hidden_dim)
 
+        self.attn = nn.Linear(hidden_dim + hidden_dim, hidden_dim)
+        self.v = nn.Linear(hidden_dim, 1)
+
+        self.context_proj = nn.Linear(hidden_dim, hidden_dim)
+        self.context_ln = nn.LayerNorm(hidden_dim)
+
+        self.decoder_ln = nn.LayerNorm(hidden_dim)
         self.unembedding = nn.Linear(hidden_dim, vocab_size_output)
 
     def forward(self, input_tokens, attention_mask, ground_truth_tokens=None, teacher_forcing_prob=0.6):
@@ -143,9 +151,11 @@ class Seq2SeqBERTAttention(nn.Module):
         
         
         encoder_outputs = self.encoder(input_ids=input_tokens, attention_mask=attention_mask)
-        pooled = encoder_outputs.last_hidden_state[:, 0]
+        masked = encoder_outputs.last_hidden_state * attention_mask.unsqueeze(-1)
+        pooled = masked.sum(dim=1) / attention_mask.sum(dim=1, keepdim=True)
         pooled = self.init_proj(pooled)
         encoder_hidden_states = self.enc_proj(encoder_outputs.last_hidden_state)
+        encoder_hidden_states = self.enc_ln(encoder_hidden_states)
 
         # Initialize decoder layers
         h = pooled.unsqueeze(0).repeat(self.decoder_layers, 1, 1)
@@ -161,22 +171,21 @@ class Seq2SeqBERTAttention(nn.Module):
         for t in range(target_len):
             decoder_embedding = self.decoder_embedding(decoder_input)
             # Attention mechanism
-            query = h[-1].unsqueeze(1)
-            Q = self.q_proj(query)
-            K = self.k_proj(encoder_hidden_states)
-            V = self.v_proj(encoder_hidden_states)
-            Q = split_heads(Q, num_heads=self.num_heads, head_dim=self.hidden_dim//self.num_heads)  
-            K = split_heads(K, num_heads=self.num_heads, head_dim=self.hidden_dim//self.num_heads) 
-            V = split_heads(V, num_heads=self.num_heads, head_dim=self.hidden_dim//self.num_heads)
-            attn_mask = ~attention_mask.unsqueeze(1).unsqueeze(2)
-            attn_mask = attn_mask.expand(-1, self.num_heads, -1, -1)
-            context = scaled_dot_product_attention(Q, K, V, attn_mask=attn_mask)
-            # context = context.squeeze(1)
-            context = context.transpose(1, 2).contiguous()
-            context = context.view(batch_size, 1, -1)  # (B,1,2H)
-            context = self.out_proj(context)
+
+            h_last = h[-1]
+            h_repeat = h_last.unsqueeze(1).repeat(1, encoder_hidden_states.size(1), 1)
+            energy = torch.tanh(self.attn(torch.cat((h_repeat, encoder_hidden_states), dim=2)))
+            attn_scores = self.v(energy).squeeze(-1)
+            # Mask padding
+            attn_scores = attn_scores.masked_fill(attention_mask == 0, -1e9)
+            attn_weights = torch.softmax(attn_scores, dim=1)
+            context = torch.bmm(attn_weights.unsqueeze(1),encoder_hidden_states)
+            context = self.context_proj(context)
+            context = self.context_ln(context)
+
             concat_input = torch.cat([decoder_embedding, context], dim=-1)
             o, (h, c) = self.decoder(concat_input, (h, c))
+            o = self.decoder_ln(o)
             logits = self.unembedding(o.squeeze(1))
             outputs.append(logits.unsqueeze(1))
 
@@ -274,18 +283,28 @@ def train_model(model, train_loader, val_loader, test_loader, num_epochs=50, sav
     global device
     model.to(device)
     
-    optimizer = torch.optim.Adam(
-        [{"params": model.encoder.parameters(), "lr": lr1},
-         {"params": list(model.decoder.parameters()) +
-               list(model.decoder_embedding.parameters()) +
-               list(model.unembedding.parameters()) +
-               list(model.enc_proj.parameters()) +
-               list(model.init_proj.parameters()) +
-               list(model.q_proj.parameters()) +
-               list(model.k_proj.parameters()) +
-               list(model.v_proj.parameters()) +
-               list(model.out_proj.parameters()), "lr": lr2}
-        ])
+    optimizer = torch.optim.AdamW(
+    [
+        {"params": model.encoder.parameters(), "lr": lr1},
+
+        {"params": (
+            list(model.decoder.parameters()) +
+            list(model.decoder_embedding.parameters()) +
+            list(model.unembedding.parameters()) +
+            list(model.enc_proj.parameters()) +
+            list(model.init_proj.parameters()) +
+            list(model.attn.parameters()) +
+            list(model.v.parameters()) +
+            list(model.context_proj.parameters()) +
+            list(model.enc_ln.parameters()) +
+            list(model.context_ln.parameters()) +
+            list(model.decoder_ln.parameters())
+        ), "lr": lr2}
+    ],
+    betas=(0.9, 0.98),
+    eps=1e-9,
+    weight_decay=0.01
+    )
 
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=num_epochs)
     criterion = nn.CrossEntropyLoss(ignore_index=pad_id_1)
@@ -341,14 +360,14 @@ def plot_and_save_all(history, save_dir):
 
     epochs = list(range(1, len(history["train_loss"]) + 1))
 
-    # helper for clean integer ticks
+
     def get_ticks(epochs):
         step = max(1, len(epochs)//10)
         return epochs[::step]
 
     teacher_forcing = get_teacher_forcing_curve(epochs[-1])
 
-    # 1. Training Loss + Teacher Forcing
+
     fig = plt.figure()
     plt.plot(epochs, history["train_loss"], label="Train Loss", color="blue")
     plt.plot(epochs, teacher_forcing, label="Teacher Forcing Prob", color="red", linestyle="--")
@@ -361,7 +380,7 @@ def plot_and_save_all(history, save_dir):
     plt.savefig(os.path.join(save_dir, "train_loss_with_tf.png"))
     plt.close(fig)
 
-    # 2. Validation Loss + Teacher Forcing
+
     fig = plt.figure()
     plt.plot(epochs, history["val_loss"], label="Validation Loss", color="green")
     plt.plot(epochs, teacher_forcing, label="Teacher Forcing Prob", color="red", linestyle="--")
@@ -374,7 +393,7 @@ def plot_and_save_all(history, save_dir):
     plt.savefig(os.path.join(save_dir, "val_loss_with_tf.png"))
     plt.close(fig)
 
-    # ------------------ 2. Validation Metrics ------------------
+
     fig = plt.figure()
     plt.plot(epochs, history["bleu"], label="BLEU")
     plt.plot(epochs, history["chrf"], label="chrF")
@@ -389,7 +408,7 @@ def plot_and_save_all(history, save_dir):
     plt.savefig(os.path.join(save_dir, "val_metrics.png"))
     plt.close(fig)
 
-    # ------------------ 3. Test Metrics ------------------
+    
     if "test_bleu" in history:
         fig = plt.figure()
         plt.plot(epochs, history["test_bleu"], label="Test BLEU")
@@ -405,7 +424,6 @@ def plot_and_save_all(history, save_dir):
         plt.savefig(os.path.join(save_dir, "test_metrics.png"))
         plt.close(fig)
 
-    # ------------------ 4. Individual Metric Curves (optional but useful) ------------------
     metrics = ["bleu", "chrf", "ter"]
 
     for metric in metrics:

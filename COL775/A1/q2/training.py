@@ -102,8 +102,25 @@ def build_filtered_glove(glove_path, texts, embedding_dim=100):
                 word_to_idx[word] = len(word_to_idx)
                 idx_to_word.append(word)
                 embeddings.append(vector)
+    final_embed = torch.cat(embeddings, dim=0)
+    
+    wi = {}
+    wi["word_to_idx"] = word_to_idx
+    wi["index_to_word"] = idx_to_word
+    wi["embeddings"] = final_embed
 
-    return torch.cat(embeddings, dim=0)
+    os.makedirs("./tokenizer_data", exist_ok=True)
+    file = os.path.join("./tokenizer_data", "tokenizer_dict.pt")
+
+    tokenizer_dict = {
+        "word_to_idx": word_to_idx,
+        "idx_to_word": idx_to_word,
+        "embeddings" : final_embed
+    }
+
+    torch.save(tokenizer_dict, file)
+
+    return final_embed
 
 def load_data(path = "./data"):
     return pd.read_csv(path)
@@ -191,13 +208,14 @@ class Seq2Seq(nn.Module):
 
         # BiLSTM encoder
         self.encoder = nn.LSTM(embedding_dim, hidden_dim, num_layers=encoder_layers, batch_first=True, dropout=dropout, bidirectional=True)
-        
+
         # # Context down projection
         # self.hidden_proj = nn.Linear(hidden_dim*2, hidden_dim, bias=False)
         # self.cell_proj = nn.Linear(hidden_dim*2, hidden_dim, bias=False)
-        
+        self.context_ln = nn.LayerNorm(2*hidden_dim)
         # LSTM decoder
         self.decoder = nn.LSTM(embedding_dim+hidden_dim*2, hidden_dim*2, num_layers=decoder_layers, batch_first=True, dropout=dropout)
+        self.decoder_ln = nn.LayerNorm(2*hidden_dim)
         self.unembedding = nn.Linear(hidden_dim*2, vocab_size_output)
 
     def forward(self, input_tokens, ground_truth_tokens=None, teacher_forcing_prob=0.6):
@@ -209,14 +227,15 @@ class Seq2Seq(nn.Module):
         embedded_input = self.encoder_embedding(input_tokens)
         packed_input = nn.utils.rnn.pack_padded_sequence(embedded_input, lengths, batch_first=True, enforce_sorted=False)
 
-        o, (h, c) = self.encoder(packed_input) 
+        o, (h, c) = self.encoder(packed_input)
+        
         
         # Build context and initialization states for decoder
         h = torch.cat((h[-2], h[-1]), dim=1)
         c = torch.cat((c[-2], c[-1]), dim=1)
         # h = self.hidden_proj(h)
         # c = self.cell_proj(c)
-        context = h.unsqueeze(1)
+        context = self.context_ln(h).unsqueeze(1)
 
         # Initialize decoder layers
         h = h.unsqueeze(0).repeat(self.decoder_layers, 1, 1)
@@ -233,6 +252,7 @@ class Seq2Seq(nn.Module):
             # Concatenate context to input embedding
             concat_input = torch.cat([decoder_embedding, context], dim=-1)
             o, (h, c) = self.decoder(concat_input, (h, c))
+            o = self.decoder_ln(o)
             logits = self.unembedding(o.squeeze(1))
             outputs.append(logits.unsqueeze(1))
 
@@ -278,22 +298,17 @@ class Seq2SeqAttention(nn.Module):
 
         # BiLSTM encoder
         self.encoder = nn.LSTM(embedding_dim, hidden_dim, num_layers=encoder_layers, batch_first=True, dropout=dropout, bidirectional=True)
-        
-        # # Context down projection
-        # self.hidden_proj = nn.Linear(hidden_dim*2, hidden_dim, bias=False)
-        # self.cell_proj = nn.Linear(hidden_dim*2, hidden_dim, bias=False)
+        self.enc_ln = nn.LayerNorm(hidden_dim)
         
         # LSTM decoder
         self.decoder = nn.LSTM(embedding_dim+hidden_dim*2, hidden_dim*2, num_layers=decoder_layers, batch_first=True, dropout=dropout)
         # Attention layer
-        # self.attention = nn.Linear(hidden_dim*2, hidden_dim*2)
-        
-        self.q_proj = nn.Linear(hidden_dim*2, hidden_dim*2)
-        self.k_proj = nn.Linear(hidden_dim*2, hidden_dim*2)
-        self.v_proj = nn.Linear(hidden_dim*2, hidden_dim*2)
+        self.attn = nn.Linear(hidden_dim*2 + hidden_dim*2, hidden_dim*2)
+        self.v = nn.Linear(hidden_dim*2, 1)
+        self.context_proj = nn.Linear(hidden_dim*2, hidden_dim*2)
+        self.context_ln = nn.LayerNorm(hidden_dim*2)
 
-        self.out_proj = nn.Linear(hidden_dim*2, hidden_dim*2)
-
+        self.decoder_ln = nn.LayerNorm(hidden_dim*2)
         self.unembedding = nn.Linear(hidden_dim*2, vocab_size_output)
 
     def forward(self, input_tokens, ground_truth_tokens=None, teacher_forcing_prob=0.6):
@@ -308,13 +323,11 @@ class Seq2SeqAttention(nn.Module):
         packed_o, (h, c) = self.encoder(packed_input) 
 
         encoder_outputs, _ = pad_packed_sequence(packed_o, batch_first=True)
+        encoder_outputs = self.enc_ln(encoder_outputs)
 
         # Build context and initialization states for decoder
         h = torch.cat((h[-2], h[-1]), dim=1)
         c = torch.cat((c[-2], c[-1]), dim=1)
-        # h = self.hidden_proj(h)
-        # c = self.cell_proj(c)
-        # context = h.unsqueeze(1)
 
         # Initialize decoder layers
         h = h.unsqueeze(0).repeat(self.decoder_layers, 1, 1)
@@ -322,32 +335,24 @@ class Seq2SeqAttention(nn.Module):
         decoder_input = torch.full((batch_size, 1), self.tokenizer.bos_token_id, dtype=torch.long, device=device) # First input token is <SOS>
         outputs = []
         sentence_bool = torch.zeros(batch_size, dtype=torch.bool, device=device)
-        
-        # target_len = ground_truth_tokens.size(1) if ground_truth_tokens is not None else sequence_len
+
         max_len = input_tokens.size(1) - 1
         target_len = ground_truth_tokens.size(1) -1 if ground_truth_tokens is not None else max_len
         for t in range(target_len):
             decoder_embedding = self.decoder_embedding(decoder_input)
-            # Attention mechanism
-            query = h[-1].unsqueeze(1)
-            Q = self.q_proj(query)
-            K = self.k_proj(encoder_outputs)
-            V = self.v_proj(encoder_outputs)
-            # query = query.unsqueeze(1)
-            # key = key.unsqueeze(1)
-            # value = value.unsqueeze(1)
-            Q = split_heads(Q, num_heads=self.num_heads, head_dim=2*self.hidden_dim//self.num_heads)  
-            K = split_heads(K, num_heads=self.num_heads, head_dim=2*self.hidden_dim//self.num_heads) 
-            V = split_heads(V, num_heads=self.num_heads, head_dim=2*self.hidden_dim//self.num_heads)
-            attn_mask = ~pad_mask.unsqueeze(1).unsqueeze(2)
-            attn_mask = attn_mask.expand(-1, self.num_heads, -1, -1)
-            context = scaled_dot_product_attention(Q, K, V, attn_mask=attn_mask)
-            # context = context.squeeze(1)
-            context = context.transpose(1, 2).contiguous()
-            context = context.view(batch_size, 1, -1)  # (B,1,2H)
-            context = self.out_proj(context)
+            h_last = h[-1]
+            h_repeat = h_last.unsqueeze(1).repeat(1, encoder_outputs.size(1), 1)
+            aplhas = torch.tanh(self.attn(torch.cat((h_repeat, encoder_outputs), dim=2))) 
+            attention_scores = self.v(aplhas).squeeze(-1)
+            # Mask padding
+            attention_scores = attention_scores.masked_fill(encoder_outputs == 0, -1e9)
+            attention_weights = torch.softmax(attention_scores, dim=1)
+            context = torch.bmm(attention_weights.unsqueeze(1), encoder_outputs) 
+            context = self.context_proj(context)
+            context = self.context_ln(context)
             concat_input = torch.cat([decoder_embedding, context], dim=-1)
             o, (h, c) = self.decoder(concat_input, (h, c))
+            o = self.decoder_ln(o)
             logits = self.unembedding(o.squeeze(1))
             outputs.append(logits.unsqueeze(1))
 
@@ -438,7 +443,7 @@ def train_epoch(model, train_loader, val_loader, test_loader, optimizer, criteri
 def train_model(model, train_loader, val_loader, test_loader, pad_id, num_epochs=50, save_path="./checkpoints/", lr=5e-4):
     global device
     model.to(device)
-    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=lr, betas=(0.9, 0.98), eps=1e-9, weight_decay=0.01)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=num_epochs)
     criterion = nn.CrossEntropyLoss(ignore_index=pad_id)
     history = {key: [] for key in ["train_loss","val_loss", "bleu", "chrf", "ter", "test_bleu", "test_chrf", "test_ter"]}
@@ -481,7 +486,6 @@ def train_model(model, train_loader, val_loader, test_loader, pad_id, num_epochs
 
         with open(os.path.join(save_path, "last_history.json"), "w") as f:
             json.dump({"bleu": bleu, "chrf": chrf, "ter": ter, "test_bleu": test_bleu, "test_chrf": test_chrf, "test_ter": test_ter}, f)
-
     return history
 
 
@@ -490,12 +494,10 @@ def plot_and_save_all(history, save_dir):
 
     epochs = list(range(1, len(history["train_loss"]) + 1))
 
-    # helper for clean integer ticks
     def get_ticks(epochs):
         step = max(1, len(epochs)//10)
         return epochs[::step]
 
-    # ------------------ 1. Loss ------------------
     fig = plt.figure()
     plt.plot(epochs, history["train_loss"], label="Train Loss")
     plt.plot(epochs, history["val_loss"], label="Val Loss")
@@ -505,11 +507,9 @@ def plot_and_save_all(history, save_dir):
     plt.xticks(get_ticks(epochs))
     plt.legend()
     plt.grid()
-
     plt.savefig(os.path.join(save_dir, "loss.png"))
     plt.close(fig)
 
-    # ------------------ 2. Validation Metrics ------------------
     fig = plt.figure()
     plt.plot(epochs, history["bleu"], label="BLEU")
     plt.plot(epochs, history["chrf"], label="chrF")
@@ -520,11 +520,9 @@ def plot_and_save_all(history, save_dir):
     plt.xticks(get_ticks(epochs))
     plt.legend()
     plt.grid()
-
     plt.savefig(os.path.join(save_dir, "val_metrics.png"))
     plt.close(fig)
 
-    # ------------------ 3. Test Metrics ------------------
     if "test_bleu" in history:
         fig = plt.figure()
         plt.plot(epochs, history["test_bleu"], label="Test BLEU")
@@ -536,13 +534,11 @@ def plot_and_save_all(history, save_dir):
         plt.xticks(get_ticks(epochs))
         plt.legend()
         plt.grid()
-
         plt.savefig(os.path.join(save_dir, "test_metrics.png"))
         plt.close(fig)
 
-    # ------------------ 4. Individual Metric Curves (optional but useful) ------------------
+    
     metrics = ["bleu", "chrf", "ter"]
-
     for metric in metrics:
         fig = plt.figure()
         plt.plot(epochs, history[metric], label=f"Val {metric.upper()}")
@@ -552,7 +548,6 @@ def plot_and_save_all(history, save_dir):
         plt.xticks(get_ticks(epochs))
         plt.legend()
         plt.grid()
-
         plt.savefig(os.path.join(save_dir, f"{metric}.png"))
         plt.close(fig)
 
@@ -577,35 +572,25 @@ def main():
     savepath = "./checkpoints"
     os.makedirs(savepath, exist_ok=True)
 
-    model_dir = os.path.join(savepath, "model_2")
+    model_dir = os.path.join(savepath, "model")
     os.makedirs(model_dir, exist_ok=True)
     tokenizer_H = build_tokenizer(train_H_df, save_dir=os.path.join(model_dir, "tokenizer", "Hindi"))
-    # tokenizer_M = build_tokenizer(train_M_df, save_dir=os.path.join(savepath, "tokenizer", "Marathi"))
 
     training_H_dataset = CustomDataset(train_H_df, tokenizer_H)
     valid_H_dataset = CustomDataset(val_H_df, tokenizer_H)
     test_H_dataset = CustomDataset(test_H_df, tokenizer_H)
-    # training_M_dataset = CustomDataset(train_M_df, tokenizer_M)
-    # valid_M_dataset = CustomDataset(val_M_df, tokenizer_M)
-    # test_M_dataset = CustomDataset(test_M_df, tokenizer_M)
     
-    batch_size = 64
+    batch_size = 32
     hidden_dim = 128
-    epochs = 100
+    epochs = 30
     lr = 5e-4
 
     train_H_dataloader = DataLoader(dataset=training_H_dataset, batch_size=batch_size, shuffle=True, num_workers=4, collate_fn=get_collate_fn(tokenizer_H))
     valid_H_dataloader = DataLoader(dataset=valid_H_dataset, batch_size=batch_size, shuffle=False, num_workers=4, collate_fn=get_collate_fn(tokenizer_H))
     test_H_dataloader = DataLoader(dataset=test_H_dataset, batch_size=batch_size, shuffle=False, num_workers=4, collate_fn=get_collate_fn(tokenizer_H))
 
-    # train_M_dataloader = DataLoader(dataset=training_M_dataset, batch_size=batch_size, shuffle=True, num_workers=4, collate_fn=get_collate_fn(tokenizer_M))
-    # valid_M_dataloader = DataLoader(dataset=valid_M_dataset, batch_size=batch_size, shuffle=False, num_workers=4, collate_fn=get_collate_fn(tokenizer_M))    
-    # test_M_dataloader = DataLoader(dataset=test_M_dataset, batch_size=batch_size, shuffle=False, num_workers=4, collate_fn=get_collate_fn(tokenizer_M))    
-
-    # embedding = get_glove_embeddings("./glove.6B.100d.txt")
     embedding = build_filtered_glove("./glove.6B.100d.txt", train_H_df["source"].tolist())
-    # model = Seq2Seq(vocab_size_output=5000, embedding_dim=100, hidden_dim=hidden_dim, pretrained_embedding=embedding, tokenizer=tokenizer_H)
-    model = Seq2SeqAttention(vocab_size_output=5000, embedding_dim=100, hidden_dim=hidden_dim, pretrained_embedding=embedding, tokenizer=tokenizer_H, num_heads=1)
+    model = Seq2Seq(vocab_size_output=5000, embedding_dim=100, hidden_dim=hidden_dim, pretrained_embedding=embedding, tokenizer=tokenizer_H)
     global word_to_idx, idx_to_word
     history = train_model(model, train_H_dataloader, valid_H_dataloader, test_H_dataloader, pad_id=tokenizer_H.pad_token_id, num_epochs=epochs, save_path=os.path.join(model_dir, "trained"), lr=lr)
     plot_and_save_all(history, os.path.join(model_dir, "trained", "plots"))
@@ -613,3 +598,111 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+class Seq2Seq2(nn.Module):
+    def __init__(self, vocab_size_output, embedding_dim, hidden_dim, pretrained_embedding, tokenizer, input_dict, encoder_layers=2, decoder_layers=2, dropout=0.2):
+        super().__init__()
+
+        self.vocab_size_output = vocab_size_output
+        self.embedding_dim = embedding_dim
+        self.hidden_dim = hidden_dim
+        self.encoder_layers = encoder_layers
+        self.decoder_layers = decoder_layers
+        self.tokenizer = tokenizer
+        self.input_dict = input_dict
+
+        self.encoder_embedding = nn.Embedding.from_pretrained(pretrained_embedding, freeze=False, padding_idx=input_dict["<pad>"]) # to freeze or not
+        self.decoder_embedding = nn.Embedding(vocab_size_output, embedding_dim, padding_idx=tokenizer.pad_token_id)
+
+        # BiLSTM encoder
+        self.encoder = nn.LSTM(embedding_dim, hidden_dim, num_layers=encoder_layers, batch_first=True, dropout=dropout, bidirectional=True)
+
+        self.context_ln = nn.LayerNorm(2*hidden_dim)
+        # LSTM decoder
+        self.decoder = nn.LSTM(embedding_dim+hidden_dim*2, hidden_dim*2, num_layers=decoder_layers, batch_first=True, dropout=dropout)
+        self.decoder_ln = nn.LayerNorm(2*hidden_dim)
+        self.unembedding = nn.Linear(hidden_dim*2, vocab_size_output)
+
+    def forward(self, input_tokens, ground_truth_tokens=None, teacher_forcing_prob=0.6):
+        
+        device = input_tokens.device
+        batch_size, sequence_len = input_tokens.size()
+        pad_mask = (input_tokens != self.input_dict['<pad>'])
+        lengths = pad_mask.sum(dim=1).cpu()
+        embedded_input = self.encoder_embedding(input_tokens)
+        packed_input = nn.utils.rnn.pack_padded_sequence(embedded_input, lengths, batch_first=True, enforce_sorted=False)
+
+        o, (h, c) = self.encoder(packed_input)
+        
+        # Build context and initialization states for decoder
+        h = torch.cat((h[-2], h[-1]), dim=1)
+        c = torch.cat((c[-2], c[-1]), dim=1)
+        context = self.context_ln(h).unsqueeze(1)
+
+        # Initialize decoder layers
+        h = h.unsqueeze(0).repeat(self.decoder_layers, 1, 1)
+        c = c.unsqueeze(0).repeat(self.decoder_layers, 1, 1)
+        decoder_input = torch.full((batch_size, 1), self.tokenizer.bos_token_id, dtype=torch.long, device=device) # First input token is <SOS>
+        outputs = []
+        sentence_bool = torch.zeros(batch_size, dtype=torch.bool, device=device)
+        max_len = input_tokens.size(1) - 1
+        target_len = ground_truth_tokens.size(1) -1 if ground_truth_tokens is not None else max_len
+        for t in range(target_len):
+            decoder_embedding = self.decoder_embedding(decoder_input)
+            # Concatenate context to input embedding
+            concat_input = torch.cat([decoder_embedding, context], dim=-1)
+            o, (h, c) = self.decoder(concat_input, (h, c))
+            o = self.decoder_ln(o)
+            logits = self.unembedding(o.squeeze(1))
+            outputs.append(logits.unsqueeze(1))
+
+            prediction = logits.argmax(dim=-1)
+            if ground_truth_tokens is not None: # ground truth is None during inference
+                spliced_ground_truth = ground_truth_tokens[:, t+1]
+                # Per sample bernoulli sampling
+                mask = torch.rand(batch_size, device=device) < teacher_forcing_prob
+                next_input = torch.where(mask, spliced_ground_truth, prediction)
+            else:
+                next_input = prediction
+            eos_mask = (next_input == self.tokenizer.eos_token_id)
+            next_input = torch.where(sentence_bool, torch.full_like(next_input, self.tokenizer.pad_token_id, device=device), next_input)
+            sentence_bool = sentence_bool | eos_mask
+            decoder_input = next_input.unsqueeze(1)
+            if ground_truth_tokens is None and sentence_bool.all():
+                break
+        return torch.cat(outputs, dim=1)
+
+
+def get_collate_fn2(tokenizer, word_2_idx):
+    def collate_fn2(batch):
+        sources, targets = zip(*batch)
+        sources_padded = pad_sequence(sources, batch_first=True, padding_value=word_2_idx['<pad>'])
+        targets_padded = pad_sequence(targets, batch_first=True, padding_value=tokenizer.pad_token_id)
+        return sources_padded, targets_padded
+
+def encode2(text, word_2_idx):
+    tokens = re.findall(r"\w+|[^\w\s]", text.lower())
+    unk_idx = word_2_idx["<unk>"]
+    return [word_2_idx.get(token, unk_idx) for token in tokens]
+
+class CustomDataset2(Dataset):
+    def __init__(self, df, tokenizer, word_2_idx):
+        self.source = df["source"].astype(str).tolist()
+        self.translated = df["translated"].astype(str).tolist()
+        self.tokenizer = tokenizer
+        self.word_2_idx =word_2_idx
+        self.sos_id = tokenizer.bos_token_id
+        self.eos_id = tokenizer.eos_token_id
+
+    def __len__(self):
+        return len(self.source)
+
+    def __getitem__(self, index):
+        source = self.source[index]
+        translated = self.translated[index]
+        source_ids = encode2(source, self.word_2_idx)
+        # translated_ids = self.tokenizer(translated)
+        translated_ids = self.tokenizer.encode(translated)
+        translated_ids = [self.sos_id] + translated_ids + [self.eos_id]
+        return torch.tensor(source_ids), torch.tensor(translated_ids)
