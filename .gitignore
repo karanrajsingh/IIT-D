@@ -6,3 +6,12 @@ COL774/Assignment2/data/*
 COL774/Assignment3/data/*
 __pycache__/
 ~$*
+COL775/A1/q1/pytorch-grad-cam/
+COL775/A1/q1/visual/
+COL775/A1/q2/beam_search/
+COL775/A1/q2/inference_outputs/
+COL775/A1/q2/tokenizer_data/
+COL775/A1/q2/updated_checkpoints/
+COL772/A3/en_sft_dataset/
+COL772/A3/sft_dataset/
+COL772/A3/pat
