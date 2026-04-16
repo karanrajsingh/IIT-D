@@ -15,4 +15,10 @@ COL775/A1/q2/updated_checkpoints/
 COL772/A3/en_sft_dataset/
 COL772/A3/sft_dataset/
 COL772/A3/pat
-COL772/A3/unsupervised_corpus/
+COL772/A3/sft_dataset/*.json
+COL772/A3/sft_dataset/*.jsonl
+COL772/A3/en_sft_dataset/*.jsonl
+COL772/A3/base_models/
+COL772/A3/pat
+COL772/A3/previous_work/
+
